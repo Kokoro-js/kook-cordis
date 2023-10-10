@@ -18,18 +18,20 @@ export interface Context {
 export class Context extends cordis.Context {
   static readonly session = Symbol('session');
 
-  constructor(options?: Context.Config) {
+  constructor(options: Context.Config) {
     super(options);
 
-    let port = options?.port || 3000;
-    let path = options?.webhook || '/kook';
+    let port = options.port;
+    let path = options.webhook;
     const webhookLogger = logger.child({ name: 'Webhook' });
     const app = uWS.App();
 
     app.post(path, async (res, req) => {
       readJson(
         res,
+        options.compressed,
         (obj) => {
+          webhookLogger.debug('webhook:data', '接收到 POST Body:' + obj);
           const data: Data<any> = obj.d;
           const verifyToken = data.verify_token;
           const bot = this.bots[verifyToken];
@@ -107,7 +109,12 @@ Context.service(
   },
 );
 
-function readJson(res: HttpResponse, cb: { (obj: any): void }, err: (message: string) => void) {
+function readJson(
+  res: HttpResponse,
+  compressed: boolean,
+  cb: { (obj: any): void },
+  err: (message: string) => void,
+) {
   let buffer: Buffer;
 
   // 注册
@@ -120,17 +127,29 @@ function readJson(res: HttpResponse, cb: { (obj: any): void }, err: (message: st
     }
 
     if (isLast) {
-      zlib.inflate(buffer, (inflateErr, result) => {
-        if (inflateErr) {
-          // 发生解压缩错误时发送适当的错误响应给客户端
-          err('解压遇到了错误' + inflateErr.message);
-          res.close();
-          return;
-        }
+      let jsonData;
+      if (compressed) {
+        zlib.inflate(buffer, (inflateErr, result) => {
+          if (inflateErr) {
+            // 发生解压缩错误时发送适当的错误响应给客户端
+            err('解压遇到了错误' + inflateErr.message);
+            res.close();
+            return;
+          }
 
-        let jsonData;
+          try {
+            const decodedData = result.toString('utf8');
+            jsonData = JSON.parse(decodedData);
+          } catch (e) {
+            // 发生JSON解析错误时发送适当的错误响应给客户端
+            err('解析遇到了错误' + e.message);
+            res.close();
+            return;
+          }
+        });
+      } else {
         try {
-          const decodedData = result.toString('utf8');
+          const decodedData = buffer.toString('utf8');
           jsonData = JSON.parse(decodedData);
         } catch (e) {
           // 发生JSON解析错误时发送适当的错误响应给客户端
@@ -138,8 +157,8 @@ function readJson(res: HttpResponse, cb: { (obj: any): void }, err: (message: st
           res.close();
           return;
         }
-        cb(jsonData);
-      });
+      }
+      cb(jsonData);
     }
   });
 
