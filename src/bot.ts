@@ -4,18 +4,23 @@ import { logger } from './Logger';
 import Schema from 'schemastery';
 import pino from 'pino';
 import axios, { AxiosInstance } from 'axios';
+import { AbstactBot } from './api/api';
+import { IBaseResponse, UserME } from './api/types/base';
 
-export class Bot {
-  verifyToken: string;
-  token: string;
+export class Bot extends AbstactBot {
+  static reusable = true;
+  readonly verifyToken: string;
+  readonly token: string;
   logger: pino.Logger<{ name: string }>;
-  http: AxiosInstance;
+  readonly http: AxiosInstance;
+  userME: UserME;
   protected context: Context;
 
   constructor(
     public ctx: Context,
     public config: Bot.Config,
   ) {
+    super();
     this.context = ctx;
     this.verifyToken = config.verifyToken;
     this.token = config.token;
@@ -27,8 +32,33 @@ export class Bot {
       },
     });
 
-    this.http.get('/api/v3/user/me').then((r) => logger.info(r.data));
-    ctx.bots.push(this); // this.context.emit('bot-added', this);
+    this.ctx.bots.push(this);
+    ctx.start();
+    ctx.on('ready', async () => {
+      return this.start();
+    });
+
+    ctx.on('dispose', () => this.dispose());
+  }
+
+  protected async start() {
+    try {
+      const response = await this.http.get('/api/v3/user/me');
+      const data = response.data as IBaseResponse<UserME>;
+      if (data.code !== 0) {
+        this.logger.error('机器人获取自身信息失败');
+      }
+      this.userME = data.data;
+      this.logger.info(this.userME);
+    } catch (error) {
+      this.logger.error('启动机器人失败，请检查 Token 是否相符。');
+      this.dispose();
+      throw error;
+    }
+  }
+
+  protected dispose() {
+    remove(this.ctx.bots, this);
   }
 }
 
