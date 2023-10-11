@@ -3,7 +3,7 @@ import Schema from 'schemastery';
 import uWS, { HttpResponse } from 'uWebSockets.js';
 import zlib from 'zlib';
 import { KookEvent } from './events';
-import { Data } from './types';
+import { Data, PayLoad } from './types';
 import { logger } from './Logger';
 import { Bot } from './bot';
 
@@ -30,11 +30,12 @@ export class Context extends cordis.Context {
       readJson(
         res,
         options.compressed,
-        (obj) => {
-          webhookLogger.debug('webhook:data', '接收到 POST Body:' + obj);
+        (obj: PayLoad) => {
+          console.time('myCode');
+          webhookLogger.debug('接收到 POST Body' + obj);
           const data: Data<any> = obj.d;
           const verifyToken = data.verify_token;
-          const bot = this.bots[verifyToken];
+          const bot: Bot = this.bots[verifyToken];
           if (!bot) {
             res.writeStatus('403 Bad Request').endWithoutBody();
             return;
@@ -46,6 +47,9 @@ export class Context extends cordis.Context {
             return;
           }
           res.writeStatus('200 OK').endWithoutBody();
+          // @ts-ignore
+          this.emit('webhook', bot, obj);
+          console.timeEnd('myCode');
         },
         (message: string) => {
           webhookLogger.error(message);
