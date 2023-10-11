@@ -26,18 +26,17 @@ export class Context extends cordis.Context {
     const webhookLogger = logger.child({ name: 'Webhook' });
     const app = uWS.App();
 
-    app.post(path, async (res, req) => {
+    app.post(path, (res, req) => {
       readJson(
         res,
         options.compressed,
         (obj: PayLoad) => {
-          console.time('myCode');
           webhookLogger.debug('接收到 POST Body' + obj);
           const data: Data<any> = obj.d;
           const verifyToken = data.verify_token;
           const bot: Bot = this.bots[verifyToken];
           if (!bot) {
-            res.writeStatus('403 Bad Request').endWithoutBody();
+            res.writeStatus('403 Bad Request').end();
             return;
           }
 
@@ -46,10 +45,9 @@ export class Context extends cordis.Context {
             res.writeStatus('200 OK').end(JSON.stringify(body));
             return;
           }
-          res.writeStatus('200 OK').endWithoutBody();
+          res.writeStatus('200 OK').end();
           // @ts-ignore
           this.emit('webhook', bot, obj);
-          console.timeEnd('myCode');
         },
         (message: string) => {
           webhookLogger.error(message);
@@ -150,6 +148,7 @@ function readJson(
             res.close();
             return;
           }
+          cb(jsonData);
         });
       } else {
         try {
@@ -161,8 +160,8 @@ function readJson(
           res.close();
           return;
         }
+        cb(jsonData);
       }
-      cb(jsonData);
     }
   });
 
