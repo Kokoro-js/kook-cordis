@@ -52,7 +52,7 @@ export abstract class AbstactBot {
       } else {
         config.data = args[0]
       }
-      const req = await this.http(path, config)
+      const req = await this.http('/api/v3' + path, config)
       if (req.status !== 200 && req?.data.code !== 0) throw new Error(req?.data?.message || 'Unexpected Error')
       return req?.data
     }
