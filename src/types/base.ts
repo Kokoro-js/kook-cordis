@@ -93,10 +93,6 @@ export enum Permissions {
   CHANNEL_VOICE_BGM = 27,
 }
 
-export function hasPermission(permissions: number, permission: Permissions) {
-  return (permissions & (1 << permission)) === 1 << permission;
-}
-
 export interface Channel {
   id: string;
   name: string;

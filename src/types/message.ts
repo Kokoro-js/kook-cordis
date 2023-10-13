@@ -166,3 +166,9 @@ export namespace Card {
     mode: "day" | "hour" | "second";
   }
 }
+
+export interface MessageReturn {
+  msg_id: string
+  msg_timestamp: number
+  nonce: string
+}
