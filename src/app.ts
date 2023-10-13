@@ -18,6 +18,13 @@ const bot2: Bot = ctx.bots['jXKDK-OapX7G3NPi'];
 bot1.sendMessage('8385444041238345', 'hello').then((r) => logger.info(r));
 // bot2.sendMessage('8385444041238345', 'hellot').then((r) => logger.info(r));
 
+ctx.channel('8385444041238345').on('webhook', (bot, payload) => {
+  bot.sendMessage(
+    '8385444041238345',
+    '嘿，这是一个仅仅接收该频道 Webhook 的回复' + payload.d.content,
+  );
+});
+
 ctx.on('webhook', (bot, payload) => {
-  bot.sendMessage('8385444041238345', '我收到了 WebHook 发言：' + payload.d.content);
+  bot.sendMessage('8385444041238345', '这是一个不过滤频道的 Webhook 回复' + payload.d.content);
 });

@@ -1,5 +1,5 @@
 import { Context } from './context';
-import { remove } from 'cosmokit';
+import { defineProperty, remove } from 'cosmokit';
 import { logger } from './Logger';
 import Schema from 'schemastery';
 import pino from 'pino';
@@ -25,6 +25,7 @@ export class Bot extends AbstactBot {
     this.verifyToken = config.verifyToken;
     this.token = config.token;
     this.logger = logger.child({ name: `bot-${this.verifyToken}` });
+    defineProperty(Bot, 'filter', false);
     this.http = axios.create({
       baseURL: 'https://www.kookapp.cn', // 设置基本的URL
       headers: {

@@ -6,6 +6,7 @@ import { KookEvent } from './events';
 import { Data, PayLoad } from './types';
 import { logger } from './Logger';
 import { Bot } from './bot';
+import { FilterService, Session } from './filter';
 
 export interface Events<C extends Context = Context> extends cordis.Events<C>, KookEvent {}
 
@@ -46,8 +47,17 @@ export class Context extends cordis.Context {
             return;
           }
           res.writeStatus('200 OK').end();
+          const session: Session = {
+            userId: data.author_id == '1' ? data.extra.body.user_id : data.author_id,
+            channelId: data.target_id,
+            guildId: data.extra.guild_id || data.target_id,
+            selfId: bot.userME.id,
+          };
+          session[Context.filter] = (ctx) => {
+            return ctx.filter(session);
+          };
           // @ts-ignore
-          this.emit('webhook', bot, obj);
+          this.emit(session, 'webhook', bot, obj);
         },
         (message: string) => {
           webhookLogger.error(message);
@@ -110,6 +120,8 @@ Context.service(
     }
   },
 );
+
+Context.service('$filter', FilterService);
 
 function readJson(
   res: HttpResponse,
