@@ -50,7 +50,6 @@ export class Bot extends AbstactBot {
         this.logger.error('机器人获取自身信息失败');
       }
       this.userME = data.data;
-      this.logger.info(this.userME);
     } catch (error) {
       this.logger.error('启动机器人失败，请检查 Token 是否相符。');
       this.dispose();

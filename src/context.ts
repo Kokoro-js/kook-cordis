@@ -6,9 +6,12 @@ import { KookEvent } from './events';
 import { Data, PayLoad } from './types';
 import { logger } from './Logger';
 import { Bot } from './bot';
-import { FilterService, Session } from './filter';
+import { FilterService } from './filter';
+import { internalWebhook } from './event-tigger';
 
-export interface Events<C extends Context = Context> extends cordis.Events<C>, KookEvent {}
+export interface Events<C extends Context = Context> extends cordis.Events<C>, KookEvent {
+  // 'internal/webhook'(bot: Bot, obj: any): void;
+}
 
 export interface Context {
   [Context.config]: Context.Config;
@@ -24,6 +27,8 @@ export class Context extends cordis.Context {
 
     let port = options.port;
     let path = options.webhook;
+    // 避免再注册一个插件添加 Webhook 的处理时间
+    // this.plugin(require('./event-tigger'));
     const webhookLogger = logger.child({ name: 'Webhook' });
     const app = uWS.App();
 
@@ -47,17 +52,12 @@ export class Context extends cordis.Context {
             return;
           }
           res.writeStatus('200 OK').end();
-          const session: Session = {
-            userId: data.author_id == '1' ? data.extra.body.user_id : data.author_id,
-            channelId: data.target_id,
-            guildId: data.extra.guild_id || data.target_id,
-            selfId: bot.userME.id,
-          };
-          session[Context.filter] = (ctx) => {
-            return ctx.filter(session);
-          };
+
+          // 避免再注册一个插件添加 Webhook 的处理时间
           // @ts-ignore
-          this.emit(session, 'webhook', bot, obj);
+          // this.emit('internal/webhook', bot, data);
+
+          internalWebhook(this, bot, data);
         },
         (message: string) => {
           webhookLogger.error(message);
@@ -74,7 +74,6 @@ export class Context extends cordis.Context {
     });
   }
 }
-
 export namespace Context {
   export interface Config extends cordis.Context.Config {
     port: number;
