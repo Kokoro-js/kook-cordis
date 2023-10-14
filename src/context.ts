@@ -8,6 +8,7 @@ import { logger } from './Logger';
 import { Bot } from './bot';
 import { FilterService } from './filter';
 import { internalWebhook } from './event-tigger';
+import { Processor } from './middleware';
 
 export interface Events<C extends Context = Context> extends cordis.Events<C>, KookEvent {
   // 'internal/webhook'(bot: Bot, obj: any): void;
@@ -27,6 +28,10 @@ export class Context extends cordis.Context {
 
     let port = options.port;
     let path = options.webhook;
+
+    this.on('internal/warning', (format, ...args) => {
+      logger.warn(format, ...args);
+    });
     // 避免再注册一个插件添加 Webhook 的处理时间
     // this.plugin(require('./event-tigger'));
     const webhookLogger = logger.child({ name: 'Webhook' });
@@ -121,6 +126,7 @@ Context.service(
 );
 
 Context.service('$filter', FilterService);
+Context.service('$internal', Processor);
 
 function readJson(
   res: HttpResponse,

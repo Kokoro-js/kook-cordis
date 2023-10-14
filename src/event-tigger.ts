@@ -17,7 +17,7 @@ export function internalWebhook(ctx: Context, bot, data) {
   };
 
   if (data.type != 255) {
-    ctx.parallel(session, 'message', bot, data);
+    ctx.parallel(session, 'message', bot, data, session);
     if (data.channel_type == 'GROUP') ctx.parallel(session, 'message-created', bot, data);
     if (data.channel_type == 'PERSON') ctx.parallel(session, 'private-message-created', bot, data);
     return;

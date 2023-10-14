@@ -39,11 +39,12 @@ import {
   SystemExtra,
 } from './types';
 import { Bot } from './bot';
+import { Session } from './filter';
 
 export interface KookEvent {
   'webhook'(bot: Bot, payload: PayLoad): void;
   //  "interaction/command"(session: Session): void;
-  'message'(bot: Bot, data: Data<MessageExtra>): void;
+  'message'(bot: Bot, data: Data<MessageExtra>, session: Session): void;
   // 群组
   'message-created'(bot: Bot, data: Data<MessageExtra>): void;
   'message-deleted'(bot: Bot, data: Data<SystemExtra<IDeletedMessageBody>>): void;
