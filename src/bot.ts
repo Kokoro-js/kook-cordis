@@ -1,11 +1,12 @@
 import { Context } from './context';
-import { defineProperty, remove } from 'cosmokit';
+import { defineProperty, isNullable, remove } from 'cosmokit';
 import { logger } from './Logger';
 import Schema from 'schemastery';
 import pino from 'pino';
 import axios, { AxiosInstance } from 'axios';
 import { AbstactBot } from './api/api';
 import { IBaseResponse, UserME } from './api/types/base';
+import { Session } from './filter';
 
 export class Bot extends AbstactBot {
   static reusable = true;

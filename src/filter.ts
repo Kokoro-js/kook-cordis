@@ -1,7 +1,7 @@
 import { defineProperty } from 'cosmokit';
 import { Context } from './context';
 
-export type Filter = (session: Session) => boolean;
+export type Filter = (session: Session<any>) => boolean;
 
 declare module './context' {
   interface Context {
@@ -20,8 +20,12 @@ declare module './context' {
   }
 }
 
-function property<K extends keyof Session>(ctx: Context, key: K, ...values: Session[K][]) {
-  return ctx.intersect((session: Session) => {
+function property<K extends keyof Session<any>>(
+  ctx: Context,
+  key: K,
+  ...values: Session<any>[K][]
+) {
+  return ctx.intersect((session: Session<any>) => {
     return values.length ? values.includes(session[key]) : !!session[key];
   });
 }
@@ -103,9 +107,10 @@ export class FilterService {
   }
 }
 
-export interface Session {
+export interface Session<T> {
   userId: string;
   selfId: string;
   guildId: string;
   channelId: string;
+  data: T;
 }

@@ -6,24 +6,26 @@ import { KookEvent } from './events';
 export const name = 'event-tiggger';
 
 export function internalWebhook(ctx: Context, bot, data) {
-  const session: Session = {
+  const session: Session<any> = {
     userId: data.author_id == '1' ? data.extra.body.user_id : data.author_id,
     channelId: data.target_id,
     guildId: data.extra.guild_id || data.target_id,
     selfId: bot.userME.id,
+    data: data,
   };
   session[Context.filter] = (ctx) => {
     return ctx.filter(session);
   };
 
   if (data.type != 255) {
-    ctx.parallel(session, 'message', bot, data, session);
-    if (data.channel_type == 'GROUP') ctx.parallel(session, 'message-created', bot, data);
-    if (data.channel_type == 'PERSON') ctx.parallel(session, 'private-message-created', bot, data);
+    ctx.parallel(session, 'message', bot, session);
+    if (data.channel_type == 'GROUP') ctx.parallel(session, 'message-created', bot, session);
+    if (data.channel_type == 'PERSON')
+      ctx.parallel(session, 'private-message-created', bot, session);
     return;
   }
   ctx.parallel(session, 'webhook', bot, data);
-  ctx.parallel(session, eventMap[data.extra.type], bot, data);
+  ctx.parallel(session, eventMap[data.extra.type], bot, session);
 }
 /*export function apply(ctx: Context) {
   ctx.on(

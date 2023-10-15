@@ -6,9 +6,10 @@ import { KookEvent } from './events';
 import { Data, PayLoad } from './types';
 import { logger } from './Logger';
 import { Bot } from './bot';
-import { FilterService } from './filter';
+import { FilterService, Session } from './filter';
 import { internalWebhook } from './event-tigger';
 import { Processor } from './middleware';
+import { isNullable, Time } from 'cosmokit';
 
 export interface Events<C extends Context = Context> extends cordis.Events<C>, KookEvent {
   // 'internal/webhook'(bot: Bot, obj: any): void;
@@ -22,19 +23,21 @@ export interface Context {
 
 export class Context extends cordis.Context {
   static readonly session = Symbol('session');
+  prompt_timeout: number;
 
   constructor(options: Context.Config) {
     super(options);
 
     let port = options.port;
     let path = options.webhook;
+    this.prompt_timeout = options.prompt_timeout;
 
     this.on('internal/warning', (format, ...args) => {
       logger.warn(format, ...args);
     });
     // 避免再注册一个插件添加 Webhook 的处理时间
     // this.plugin(require('./event-tigger'));
-    const webhookLogger = logger.child({ name: 'Webhook' });
+    const webhookLogger = logger.child({ name: 'webhook' });
     const app = uWS.App();
 
     app.post(path, (res, req) => {
@@ -78,12 +81,30 @@ export class Context extends cordis.Context {
       }
     });
   }
+
+  prompt(current: Session<any>, timeout = this.config.timeout) {
+    return new Promise<string>((resolve) => {
+      const dispose = this.middleware(async (bot, session, next) => {
+        if (session.userId == current.userId && session.selfId == current.selfId) {
+          const value = session.data.content;
+          resolve(value);
+          clearTimeout(timer);
+          dispose();
+        } else return next();
+      }, true);
+      const timer = setTimeout(() => {
+        dispose();
+        resolve(undefined);
+      }, this.prompt_timeout);
+    });
+  }
 }
 export namespace Context {
   export interface Config extends cordis.Context.Config {
     port: number;
     webhook: string;
     compressed?: boolean;
+    prompt_timeout?: number;
   }
 
   export const Config: Schema<Config> = Schema.intersect([
@@ -91,6 +112,7 @@ export namespace Context {
       port: Schema.number().default(3000).required(),
       webhook: Schema.string().default('/kook').required(),
       compressed: Schema.boolean().default(true),
+      prompt_timeout: Schema.natural().default(5000),
     }),
   ]);
 

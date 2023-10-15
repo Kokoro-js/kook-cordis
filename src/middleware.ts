@@ -20,8 +20,7 @@ declare module './context' {
 export type Next = (next?: Next.Callback) => Promise<void | string>;
 export type Middleware = (
   bot: Bot,
-  data: Data<MessageExtra>,
-  session: Session,
+  session: Session<Data<MessageExtra>>,
   next: Next,
 ) => Awaitable<void | string>;
 
@@ -44,15 +43,15 @@ export class Processor {
   constructor(private ctx: Context) {
     defineProperty(this, Context.current, ctx);
 
-    // 将中间件处理逻辑绑定到 message 事件触发
+    // 将中间件处理逻辑绑定到 message 事件触发，并绑定 this(Processor) 避免在函数里 this 到事件的 thisArgs
     ctx.on('message', this._handleMessage.bind(this));
   }
 
-  private async _handleMessage(bot, data, session: Session) {
+  private async _handleMessage(bot, session) {
     // 筛选出符合特定 session 内容的中间件组成数组
     const queue: Next.Queue = this._hooks
       .filter(([context]) => context.filter(session))
-      .map(([, middleware]) => middleware.bind(null, bot, data, session));
+      .map(([, middleware]) => middleware.bind(null, bot, session));
 
     // 开始执行中间件，从第一个开始
     let index = 0;
@@ -80,7 +79,7 @@ export class Processor {
       const result = await next();
       if (result) await bot.sendMessage(session.channelId, result);
     } finally {
-      this.ctx.emit(session, 'middleware', bot, data);
+      this.ctx.emit(session, 'middleware', bot, session);
     }
   }
   protected get caller() {
