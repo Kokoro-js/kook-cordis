@@ -2,14 +2,13 @@ import * as cordis from 'cordis';
 import Schema from 'schemastery';
 import uWS, { HttpResponse } from 'uWebSockets.js';
 import zlib from 'zlib';
-import { KookEvent } from './events';
-import { Data, PayLoad } from './types';
+import { EventSession, KookEvent } from './events';
+import { Data, IMessageButtonClickBody, PayLoad } from './types';
 import { logger } from './Logger';
 import { Bot } from './bot';
 import { FilterService, Session } from './filter';
 import { internalWebhook } from './event-tigger';
 import { Processor } from './middleware';
-import { isNullable, Time } from 'cosmokit';
 
 export interface Events<C extends Context = Context> extends cordis.Events<C>, KookEvent {
   // 'internal/webhook'(bot: Bot, obj: any): void;
@@ -95,7 +94,28 @@ export class Context extends cordis.Context {
       const timer = setTimeout(() => {
         dispose();
         resolve(undefined);
-      }, this.prompt_timeout);
+      }, timeout);
+    });
+  }
+
+  suggest(current: Session<any>, timeout = this.config.timeout) {
+    return new Promise<IMessageButtonClickBody>((resolve) => {
+      const dispose = this.on(
+        'button-click',
+        async (bot, session) => {
+          if (session.userId == current.userId && session.selfId == current.selfId) {
+            const value = session.data.extra.body;
+            resolve(value);
+            clearTimeout(timer);
+            dispose();
+          }
+        },
+        true,
+      );
+      const timer = setTimeout(() => {
+        dispose();
+        resolve(undefined);
+      }, timeout);
     });
   }
 }
@@ -105,6 +125,7 @@ export namespace Context {
     webhook: string;
     compressed?: boolean;
     prompt_timeout?: number;
+    commandPrefix?: string;
   }
 
   export const Config: Schema<Config> = Schema.intersect([
@@ -113,6 +134,7 @@ export namespace Context {
       webhook: Schema.string().default('/kook').required(),
       compressed: Schema.boolean().default(true),
       prompt_timeout: Schema.natural().default(5000),
+      commandPrefix: Schema.string().default('/'),
     }),
   ]);
 

@@ -40,9 +40,10 @@ import {
 } from './types';
 import { Bot } from './bot';
 import { Session } from './filter';
+import exp from 'constants';
 
-type EventSession<T> = Session<Data<SystemExtra<T>>>;
-type MessageSession<T> = Session<Data<T>>;
+export type EventSession<T> = Session<Data<SystemExtra<T>>>;
+export type MessageSession<T> = Session<Data<T>>;
 
 export interface KookEvent {
   'webhook'(bot: Bot, payload: PayLoad): void;
