@@ -11,17 +11,17 @@
     "axios": "^1.5.1",
     "cordis": "^2.8.8",
     "cosmokit": "^1.4.5",
+    "fast-fuzzy": "^1.12.0",
     "minizlib": "^2.1.2",
     "pino": "^8.15.3",
     "pino-debug": "^2.0.0",
     "schemastery": "^3.13.1",
-    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.32.0",
-    "yargs": "^17.7.2"
+    "type-flag": "^3.0.0",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.32.0"
   },
   "devDependencies": {
     "@types/node": "^20.4.4",
     "@types/tap": "^15.0.5",
-    "@types/yargs": "^17.0.28",
     "concurrently": "^7.0.0",
     "cross-env": "^7.0.3",
     "pino-pretty": "^10.2.3",

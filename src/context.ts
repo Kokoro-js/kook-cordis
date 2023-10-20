@@ -9,10 +9,20 @@ import { Bot } from './bot';
 import { FilterService, Session } from './filter';
 import { internalWebhook } from './event-tigger';
 import { Processor } from './middleware';
+import { Commander } from './commander/commander';
 
 export interface Events<C extends Context = Context> extends cordis.Events<C>, KookEvent {
   // 'internal/webhook'(bot: Bot, obj: any): void;
 }
+
+export type EffectScope = cordis.EffectScope<Context>;
+export type ForkScope = cordis.ForkScope<Context>;
+export type MainScope = cordis.MainScope<Context>;
+export type Service = cordis.Service<Context>;
+
+export const Service = cordis.Service<Context>;
+
+export type { Disposable, ScopeStatus } from 'cordis';
 
 export interface Context {
   [Context.config]: Context.Config;
@@ -22,14 +32,12 @@ export interface Context {
 
 export class Context extends cordis.Context {
   static readonly session = Symbol('session');
-  prompt_timeout: number;
 
   constructor(options: Context.Config) {
     super(options);
 
     let port = options.port;
     let path = options.webhook;
-    this.prompt_timeout = options.prompt_timeout;
 
     this.on('internal/warning', (format, ...args) => {
       logger.warn(format, ...args);
@@ -81,7 +89,7 @@ export class Context extends cordis.Context {
     });
   }
 
-  prompt(current: Session<any>, timeout = this.config.timeout) {
+  prompt(current: Session<any>, timeout = this.scope.config.prompt_timeout) {
     return new Promise<string>((resolve) => {
       const dispose = this.middleware(async (bot, session, next) => {
         if (session.userId == current.userId && session.selfId == current.selfId) {
@@ -98,7 +106,7 @@ export class Context extends cordis.Context {
     });
   }
 
-  suggest(current: Session<any>, timeout = this.config.timeout) {
+  suggest(current: Session<any>, timeout = this.scope.config.prompt_timeout) {
     return new Promise<IMessageButtonClickBody>((resolve) => {
       const dispose = this.on(
         'button-click',
@@ -171,6 +179,7 @@ Context.service(
 
 Context.service('$filter', FilterService);
 Context.service('$internal', Processor);
+Context.service('$commander', Commander);
 
 function readJson(
   res: HttpResponse,
