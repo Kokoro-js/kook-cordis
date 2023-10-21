@@ -55,10 +55,12 @@ export abstract class AbstactBot {
       } else {
         config.data = args[0];
       }
+
+      // Axios 在请求出现错误的时候会丢出详细错误，不需要手动判断
       const req = await this.http('/api/v3' + path, config);
-      if (req.status !== 200 && req?.data.code !== 0)
-        throw new Error(req?.data?.message || 'Unexpected Error');
-      return req?.data;
+      const response: IBaseResponse<any> = req.data;
+      if (response.code !== 0) throw new Error(response.message || 'Unexpected Error');
+      return response.data;
     };
   }
 }
