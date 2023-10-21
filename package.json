@@ -1,6 +1,6 @@
 {
   "name": "kook-cordis",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Kook 在 Cordis 下的 SDK 包装。",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -8,14 +8,11 @@
     "test": "test"
   },
   "dependencies": {
-    "@satorijs/satori": "3.0.0-rc.0",
     "axios": "^1.5.1",
     "cordis": "^2.8.8",
     "cosmokit": "^1.4.5",
     "fast-fuzzy": "^1.12.0",
-    "minizlib": "^2.1.2",
     "pino": "^8.15.3",
-    "pino-debug": "^2.0.0",
     "schemastery": "^3.13.1",
     "type-flag": "^3.0.0",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.32.0"
@@ -27,6 +24,7 @@
     "cross-env": "^7.0.3",
     "pino-pretty": "^10.2.3",
     "prettier": "3.0.3",
+    "pino-debug": "^2.0.0",
     "tap": "^16.1.0",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.1.3"

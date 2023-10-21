@@ -2,17 +2,28 @@ import * as cordis from 'cordis';
 import Schema from 'schemastery';
 import uWS, { HttpResponse } from 'uWebSockets.js';
 import zlib from 'zlib';
-import { EventSession, KookEvent } from './events';
-import { Data, IMessageButtonClickBody, PayLoad } from './types';
+import { KookEvent } from './events';
+import {
+  Data,
+  IMessageButtonClickBody,
+  MessageExtra,
+  MessageSession,
+  PayLoad,
+  Session,
+} from './types';
 import { logger } from './Logger';
 import { Bot } from './bot';
-import { FilterService, Session } from './filter';
 import { internalWebhook } from './event-tigger';
-import { Processor } from './middleware';
-import { Commander } from './commander/commander';
+import { FilterService, Processor, Commander, CommandInstance } from './services';
+import { Awaitable } from 'cosmokit';
 
 export interface Events<C extends Context = Context> extends cordis.Events<C>, KookEvent {
   // 'internal/webhook'(bot: Bot, obj: any): void;
+  'command/before-execute'(
+    command: CommandInstance<any>,
+    bot: Bot,
+    session: MessageSession<MessageExtra>,
+  ): Awaitable<void | string>;
 }
 
 export type EffectScope = cordis.EffectScope<Context>;
@@ -32,12 +43,14 @@ export interface Context {
 
 export class Context extends cordis.Context {
   static readonly session = Symbol('session');
+  prompt_timeout: number;
 
   constructor(options: Context.Config) {
     super(options);
 
     let port = options.port;
     let path = options.webhook;
+    this.prompt_timeout = options.prompt_timeout || 5000;
 
     this.on('internal/warning', (format, ...args) => {
       logger.warn(format, ...args);
@@ -52,7 +65,7 @@ export class Context extends cordis.Context {
         res,
         options.compressed,
         (obj: PayLoad) => {
-          webhookLogger.debug('接收到 POST Body' + obj);
+          webhookLogger.debug(obj, '接收到 POST Body');
           const data: Data<any> = obj.d;
           const verifyToken = data.verify_token;
           const bot: Bot = this.bots[verifyToken];
@@ -89,15 +102,13 @@ export class Context extends cordis.Context {
     });
   }
 
-  prompt(current: Session<any>, timeout = this.scope.config.prompt_timeout) {
+  prompt(current: Session<any>, timeout = this.prompt_timeout) {
     return new Promise<string>((resolve) => {
       const dispose = this.middleware(async (bot, session, next) => {
-        if (session.userId == current.userId && session.selfId == current.selfId) {
-          const value = session.data.content;
-          resolve(value);
-          clearTimeout(timer);
-          dispose();
-        } else return next();
+        if (session.userId !== current.userId || session.selfId !== current.selfId) return next();
+        clearTimeout(timer);
+        dispose();
+        resolve(session.data.content);
       }, true);
       const timer = setTimeout(() => {
         dispose();
@@ -106,17 +117,15 @@ export class Context extends cordis.Context {
     });
   }
 
-  suggest(current: Session<any>, timeout = this.scope.config.prompt_timeout) {
+  suggest(current: Session<any>, timeout = this.prompt_timeout) {
     return new Promise<IMessageButtonClickBody>((resolve) => {
       const dispose = this.on(
         'button-click',
         async (bot, session) => {
-          if (session.userId == current.userId && session.selfId == current.selfId) {
-            const value = session.data.extra.body;
-            resolve(value);
-            clearTimeout(timer);
-            dispose();
-          }
+          if (session.userId !== current.userId || session.selfId !== current.selfId) return;
+          clearTimeout(timer);
+          dispose();
+          resolve(session.data.extra.body);
         },
         true,
       );
@@ -131,7 +140,7 @@ export namespace Context {
   export interface Config extends cordis.Context.Config {
     port: number;
     webhook: string;
-    compressed?: boolean;
+    compressed: boolean;
     prompt_timeout?: number;
     commandPrefix?: string;
   }
@@ -140,7 +149,7 @@ export namespace Context {
     Schema.object({
       port: Schema.number().default(3000).required(),
       webhook: Schema.string().default('/kook').required(),
-      compressed: Schema.boolean().default(true),
+      compressed: Schema.boolean().default(true).required(),
       prompt_timeout: Schema.natural().default(5000),
       commandPrefix: Schema.string().default('/'),
     }),

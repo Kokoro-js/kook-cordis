@@ -1,5 +1,5 @@
 import {
-  Data,
+  EventSession,
   IAddedBlockListBody,
   IAddedChannelBody,
   IAddedEmojiBody,
@@ -35,15 +35,10 @@ import {
   IUpdatedRoleBody,
   IUserUpdatedBody,
   MessageExtra,
+  MessageSession,
   PayLoad,
-  SystemExtra,
 } from './types';
 import { Bot } from './bot';
-import { Session } from './filter';
-import exp from 'constants';
-
-export type EventSession<T> = Session<Data<SystemExtra<T>>>;
-export type MessageSession<T> = Session<Data<T>>;
 
 export interface KookEvent {
   'webhook'(bot: Bot, payload: PayLoad): void;

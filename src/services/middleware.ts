@@ -1,11 +1,10 @@
 import { Awaitable, defineProperty, Dict, makeArray, Time } from 'cosmokit';
-import { Session } from './filter';
-import { Context } from './context';
-import { logger } from './Logger';
-import { Bot } from './bot';
-import { Data, MessageExtra } from './types';
+import { Context } from '../context';
+import { logger } from '../Logger';
+import { Bot } from '../bot';
+import { Data, MessageExtra, Session } from '../types';
 
-declare module './context' {
+declare module '../context' {
   interface Context {
     $internal: Processor;
 

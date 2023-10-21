@@ -1,5 +1,6 @@
 import { defineProperty } from 'cosmokit';
-import { Context } from './context';
+import { Context } from '../context';
+import { Session } from '../types';
 
 export type Filter = (session: Session<any>) => boolean;
 // 移除 Session 中的 data，并将所有 string 属性转为 string[]
@@ -10,7 +11,7 @@ interface FilterData {
   guildId?: string[];
 }
 
-declare module './context' {
+declare module '../context' {
   interface Context {
     $filter: FilterService;
     filter: Filter;
@@ -181,12 +182,4 @@ export class FilterService {
   private(...values: string[]) {
     return property(this.caller.exclude(property(this.caller, 'guildId')), 'userId', ...values);
   }
-}
-
-export interface Session<T> {
-  userId: string;
-  selfId: string;
-  guildId: string;
-  channelId: string;
-  data: T;
 }

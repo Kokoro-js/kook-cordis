@@ -1,14 +1,16 @@
 import { defineProperty, Dict, remove } from 'cosmokit';
-import { Context } from '../context';
+import { Context } from '../../context';
 
 import { CommandInstance } from './command';
 import { Flags } from 'type-flag';
-import { logger } from '../Logger';
+import { logger } from '../../Logger';
 
-import { fuzzy, search } from 'fast-fuzzy';
-import { MessageType } from '../types';
+import { search } from 'fast-fuzzy';
+import { MessageType } from '../../types';
 
-declare module '../context' {
+export { CommandInstance };
+
+declare module '../../context' {
   interface Context {
     $commander: Commander;
     command<T extends Flags<Record<string, unknown>>>(
@@ -50,7 +52,13 @@ export class Commander {
       for (const obj of meetCommands) {
         // 如果匹配到指令就直接结束
         if (commandMain === obj.name) {
-          obj.execute(command, bot, session).catch((e) => logger.error(e));
+          ctx.serial(session, 'command/before-execute', obj, bot, session).then((result) => {
+            if (typeof result === 'string') {
+              bot.sendMessage(session.channelId, result, { quote: session.data.msg_id });
+            } else {
+              obj.execute(command, bot, session).catch((e) => logger.error(e));
+            }
+          });
           return;
         }
         // 没匹配到就把该指令放进相似指令匹配列表
@@ -109,6 +117,11 @@ export class Commander {
     input: string,
     avatar: string,
   ) {
+    let content = '**指令** - *描述* \n';
+    for (const b of commands) {
+      content += `**${b.name}** - *${b.description}*\n`;
+    }
+
     const a = [
       {
         type: 'card',
@@ -124,20 +137,9 @@ export class Commander {
           },
           {
             type: 'section',
-            accessory: {},
             text: {
-              type: 'paragraph',
-              cols: 2,
-              fields: [
-                {
-                  type: 'kmarkdown',
-                  content: '**指令**',
-                },
-                {
-                  type: 'kmarkdown',
-                  content: '**描述**',
-                },
-              ],
+              type: 'kmarkdown',
+              content: content,
             },
           },
           {
@@ -163,10 +165,6 @@ export class Commander {
         ],
       },
     ];
-    for (const b of commands) {
-      a[0].modules[1].text.fields.push({ type: 'plain-text', content: b.name });
-      a[0].modules[1].text.fields.push({ type: 'plain-text', content: b.description });
-    }
 
     return JSON.stringify(a);
   }

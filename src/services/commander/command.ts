@@ -1,13 +1,12 @@
 import { Flags, typeFlag, TypeFlag } from 'type-flag';
 import { Awaitable } from 'cosmokit';
-import { MessageSession } from '../events';
-import { MessageExtra } from '../types';
-import { Bot } from '../bot';
+import { MessageExtra, MessageSession } from '../../types';
+import { Bot } from '../../bot';
 
 export class CommandInstance<T extends Flags> {
-  name: string;
-  description: string;
-  options: T;
+  readonly name: string;
+  readonly description: string;
+  readonly options: T;
   commandFunction: callbackFunction<T>;
 
   constructor(name: string, desc: string, options: T) {

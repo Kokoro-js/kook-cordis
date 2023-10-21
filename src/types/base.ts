@@ -17,7 +17,7 @@ export enum MessageType {
 }
 
 export interface Data<T> {
-  channel_type: "GROUP" | "PERSON" | "WEBHOOK_CHALLENGE";
+  channel_type: 'GROUP' | 'PERSON' | 'WEBHOOK_CHALLENGE';
   type: MessageType; // 消息类型
   challenge: string; // 仅在 WEBHOOK_CHALLENGE 存在
   verify_token: string;
@@ -123,7 +123,7 @@ export interface Channel {
   permission_overwrites?: Overwrite[];
   permission_users?: any[];
   permission_sync?: 0 | 1;
-  voice_quality?: "1" | "2" | "3";
+  voice_quality?: '1' | '2' | '3';
   server_url?: string;
   children?: string[];
 }
