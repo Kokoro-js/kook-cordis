@@ -1,12 +1,11 @@
 import { Context } from './context';
 import { defineProperty, isNullable, remove } from 'cosmokit';
-import { logger } from './Logger';
+import { createLogger } from './Logger';
 import Schema from 'schemastery';
 import pino from 'pino';
 import axios, { AxiosInstance } from 'axios';
 import { AbstactBot } from './api/api';
 import { IBaseResponse, UserME } from './api/types/base';
-import { Session } from './filter';
 
 export class Bot extends AbstactBot {
   static reusable = true;
@@ -25,7 +24,7 @@ export class Bot extends AbstactBot {
     this.context = ctx;
     this.verifyToken = config.verifyToken;
     this.token = config.token;
-    this.logger = logger.child({ name: `bot-${this.verifyToken}` });
+    this.logger = createLogger(`bot-${this.verifyToken}`);
     defineProperty(Bot, 'filter', false);
     this.http = axios.create({
       baseURL: 'https://www.kookapp.cn', // 设置基本的URL

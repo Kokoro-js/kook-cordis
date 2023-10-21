@@ -1,12 +1,12 @@
 import pino from 'pino';
 
-export const logger = pino({
+const logger = pino({
   name: 'Kook',
   level: process.env.LEVEL || 'info',
 });
 
-function newLogger(name: string) {
+function createLogger(name: string) {
   return logger.child({ name: name });
 }
 
-export { pino };
+export { pino, logger, createLogger };

@@ -1,8 +1,9 @@
 {
-  "name": "kook-codis",
-  "version": "1.0.0",
+  "name": "kook-cordis",
+  "version": "1.0.1",
   "description": "Kook 在 Cordis 下的 SDK 包装。",
-  "main": "app.ts",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "directories": {
     "test": "test"
   },
@@ -37,7 +38,12 @@
     "dev": "npm run build:ts && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"npm:watch:ts\" \"npm:dev:start\"",
     "dev:start": "cross-env LEVEL=debug DEBUG=webhook ts-node-dev --respawn --debounce 1000 src/app.ts | pino-pretty"
   },
+  "files": [
+    "dist/",
+    "index.js",
+    "index.d.ts"
+  ],
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "LGPL-3.0"
 }

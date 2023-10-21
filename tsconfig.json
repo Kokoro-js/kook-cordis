@@ -6,7 +6,10 @@
     "rootDir": "./src", // TypeScript源代码目录为 src
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "strictBindCallApply": true
+    "strictBindCallApply": true,
+    "composite": true,
+    "declaration": true,
+    "skipLibCheck": true
   },
   "include": ["src/**/*.ts"], // 包含的 TypeScript 文件
   "exclude": ["node_modules"] // 排除的文件夹
