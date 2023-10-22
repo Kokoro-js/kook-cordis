@@ -1,6 +1,6 @@
 {
   "name": "kook-cordis",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "Kook 在 Cordis 下的 SDK 包装。",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -20,12 +20,12 @@
   "devDependencies": {
     "@types/node": "^20.8.7",
     "@types/tap": "^15.0.10",
-    "concurrently": "^7.6.0",
+    "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
     "pino-debug": "^2.0.0",
     "pino-pretty": "^10.2.3",
     "prettier": "3.0.3",
-    "tap": "^16.3.9",
+    "tap": "^18.5.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.2.2"
   },
