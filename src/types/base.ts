@@ -56,10 +56,13 @@ export interface GuildRole {
   role_id: number;
   name: string;
   color: number;
+  color_type: number;
+  color_map: number[];
   position: number;
   hoist: 0 | 1;
   mentionable: 0 | 1;
   permissions: number;
+  type: number;
 }
 
 export enum Permissions {
@@ -95,15 +98,15 @@ export enum Permissions {
 
 export interface Channel {
   id: string;
-  name: string;
-  user_id: string;
   guild_id: string;
-  is_category: boolean;
+  master_id: string;
   parent_id: string;
+  user_id: string;
+  name: string;
   topic: string;
   type: 0 | 1 | 2;
   level: number;
-  slow_mode?:
+  slow_mode:
     | 0
     | 5000
     | 10000
@@ -118,14 +121,19 @@ export interface Channel {
     | 3600000
     | 7200000
     | 21600000;
-  has_password?: boolean;
+  last_msg_content: string;
+  last_mag_id: string;
+  has_password: boolean;
   limit_amount: number;
-  permission_overwrites?: Overwrite[];
-  permission_users?: any[];
-  permission_sync?: 0 | 1;
+  is_category: boolean;
+  permission_sync: 0 | 1;
+  permission_overwrites: Overwrite[];
+  permission_users: any[];
   voice_quality?: '1' | '2' | '3';
   server_url?: string;
   children?: string[];
+  region?: string;
+  sync_guild_region?: number;
 }
 
 export interface Overwrite {

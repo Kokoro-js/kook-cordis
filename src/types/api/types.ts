@@ -1,4 +1,4 @@
-import { Overwrite, User } from '../base';
+import { Channel, GuildRole, Overwrite, User } from '../base';
 
 export interface ChannelRoleIndex {
   permission_overwrites: Overwrite;
@@ -20,13 +20,34 @@ export interface Guild {
   master_id: string;
   is_master: boolean;
   icon: string;
-  invite_enabled: number;
   notify_type: number;
   region: string;
   enable_open: number;
   openId: string;
   default_channel_id: string;
   welcome_channel_id: string;
+  features: any[];
+  boost_num: number;
+  buffer_boost_num: number;
+  level: number;
+  status: number;
+  auto_delete_time: string;
+  roles: GuildRole[];
+  channels: Channel[];
+  invite_enabled: number;
+}
+
+export interface GuildWithUser extends Guild {
+  user_config: {
+    notify_type: null | any;
+    nickname: string;
+    role_ids: number[];
+    chat_setting: string;
+    security_limit: null | any;
+    close_mention_all_here: boolean;
+    close_mention_role: boolean;
+  };
+  guest: boolean;
 }
 
 export interface GuildList extends List<Guild> {}

@@ -15,7 +15,7 @@ export interface Notice {
   type: NoticeType;
   body: NoticeBody;
 }
-export interface NoticeBody extends Channel, MessageMeta, GuildRole {
+export interface NoticeBody extends Omit<Channel, 'type'>, MessageMeta, GuildRole {
   value: string;
   msg_id: string;
   target_id: string;
