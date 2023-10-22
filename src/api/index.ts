@@ -1,7 +1,6 @@
-import { AxiosInstance, AxiosRequestConfig, Method } from 'axios/index';
-import { IBaseResponse } from './types/base';
+import { AxiosInstance, AxiosRequestConfig, Method } from 'axios';
 import * as Kook from '../types';
-import { logger } from '../Logger';
+import { IBaseAPIResponse } from '../types';
 
 export abstract class AbstactBot {
   abstract http: AxiosInstance;
@@ -12,7 +11,7 @@ export abstract class AbstactBot {
     options?: { type?: Kook.MessageType; temp_target_id?: string; quote?: string },
   ) {
     const res = await this.http.post('/api/v3/message/create', { target_id, content, ...options });
-    const response: IBaseResponse<Kook.MessageReturn> = res.data;
+    const response: IBaseAPIResponse<Kook.MessageReturn> = res.data;
     if (response.code != 0) {
       throw new Error(response.message);
     }
@@ -30,7 +29,7 @@ export abstract class AbstactBot {
     },
   ) {
     const res = await this.http.post('/api/v3/message/update', { msg_id, content, ...options });
-    const response: IBaseResponse<[]> = res.data;
+    const response: IBaseAPIResponse<[]> = res.data;
     if (response.code != 0) throw new Error(response.message);
 
     return response.data;
@@ -38,7 +37,7 @@ export abstract class AbstactBot {
 
   async deleteMessage(msg_id: string) {
     const res = await this.http.post('/api/v3/message/delete', { msg_id });
-    const response: IBaseResponse<[]> = res.data;
+    const response: IBaseAPIResponse<[]> = res.data;
     if (response.code != 0) throw new Error(response.message);
 
     return response.data;
@@ -58,12 +57,99 @@ export abstract class AbstactBot {
 
       // Axios 在请求出现错误的时候会丢出详细错误，不需要手动判断
       const req = await this.http('/api/v3' + path, config);
-      const response: IBaseResponse<any> = req.data;
+      const response: IBaseAPIResponse<any> = req.data;
       if (response.code !== 0) throw new Error(response.message || 'Unexpected Error');
       return response.data;
     };
   }
 }
+
+AbstactBot.define('getGuildList', 'GET', '/guild/list');
+AbstactBot.define('getGuildView', 'GET', '/guild/view');
+AbstactBot.define('getGuildUserList', 'GET', '/guild/user-list');
+AbstactBot.define('setGuildUserNickname', 'POST', '/guild/nickname');
+AbstactBot.define('leaveGuild', 'POST', '/guild/leave');
+AbstactBot.define('kickoutGuildUser', 'POST', '/guild/kickout');
+AbstactBot.define('getGuildMuteList', 'GET', '/guild-mute/list');
+AbstactBot.define('createGuildMute', 'POST', '/guild-mute/create');
+AbstactBot.define('deleteGuildMute', 'POST', '/guild-mute/delete');
+AbstactBot.define('getGuildBoostHistory', 'GET', '/guild-boost/history');
+
+AbstactBot.define('getChannelList', 'GET', '/channel/list');
+AbstactBot.define('getChannelView', 'GET', '/channel/view');
+AbstactBot.define('createChannel', 'POST', '/channel/create');
+AbstactBot.define('updateChannel', 'POST', '/channel/update');
+AbstactBot.define('deleteChannel', 'POST', '/channel/delete');
+AbstactBot.define('getChannelUserList', 'GET', '/channel/user-list');
+AbstactBot.define('kickChannelUser', 'POST', '/channel/kickout');
+AbstactBot.define('moveChannelUser', 'POST', '/channel/move-user');
+AbstactBot.define('getChannelRoleIndex', 'GET', '/channel-role/index');
+AbstactBot.define('createChannelRole', 'POST', '/channel-role/create');
+AbstactBot.define('updateChannelRole', 'POST', '/channel-role/update');
+AbstactBot.define('deleteChannelRole', 'POST', '/channel-role/delete');
+
+AbstactBot.define('getMessageList', 'GET', '/message/list');
+AbstactBot.define('getMessageView', 'GET', '/message/view');
+// AbstactBot.define('createMessage', 'POST', '/message/create')
+// AbstactBot.define('updateMessage', 'POST', '/message/update')
+// AbstactBot.define('deleteMessage', 'POST', '/message/delete')
+AbstactBot.define('getMessageReactionList', 'GET', '/message/reaction-list');
+AbstactBot.define('addMessageReaction', 'POST', '/message/add-reaction');
+AbstactBot.define('deleteMessageReaction', 'POST', '/message/delete-reaction');
+
+AbstactBot.define('getChannelJoinedUserList', 'GET', '/channel-user/get-joined-channel');
+
+AbstactBot.define('getPrivateChatList', 'GET', '/user-chat/list');
+AbstactBot.define('getPrivateChatView', 'GET', '/user-chat/view');
+AbstactBot.define('createPrivateChat', 'POST', '/user-chat/create');
+AbstactBot.define('deletePrivateChat', 'POST', '/user-chat/delete');
+
+AbstactBot.define('getDirectMessageList', 'GET', '/direct-message/list');
+AbstactBot.define('createDirectMessage', 'POST', '/direct-message/create');
+AbstactBot.define('updateDirectMessage', 'POST', '/direct-message/update');
+AbstactBot.define('deleteDirectMessage', 'POST', '/direct-message/delete');
+AbstactBot.define('getDirectMessageReactionList', 'GET', '/direct-message/reaction-list');
+AbstactBot.define('addDirectMessageReaction', 'POST', '/direct-message/add-reaction');
+AbstactBot.define('deleteDirectMessageReaction', 'POST', '/direct-message/delete-reaction');
+
+AbstactBot.define('getGateway', 'GET', '/gateway/index');
+AbstactBot.define('getToken', 'POST', '/oauth2/token');
+AbstactBot.define('createAsset', 'POST', '/asset/create');
+
+AbstactBot.define('getUserMe', 'GET', '/user/me');
+AbstactBot.define('getUserView', 'GET', '/user/view');
+AbstactBot.define('offline', 'POST', '/user/offline');
+
+AbstactBot.define('getGuildRoleList', 'GET', '/guild-role/list');
+AbstactBot.define('createGuildRole', 'POST', '/guild-role/create');
+AbstactBot.define('updateGuildRole', 'POST', '/guild-role/update');
+AbstactBot.define('deleteGuildRole', 'POST', '/guild-role/delete');
+AbstactBot.define('grantGuildRole', 'POST', '/guild-role/grant');
+AbstactBot.define('revokeGuildRole', 'POST', '/guild-role/revoke');
+
+AbstactBot.define('getIntimacy', 'GET', '/intimacy/index');
+AbstactBot.define('updateIntimacy', 'POST', '/intimacy/update');
+
+AbstactBot.define('getGuildEmojiList', 'GET', '/guild-emoji/list');
+AbstactBot.define('createGuildEmoji', 'POST', '/guild-emoji/create');
+AbstactBot.define('updateGuildEmoji', 'POST', '/guild-emoji/update');
+AbstactBot.define('deleteGuildEmoji', 'POST', '/guild-emoji/delete');
+
+AbstactBot.define('getInviteList', 'GET', '/invite/list');
+AbstactBot.define('createInvite', 'POST', '/invite/create');
+AbstactBot.define('deleteInvite', 'POST', '/invite/delete');
+
+AbstactBot.define('getBlacklist', 'GET', '/blacklist/list');
+AbstactBot.define('createBlacklist', 'POST', '/blacklist/create');
+AbstactBot.define('deleteBlacklist', 'POST', '/blacklist/delete');
+
+AbstactBot.define('getGuildBadge', 'GET', '/badge/guild');
+AbstactBot.define('getGameList', 'GET', '/game');
+AbstactBot.define('createGame', 'POST', '/game/create');
+AbstactBot.define('updateGame', 'POST', '/game/update');
+AbstactBot.define('deleteGame', 'POST', '/game/delete');
+AbstactBot.define('createGameActivity', 'POST', '/game/activity');
+AbstactBot.define('deleteGameActivity', 'POST', '/game/delete-activity');
 
 export interface AbstactBot {
   getGuildList(param?: Kook.Pagination): Promise<Kook.GuildList>;
@@ -294,90 +380,3 @@ export interface AbstactBot {
 
   hasPermission(permissions: number, permission: Permissions): boolean;
 }
-
-AbstactBot.define('getGuildList', 'GET', '/guild/list');
-AbstactBot.define('getGuildView', 'GET', '/guild/view');
-AbstactBot.define('getGuildUserList', 'GET', '/guild/user-list');
-AbstactBot.define('setGuildUserNickname', 'POST', '/guild/nickname');
-AbstactBot.define('leaveGuild', 'POST', '/guild/leave');
-AbstactBot.define('kickoutGuildUser', 'POST', '/guild/kickout');
-AbstactBot.define('getGuildMuteList', 'GET', '/guild-mute/list');
-AbstactBot.define('createGuildMute', 'POST', '/guild-mute/create');
-AbstactBot.define('deleteGuildMute', 'POST', '/guild-mute/delete');
-AbstactBot.define('getGuildBoostHistory', 'GET', '/guild-boost/history');
-
-AbstactBot.define('getChannelList', 'GET', '/channel/list');
-AbstactBot.define('getChannelView', 'GET', '/channel/view');
-AbstactBot.define('createChannel', 'POST', '/channel/create');
-AbstactBot.define('updateChannel', 'POST', '/channel/update');
-AbstactBot.define('deleteChannel', 'POST', '/channel/delete');
-AbstactBot.define('getChannelUserList', 'GET', '/channel/user-list');
-AbstactBot.define('kickChannelUser', 'POST', '/channel/kickout');
-AbstactBot.define('moveChannelUser', 'POST', '/channel/move-user');
-AbstactBot.define('getChannelRoleIndex', 'GET', '/channel-role/index');
-AbstactBot.define('createChannelRole', 'POST', '/channel-role/create');
-AbstactBot.define('updateChannelRole', 'POST', '/channel-role/update');
-AbstactBot.define('deleteChannelRole', 'POST', '/channel-role/delete');
-
-AbstactBot.define('getMessageList', 'GET', '/message/list');
-AbstactBot.define('getMessageView', 'GET', '/message/view');
-// AbstactBot.define('createMessage', 'POST', '/message/create')
-// AbstactBot.define('updateMessage', 'POST', '/message/update')
-// AbstactBot.define('deleteMessage', 'POST', '/message/delete')
-AbstactBot.define('getMessageReactionList', 'GET', '/message/reaction-list');
-AbstactBot.define('addMessageReaction', 'POST', '/message/add-reaction');
-AbstactBot.define('deleteMessageReaction', 'POST', '/message/delete-reaction');
-
-AbstactBot.define('getChannelJoinedUserList', 'GET', '/channel-user/get-joined-channel');
-
-AbstactBot.define('getPrivateChatList', 'GET', '/user-chat/list');
-AbstactBot.define('getPrivateChatView', 'GET', '/user-chat/view');
-AbstactBot.define('createPrivateChat', 'POST', '/user-chat/create');
-AbstactBot.define('deletePrivateChat', 'POST', '/user-chat/delete');
-
-AbstactBot.define('getDirectMessageList', 'GET', '/direct-message/list');
-AbstactBot.define('createDirectMessage', 'POST', '/direct-message/create');
-AbstactBot.define('updateDirectMessage', 'POST', '/direct-message/update');
-AbstactBot.define('deleteDirectMessage', 'POST', '/direct-message/delete');
-AbstactBot.define('getDirectMessageReactionList', 'GET', '/direct-message/reaction-list');
-AbstactBot.define('addDirectMessageReaction', 'POST', '/direct-message/add-reaction');
-AbstactBot.define('deleteDirectMessageReaction', 'POST', '/direct-message/delete-reaction');
-
-AbstactBot.define('getGateway', 'GET', '/gateway/index');
-AbstactBot.define('getToken', 'POST', '/oauth2/token');
-AbstactBot.define('createAsset', 'POST', '/asset/create');
-
-AbstactBot.define('getUserMe', 'GET', '/user/me');
-AbstactBot.define('getUserView', 'GET', '/user/view');
-AbstactBot.define('offline', 'POST', '/user/offline');
-
-AbstactBot.define('getGuildRoleList', 'GET', '/guild-role/list');
-AbstactBot.define('createGuildRole', 'POST', '/guild-role/create');
-AbstactBot.define('updateGuildRole', 'POST', '/guild-role/update');
-AbstactBot.define('deleteGuildRole', 'POST', '/guild-role/delete');
-AbstactBot.define('grantGuildRole', 'POST', '/guild-role/grant');
-AbstactBot.define('revokeGuildRole', 'POST', '/guild-role/revoke');
-
-AbstactBot.define('getIntimacy', 'GET', '/intimacy/index');
-AbstactBot.define('updateIntimacy', 'POST', '/intimacy/update');
-
-AbstactBot.define('getGuildEmojiList', 'GET', '/guild-emoji/list');
-AbstactBot.define('createGuildEmoji', 'POST', '/guild-emoji/create');
-AbstactBot.define('updateGuildEmoji', 'POST', '/guild-emoji/update');
-AbstactBot.define('deleteGuildEmoji', 'POST', '/guild-emoji/delete');
-
-AbstactBot.define('getInviteList', 'GET', '/invite/list');
-AbstactBot.define('createInvite', 'POST', '/invite/create');
-AbstactBot.define('deleteInvite', 'POST', '/invite/delete');
-
-AbstactBot.define('getBlacklist', 'GET', '/blacklist/list');
-AbstactBot.define('createBlacklist', 'POST', '/blacklist/create');
-AbstactBot.define('deleteBlacklist', 'POST', '/blacklist/delete');
-
-AbstactBot.define('getGuildBadge', 'GET', '/badge/guild');
-AbstactBot.define('getGameList', 'GET', '/game');
-AbstactBot.define('createGame', 'POST', '/game/create');
-AbstactBot.define('updateGame', 'POST', '/game/update');
-AbstactBot.define('deleteGame', 'POST', '/game/delete');
-AbstactBot.define('createGameActivity', 'POST', '/game/activity');
-AbstactBot.define('deleteGameActivity', 'POST', '/game/delete-activity');

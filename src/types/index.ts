@@ -4,7 +4,7 @@ import { Data } from './base';
 export * from './base';
 export * from './message';
 export * from './system';
-export * from './types';
+export * from './api';
 
 export type EventSession<T> = Session<Data<SystemExtra<T>>>;
 export type MessageSession<T> = Session<Data<T>>;

@@ -57,7 +57,7 @@ devDependencies:
     version: 16.3.9(typescript@5.2.2)
   ts-node-dev:
     specifier: ^2.0.0
-    version: 2.0.0(@types/node@20.8.7)(typescript@5.2.2)
+    version: 2.0.0(@api/node@20.8.7)(typescript@5.2.2)
   typescript:
     specifier: ^5.2.2
     version: 5.2.2
@@ -1907,7 +1907,7 @@ packages:
     bundledDependencies:
       - ink
       - treport
-      - '@types/react'
+      - '@api/react'
       - '@isaacs/import-jsx'
       - react
 
@@ -1978,13 +1978,13 @@ packages:
       rimraf: 2.7.1
       source-map-support: 0.5.21
       tree-kill: 1.2.2
-      ts-node: 10.9.1(@types/node@20.8.7)(typescript@5.2.2)
+      ts-node: 10.9.1(@api/node@20.8.7)(typescript@5.2.2)
       tsconfig: 7.0.0
       typescript: 5.2.2
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/wasm'
-      - '@types/node'
+      - '@api/node'
     dev: true
 
   /ts-node@10.9.1(@types/node@20.8.7)(typescript@5.2.2):

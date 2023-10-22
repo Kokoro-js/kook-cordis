@@ -1,4 +1,4 @@
-export interface IBaseResponse<T> {
+export interface IBaseAPIResponse<T> {
   code: number;
   message: string;
   data: T;
@@ -20,3 +20,5 @@ export interface UserME {
   mobile: string;
   invited_count: number;
 }
+
+export * from './types';

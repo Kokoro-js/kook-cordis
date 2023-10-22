@@ -1,5 +1,5 @@
 import { Permissions, List, Pagination } from './types';
-import { AbstactBot } from './api/api';
+import { AbstactBot } from './api';
 
 export function hasPermission(permissions: number, permission: Permissions) {
   return (permissions & (1 << permission)) === 1 << permission;

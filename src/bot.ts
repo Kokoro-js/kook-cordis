@@ -4,8 +4,8 @@ import { createLogger } from './Logger';
 import Schema from 'schemastery';
 import pino from 'pino';
 import axios, { AxiosInstance } from 'axios';
-import { AbstactBot } from './api/api';
-import { IBaseResponse, UserME } from './api/types/base';
+import { AbstactBot } from './api';
+import { IBaseAPIResponse, UserME } from './types';
 
 export class Bot extends AbstactBot {
   static reusable = true;
@@ -45,7 +45,7 @@ export class Bot extends AbstactBot {
   protected async start() {
     try {
       const response = await this.http.get('/api/v3/user/me');
-      const data = response.data as IBaseResponse<UserME>;
+      const data = response.data as IBaseAPIResponse<UserME>;
       if (data.code !== 0) {
         this.logger.error('机器人获取自身信息失败');
       }
