@@ -27,6 +27,12 @@ declare module '../../context' {
       bot: Bot,
       session: MessageSession<MessageExtra>,
     ): Awaitable<void | string>;
+
+    'command/execute'(
+      command: CommandInstance<any, any>,
+      bot: Bot,
+      session: MessageSession<MessageExtra>,
+    ): void;
   }
 }
 
@@ -42,9 +48,9 @@ export class Commander {
 
     ctx.middleware((bot, session, next) => {
       if (!session.data.content.startsWith(prefix)) return next();
-      const command = session.data.content.substring(prefix.length);
-      const index: number = command.indexOf(' ');
-      const commandMain: string = index !== -1 ? command.substring(0, index) : command;
+      const input = session.data.content.substring(prefix.length);
+      const index: number = input.indexOf(' ');
+      const commandInputMain: string = index !== -1 ? input.substring(0, index) : input;
 
       // 筛选符合特定情境的指令
       const meetCommands = this._commands
@@ -58,12 +64,17 @@ export class Commander {
       let commandArray = [];
       for (const obj of meetCommands) {
         // 如果匹配到指令就直接结束
-        if (commandMain === obj.name) {
+        if (commandInputMain === obj.name) {
           ctx.serial(session, 'command/before-execute', obj, bot, session).then((result) => {
             if (typeof result === 'string') {
               bot.sendMessage(session.channelId, result, { quote: session.data.msg_id });
             } else {
-              obj.execute(command, bot, session).catch((e) => logger.error(e));
+              obj
+                .execute(input, bot, session)
+                .then(() => {
+                  ctx.parallel('command/execute', obj, bot, session);
+                })
+                .catch((e) => logger.error(e));
             }
           });
           return;
@@ -73,7 +84,7 @@ export class Commander {
       }
 
       // 默认使用 damerau-levenshtein，只有相似度达到 0.6 返回结果
-      const result = search(commandMain, commandArray, { keySelector: (obj) => obj.name });
+      const result = search(commandInputMain, commandArray, { keySelector: (obj) => obj.name });
 
       // 没有相似的，告诉用户找不到指令
       if (result.length === 0) {
