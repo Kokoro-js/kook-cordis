@@ -14,8 +14,11 @@ import {
 import { logger } from './Logger';
 import { Bot } from './bot';
 import { internalWebhook } from './event-tigger';
-import { FilterService, Processor, Commander, CommandInstance } from './services';
+import { FilterService, Processor, Commander, CommandInstance, readJson } from './services';
 import { Awaitable } from 'cosmokit';
+import { Routers } from './services';
+
+export { uWS };
 
 export interface Events<C extends Context = Context> extends cordis.Events<C>, KookEvent {
   // 'internal/webhook'(bot: Bot, obj: any): void;
@@ -51,6 +54,7 @@ export class Context extends cordis.Context {
     let port = options.port;
     let path = options.webhook;
     this.prompt_timeout = options.prompt_timeout || 5000;
+    let pluginPath = options.pluginRouterPath || '/api';
 
     this.on('internal/warning', (format, ...args) => {
       logger.warn(format, ...args);
@@ -63,7 +67,6 @@ export class Context extends cordis.Context {
     app.post(path, (res, req) => {
       readJson(
         res,
-        options.compressed,
         (obj: PayLoad) => {
           webhookLogger.debug(obj, '接收到 POST Body');
           const data: Data<any> = obj.d;
@@ -90,7 +93,19 @@ export class Context extends cordis.Context {
         (message: string) => {
           webhookLogger.error(message);
         },
+        options.compressed,
       );
+    });
+
+    app.any(`${pluginPath}/*`, (res, req) => {
+      const method = req.getMethod();
+      const url = (req.getUrl() || '/').substring(pluginPath.length);
+
+      if (this.$routers._routes[method] && this.$routers._routes[method][url]) {
+        this.$routers._routes[method][url](res, req);
+      } else {
+        res.end('404 Not Found');
+      }
     });
 
     app.listen(port, (token) => {
@@ -140,6 +155,7 @@ export namespace Context {
   export interface Config extends cordis.Context.Config {
     port: number;
     webhook: string;
+    pluginRouterPath?: string;
     compressed: boolean;
     prompt_timeout?: number;
     commandPrefix?: string;
@@ -149,6 +165,7 @@ export namespace Context {
     Schema.object({
       port: Schema.number().default(3000).required(),
       webhook: Schema.string().default('/kook').required(),
+      pluginRouterPath: Schema.string().default('/api'),
       compressed: Schema.boolean().default(true).required(),
       prompt_timeout: Schema.natural().default(5000),
       commandPrefix: Schema.string().default('/'),
@@ -189,62 +206,4 @@ Context.service(
 Context.service('$filter', FilterService);
 Context.service('$internal', Processor);
 Context.service('$commander', Commander);
-
-function readJson(
-  res: HttpResponse,
-  compressed: boolean,
-  cb: { (obj: any): void },
-  err: (message: string) => void,
-) {
-  let buffer: Buffer;
-
-  // 注册
-  res.onData((ab, isLast) => {
-    const chunk = Buffer.from(ab);
-    if (buffer) {
-      buffer = Buffer.concat([buffer, chunk]);
-    } else {
-      buffer = Buffer.from(chunk);
-    }
-
-    if (isLast) {
-      let jsonData;
-      if (compressed) {
-        zlib.inflate(buffer, (inflateErr, result) => {
-          if (inflateErr) {
-            // 发生解压缩错误时发送适当的错误响应给客户端
-            err('解压遇到了错误' + inflateErr.message);
-            res.close();
-            return;
-          }
-
-          try {
-            const decodedData = result.toString('utf8');
-            jsonData = JSON.parse(decodedData);
-          } catch (e) {
-            // 发生JSON解析错误时发送适当的错误响应给客户端
-            err('解析遇到了错误' + e.message);
-            res.close();
-            return;
-          }
-          cb(jsonData);
-        });
-      } else {
-        try {
-          const decodedData = buffer.toString('utf8');
-          jsonData = JSON.parse(decodedData);
-        } catch (e) {
-          // 发生JSON解析错误时发送适当的错误响应给客户端
-          err('解析遇到了错误' + e.message);
-          res.close();
-          return;
-        }
-        cb(jsonData);
-      }
-    }
-  });
-
-  // 处理客户端中止请求的情况
-
-  res.onAborted(() => {});
-}
+Context.service('$routers', Routers);
