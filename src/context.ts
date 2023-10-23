@@ -1,32 +1,17 @@
 import * as cordis from 'cordis';
 import Schema from 'schemastery';
-import uWS, { HttpResponse } from 'uWebSockets.js';
-import zlib from 'zlib';
+import uWS from 'uWebSockets.js';
 import { KookEvent } from './events';
-import {
-  Data,
-  IMessageButtonClickBody,
-  MessageExtra,
-  MessageSession,
-  PayLoad,
-  Session,
-} from './types';
+import { Data, IMessageButtonClickBody, PayLoad, Session } from './types';
 import { logger } from './Logger';
 import { Bot } from './bot';
 import { internalWebhook } from './event-tigger';
-import { FilterService, Processor, Commander, CommandInstance, readJson } from './services';
-import { Awaitable } from 'cosmokit';
-import { Routers } from './services';
+import { FilterService, Processor, Commander, Routers, readJson } from './services';
 
-export { uWS };
+export { uWS, readJson };
 
 export interface Events<C extends Context = Context> extends cordis.Events<C>, KookEvent {
   // 'internal/webhook'(bot: Bot, obj: any): void;
-  'command/before-execute'(
-    command: CommandInstance<any>,
-    bot: Bot,
-    session: MessageSession<MessageExtra>,
-  ): Awaitable<void | string>;
 }
 
 export type EffectScope = cordis.EffectScope<Context>;

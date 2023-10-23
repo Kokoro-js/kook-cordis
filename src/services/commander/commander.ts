@@ -1,4 +1,4 @@
-import { defineProperty, Dict, remove } from 'cosmokit';
+import { Awaitable, defineProperty, Dict, remove } from 'cosmokit';
 import { Context } from '../../context';
 
 import { CommandInstance } from './command';
@@ -6,28 +6,35 @@ import { Flags } from 'type-flag';
 import { logger } from '../../Logger';
 
 import { search } from 'fast-fuzzy';
-import { MessageType } from '../../types';
+import { MessageExtra, MessageSession, MessageType } from '../../types';
+import { Bot } from '../../bot';
 
 export { CommandInstance };
 
 declare module '../../context' {
   interface Context {
     $commander: Commander;
-    command<T extends Flags<Record<string, unknown>>>(
-      commandName: string,
+    command<T extends Flags<Record<string, unknown>>, P extends string>(
+      commandName: P,
       description: string,
       options: T,
-    ): CommandInstance<T>;
+    ): CommandInstance<T, P>;
   }
 
-  interface Events {}
+  interface Events {
+    'command/before-execute'(
+      command: CommandInstance<any, any>,
+      bot: Bot,
+      session: MessageSession<MessageExtra>,
+    ): Awaitable<void | string>;
+  }
 }
 
 export class Commander {
   static readonly key = '$commander';
   static readonly methods = ['command'];
 
-  _commands: [Context, CommandInstance<any>][] = [];
+  _commands: [Context, CommandInstance<any, any>][] = [];
   constructor(private ctx: Context) {
     defineProperty(this, Context.current, ctx);
 
@@ -99,12 +106,12 @@ export class Commander {
     return this[Context.current] as Context;
   }
 
-  command<T extends Flags<Record<string, unknown>>>(
-    commandName: string,
+  command<T extends Flags<Record<string, unknown>>, P extends string>(
+    commandName: P,
     description: string,
     options: T,
-  ): CommandInstance<T> {
-    const command = new CommandInstance<T>(commandName, description, options);
+  ): CommandInstance<T, P> {
+    const command = new CommandInstance<T, P>(commandName, description, options);
     const context = this.caller;
     this._commands.push([context, command]);
     // 在情境卸载的时候也移除注册的指令
