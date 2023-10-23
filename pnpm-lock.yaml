@@ -10,7 +10,7 @@ dependencies:
     version: 1.5.1(debug@4.3.4)
   cordis:
     specifier: ^2.9.3
-    version: 2.9.3
+    version: 2.10.2
   cosmokit:
     specifier: ^1.5.1
     version: 1.5.1
@@ -1065,8 +1065,8 @@ packages:
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     dev: true
 
-  /cordis@2.9.3:
-    resolution: {integrity: sha512-qp0uMLkhfdqwt10TDBHGCD6UEgx8yeEjRd8FQ5jIuZ6F+RbNsKCOZ5NN2NhOmNVbb0RhOWCxPK3YEZSWBM+7Tw==}
+  /cordis@2.10.2:
+    resolution: {integrity: sha512-OLh1bZsL/Y0CU10WQzvPLveOAPKEAqJ70rpB6XNn3Wsk4CfQd53ahpWlnAzvO15b2evySEFcLEfjUNfIxP1Wtg==}
     dependencies:
       cosmokit: 1.5.1
     dev: false
