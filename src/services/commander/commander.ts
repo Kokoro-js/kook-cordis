@@ -37,9 +37,6 @@ declare module '../../context' {
 }
 
 export class Commander {
-  static readonly key = '$commander';
-  static readonly methods = ['command'];
-
   _commands: [Context, CommandInstance<any, any>][] = [];
   constructor(private ctx: Context) {
     defineProperty(this, Context.current, ctx);

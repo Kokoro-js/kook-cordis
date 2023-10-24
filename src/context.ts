@@ -36,18 +36,103 @@ export class Context extends cordis.Context {
   constructor(options: Context.Config) {
     super(options);
 
-    let port = options.port;
-    let path = options.webhook;
+    this.setupMixins();
+    this.setupProviders();
+    this.setupWebServer(options);
     this.prompt_timeout = options.prompt_timeout || 5000;
-    let pluginPath = options.pluginRouterPath || '/api';
 
     this.on('internal/warning', (format, ...args) => {
       logger.warn(format, ...args);
     });
-    // 避免再注册一个插件添加 Webhook 的处理时间
-    // this.plugin(require('./event-tigger'));
-    const webhookLogger = logger.child({ name: 'webhook' });
+  }
+
+  prompt(current: Session<any>, timeout = this.prompt_timeout) {
+    return new Promise<string>((resolve) => {
+      const dispose = this.middleware(async (bot, session, next) => {
+        if (session.userId !== current.userId || session.selfId !== current.selfId) return next();
+        clearTimeout(timer);
+        dispose();
+        resolve(session.data.content);
+      }, true);
+      const timer = setTimeout(() => {
+        dispose();
+        resolve(undefined);
+      }, timeout);
+    });
+  }
+
+  suggest(current: Session<any>, timeout = this.prompt_timeout) {
+    return new Promise<IMessageButtonClickBody>((resolve) => {
+      const dispose = this.on(
+        'button-click',
+        async (bot, session) => {
+          if (session.userId !== current.userId || session.selfId !== current.selfId) return;
+          clearTimeout(timer);
+          dispose();
+          resolve(session.data.extra.body);
+        },
+        true,
+      );
+      const timer = setTimeout(() => {
+        dispose();
+        resolve(undefined);
+      }, timeout);
+    });
+  }
+
+  public bots = new Proxy([] as Bot[], {
+    get(target, prop) {
+      if (prop in target || typeof prop === 'symbol') {
+        return Reflect.get(target, prop);
+      }
+      return target.find((bot) => bot.verifyToken === prop);
+    },
+    deleteProperty(target, prop) {
+      if (prop in target || typeof prop === 'symbol') {
+        return Reflect.deleteProperty(target, prop);
+      }
+      const bot = target.findIndex((bot) => bot.verifyToken === prop);
+      if (bot < 0) return true;
+      target.splice(bot, 1);
+      return true;
+    },
+  });
+
+  private setupMixins() {
+    this.mixin('$filter', [
+      'any',
+      'never',
+      'union',
+      'intersect',
+      'exclude',
+      'user',
+      'self',
+      'guild',
+      'channel',
+      'private',
+      'mergeFilterData',
+      'removeFilterData',
+      'addAndFilterToThis',
+      'addOrFilterToThis',
+    ]);
+    this.mixin('$processor', ['middleware']);
+    this.mixin('$commander', ['command']);
+    this.mixin('$routers', ['router']);
+  }
+
+  private setupProviders() {
+    this.provide('$filter', new FilterService(this));
+    this.provide('$processor', new Processor(this));
+    this.provide('$commander', new Commander(this));
+    this.provide('$routers', new Routers(this));
+  }
+
+  private setupWebServer(options: Context.Config) {
     const app = uWS.App();
+    const webhookLogger = logger.child({ name: 'webhook' });
+    const path = options.webhook;
+    const port = options.port;
+    const pluginPath = options.pluginRouterPath || '/api';
 
     app.post(path, (res, req) => {
       readJson(
@@ -101,40 +186,6 @@ export class Context extends cordis.Context {
       }
     });
   }
-
-  prompt(current: Session<any>, timeout = this.prompt_timeout) {
-    return new Promise<string>((resolve) => {
-      const dispose = this.middleware(async (bot, session, next) => {
-        if (session.userId !== current.userId || session.selfId !== current.selfId) return next();
-        clearTimeout(timer);
-        dispose();
-        resolve(session.data.content);
-      }, true);
-      const timer = setTimeout(() => {
-        dispose();
-        resolve(undefined);
-      }, timeout);
-    });
-  }
-
-  suggest(current: Session<any>, timeout = this.prompt_timeout) {
-    return new Promise<IMessageButtonClickBody>((resolve) => {
-      const dispose = this.on(
-        'button-click',
-        async (bot, session) => {
-          if (session.userId !== current.userId || session.selfId !== current.selfId) return;
-          clearTimeout(timer);
-          dispose();
-          resolve(session.data.extra.body);
-        },
-        true,
-      );
-      const timer = setTimeout(() => {
-        dispose();
-        resolve(undefined);
-      }, timeout);
-    });
-  }
 }
 export namespace Context {
   export interface Config extends cordis.Context.Config {
@@ -161,34 +212,3 @@ export namespace Context {
     export interface Static extends Schema<Config> {}
   }
 }
-
-Context.service(
-  'bots',
-  class {
-    constructor(root: Context) {
-      const list: Bot[] = [];
-      return new Proxy(list, {
-        get(target, prop) {
-          if (prop in target || typeof prop === 'symbol') {
-            return target[prop];
-          }
-          return list.find((bot) => bot.verifyToken === prop);
-        },
-        deleteProperty(target, prop) {
-          if (prop in target || typeof prop === 'symbol') {
-            return delete target[prop];
-          }
-          const bot = target.findIndex((bot) => bot.verifyToken === prop);
-          if (bot < 0) return true;
-          target.splice(bot, 1);
-          return true;
-        },
-      });
-    }
-  },
-);
-
-Context.service('$filter', FilterService);
-Context.service('$internal', Processor);
-Context.service('$commander', Commander);
-Context.service('$routers', Routers);

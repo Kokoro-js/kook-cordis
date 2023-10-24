@@ -44,23 +44,6 @@ function property<K extends keyof Session<any>>(
 }
 
 export class FilterService {
-  static readonly methods = [
-    'any',
-    'never',
-    'union',
-    'intersect',
-    'exclude',
-    'user',
-    'self',
-    'guild',
-    'channel',
-    'private',
-    'mergeFilterData',
-    'removeFilterData',
-    'addAndFilterToThis',
-    'addOrFilterToThis',
-  ];
-
   constructor(private app: Context) {
     defineProperty(this, Context.current, app);
 

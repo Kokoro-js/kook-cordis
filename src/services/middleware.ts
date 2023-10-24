@@ -6,7 +6,7 @@ import { Data, MessageExtra, Session } from '../types';
 
 declare module '../context' {
   interface Context {
-    $internal: Processor;
+    $processor: Processor;
 
     middleware(middleware: Middleware, prepend?: boolean): () => boolean;
   }
@@ -35,8 +35,6 @@ export namespace Next {
 }
 
 export class Processor {
-  static readonly methods = ['middleware'];
-
   _hooks: [Context, Middleware][] = [];
 
   constructor(private ctx: Context) {

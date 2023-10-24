@@ -19,8 +19,6 @@ declare module '../context' {
 }
 
 export class Routers {
-  static readonly methods = ['router'];
-
   _routes: Routes = { delete: {}, get: {}, patch: {}, post: {}, put: {} };
 
   constructor(private ctx: Context) {
