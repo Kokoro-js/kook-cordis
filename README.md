@@ -1,6 +1,7 @@
 [![downloads](https://img.shields.io/npm/dm/kook-cordis?style=flat-square)](https://www.npmjs.com/package/kook-cordis)
 [![npm](https://img.shields.io/npm/v/kook-cordis?style=flat-square)](https://www.npmjs.com/package/kook-cordis)
 
+加入我们的 [Kook频道](https://kook.top/UzctXt) 来与开发者取得联系。
 ```typescript
 // 目前只支持 Webhook 
 const ctx = new Context({ webhook: '/kook', port: 1000, compressed: false });
@@ -10,7 +11,7 @@ const botFork1 = ctx.plugin(Bot, {
   token: '你的 Token',
 });
 
-const bot1: Bot = ctx.bots['ZJ2N-emqiqnVDAOh'];
+const bot1: Bot = ctx.bots['你的 verifyToken'];
 bot1.sendMessage('any channel id', 'hello').then((r) => logger.info(r));
 
 // 过滤器演示
@@ -43,10 +44,11 @@ const plugin1 = ctx.plugin((ctx) => {
     return '让我们在这里结束';
   });
 
+  
   ctx.middleware(async (bot, session, next) => {
     await bot.sendMessage(session.channelId, '二号中间件');
     await next();
-  });
+  }, true); // 这里的 true 代表注册前置中间件
 
   ctx.middleware((bot, session, next) => {
     bot.sendMessage(session.channelId, '三号中间件');
