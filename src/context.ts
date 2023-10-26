@@ -31,22 +31,22 @@ export interface Context {
 
 export class Context extends cordis.Context {
   static readonly session = Symbol('session');
-  prompt_timeout: number;
 
   constructor(options: Context.Config) {
     super(options);
 
+    this.config = new Context.Config(options);
+
     this.setupMixins();
     this.setupProviders();
-    this.setupWebServer(options);
-    this.prompt_timeout = options.prompt_timeout || 5000;
+    this.setupWebServer(this.config);
 
     this.on('internal/warning', (format, ...args) => {
       logger.warn(format, ...args);
     });
   }
 
-  prompt(current: Session<any>, timeout = this.prompt_timeout) {
+  prompt(current: Session<any>, timeout = this.config.prompt_timeout) {
     return new Promise<string>((resolve) => {
       const dispose = this.middleware(async (bot, session, next) => {
         if (session.userId !== current.userId || session.selfId !== current.selfId) return next();
@@ -61,7 +61,7 @@ export class Context extends cordis.Context {
     });
   }
 
-  suggest(current: Session<any>, timeout = this.prompt_timeout) {
+  suggest(current: Session<any>, timeout = this.config.prompt_timeout) {
     return new Promise<IMessageButtonClickBody>((resolve) => {
       const dispose = this.on(
         'button-click',
@@ -121,18 +121,18 @@ export class Context extends cordis.Context {
   }
 
   private setupProviders() {
-    this.provide('$filter', new FilterService(this));
-    this.provide('$processor', new Processor(this));
-    this.provide('$commander', new Commander(this));
-    this.provide('$routers', new Routers(this));
+    this.provide('$filter', new FilterService(this), true);
+    this.provide('$processor', new Processor(this), true);
+    this.provide('$commander', new Commander(this), true);
+    this.provide('$routers', new Routers(this), true);
   }
 
-  private setupWebServer(options: Context.Config) {
+  private setupWebServer(config: Context.Config) {
     const app = uWS.App();
     const webhookLogger = logger.child({ name: 'webhook' });
-    const path = options.webhook;
-    const port = options.port;
-    const pluginPath = options.pluginRouterPath || '/api';
+    const path = config.webhook;
+    const port = config.port;
+    const pluginPath = config.pluginRouterPath;
 
     app.post(path, (res, req) => {
       readJson(
@@ -163,7 +163,7 @@ export class Context extends cordis.Context {
         (message: string) => {
           webhookLogger.error(message);
         },
-        options.compressed,
+        config.compressed,
       );
     });
 
@@ -192,7 +192,7 @@ export namespace Context {
     port: number;
     webhook: string;
     pluginRouterPath?: string;
-    compressed: boolean;
+    compressed?: boolean;
     prompt_timeout?: number;
     commandPrefix?: string;
   }
@@ -202,7 +202,7 @@ export namespace Context {
       port: Schema.number().default(3000).required(),
       webhook: Schema.string().default('/kook').required(),
       pluginRouterPath: Schema.string().default('/api'),
-      compressed: Schema.boolean().default(true).required(),
+      compressed: Schema.boolean().default(true),
       prompt_timeout: Schema.natural().default(5000),
       commandPrefix: Schema.string().default('/'),
     }),

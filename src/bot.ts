@@ -22,8 +22,8 @@ export class Bot extends AbstactBot {
   ) {
     super();
     this.context = ctx;
-    this.verifyToken = config.verifyToken;
-    this.token = config.token;
+    this.config = new Bot.Config(this.config);
+    ({ verifyToken: this.verifyToken, token: this.token } = this.config);
     this.logger = createLogger(`bot-${this.verifyToken}`);
     defineProperty(Bot, 'filter', false);
     this.http = axios.create({
@@ -34,7 +34,7 @@ export class Bot extends AbstactBot {
     });
 
     this.ctx.bots.push(this);
-    ctx.start();
+
     ctx.on('ready', async () => {
       return this.start();
     });
