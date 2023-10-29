@@ -1,6 +1,6 @@
 {
   "name": "kook-cordis",
-  "version": "1.2.2",
+  "version": "1.2.4",
   "description": "Kook 在 Cordis 下的 SDK 包装。",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -8,24 +8,22 @@
     "test": "test"
   },
   "dependencies": {
-    "axios": "^1.5.1",
-    "cordis": "^3.0.0",
+    "axios": "^1.6.0",
+    "cordis": "^3.1.1",
     "cosmokit": "^1.5.1",
     "fast-fuzzy": "^1.12.0",
-    "pino": "^8.16.0",
+    "pino": "^8.16.1",
     "schemastery": "^3.14.0",
     "type-flag": "^3.0.0",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.32.0"
   },
   "devDependencies": {
-    "@types/node": "^20.8.7",
+    "@types/node": "^20.8.9",
     "@types/tap": "^15.0.10",
-    "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
-    "pino-debug": "^2.0.0",
     "pino-pretty": "^10.2.3",
     "prettier": "3.0.3",
-    "tap": "^18.5.2",
+    "tap": "^18.5.3",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.2.2"
   },
@@ -33,13 +31,11 @@
     "test": "npm run build:ts && tsc -p test/tsconfig.json && tap --ts \"test/**/*.test.ts\"",
     "build:ts": "tsc",
     "watch:ts": "tsc -w",
-    "dev": "npm run build:ts && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"npm:watch:ts\" \"npm:dev:start\"",
-    "dev:start": "cross-env LEVEL=debug DEBUG=webhook ts-node-dev --respawn --debounce 1000 src/app.ts | pino-pretty"
+    "start": "clinic doctor -- node app.js",
+    "dev": "if \\\"%OS%\\\"==\\\"Windows_NT\\\" (chcp 65001) && cross-env LEVEL=trace ts-node-dev --respawn --debounce 1000 app.ts | pino-pretty"
   },
   "files": [
-    "dist/",
-    "index.js",
-    "index.d.ts"
+    "dist/"
   ],
   "keywords": [],
   "author": "",

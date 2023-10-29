@@ -1,3 +1,6 @@
+# 本地测试不应上传的文件
+src/app.ts
+
 # Logs
 logs
 *.log
@@ -125,4 +128,3 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
-src/app.ts

@@ -138,7 +138,7 @@ export class Context extends cordis.Context {
       readJson(
         res,
         (obj: PayLoad) => {
-          webhookLogger.debug(obj, '接收到 POST Body');
+          webhookLogger.trace(obj, '接收到 POST Body');
           const data: Data<any> = obj.d;
           const verifyToken = data.verify_token;
           const bot: Bot = this.bots[verifyToken];

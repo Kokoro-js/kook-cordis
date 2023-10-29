@@ -22,6 +22,12 @@ declare module '../../context' {
   }
 
   interface Events {
+    'command/before-parse'(
+      input: string,
+      bot: Bot,
+      session: MessageSession<MessageExtra>,
+    ): Awaitable<void | string | boolean>;
+
     'command/before-execute'(
       command: CommandInstance<any, any>,
       bot: Bot,
@@ -43,9 +49,17 @@ export class Commander {
 
     const prefix = ctx.scope.config.commandPrefix;
 
-    ctx.middleware((bot, session, next) => {
+    ctx.middleware(async (bot, session, next) => {
       if (!session.data.content.startsWith(prefix)) return next();
-      const input = session.data.content.substring(prefix.length);
+      let input = session.data.content.substring(prefix.length);
+
+      const response = await ctx.bail('command/before-parse', input, bot, session);
+      // 如果 response 没被返回任何内容，则正常解析，如果返回了一个字符串则覆盖要解析的内容，如果返回了 false 则取消该指令解析
+      if (response !== undefined) {
+        if (typeof response == 'string') input = response;
+        else if (!response) return;
+      }
+
       const index: number = input.indexOf(' ');
       const commandInputMain: string = index !== -1 ? input.substring(0, index) : input;
 
@@ -68,12 +82,13 @@ export class Commander {
             } else {
               obj
                 .execute(input, bot, session)
-                .then(() => {
-                  ctx.parallel('command/execute', obj, bot, session);
+                .then((r) => {
+                  if (r) ctx.parallel('command/execute', obj, bot, session);
                 })
                 .catch((e) => logger.error(e));
             }
           });
+
           return;
         }
         // 没匹配到就把该指令放进相似指令匹配列表

@@ -35,7 +35,8 @@ export class Bot extends AbstactBot {
 
     this.ctx.bots.push(this);
 
-    ctx.on('ready', async () => {
+    ctx.start();
+    ctx.on('ready', () => {
       return this.start();
     });
 

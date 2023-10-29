@@ -29,26 +29,40 @@ export class CommandInstance<T extends Flags, P extends string> {
   readonly description: string;
   readonly options: T;
   commandFunction: callbackFunction<T, P>;
+  checkers: {
+    [key: string]: (bot: Bot, session: MessageSession<MessageExtra>) => Awaitable<void | boolean>;
+  } = {};
 
   readonly requiredMatches: string[];
   readonly optionalMatches: string[];
 
   constructor(name: P, desc: string, options: T) {
     const index: number = name.indexOf(' ');
-    this.name = name.substring(0, index);
+
+    if (index !== -1) {
+      this.name = name.substring(0, index);
+      const others = name.substring(index);
+      this.requiredMatches = others.match(/<[^>]+>/g) || [];
+      this.optionalMatches = others.match(/\[[^\]]+\]/g) || [];
+    } else this.name = name;
+
     this.description = desc;
     this.options = options;
-
-    const others = name.substring(index);
-    this.requiredMatches = others.match(/<[^>]+>/g) || [];
-    this.optionalMatches = others.match(/\[[^\]]+\]/g) || [];
   }
 
-  action(callback: callbackFunction<T, P>): void {
+  action(callback: callbackFunction<T, P>) {
     this.commandFunction = callback;
+    return this;
   }
 
   async execute(possible: string, bot: Bot, session: MessageSession<MessageExtra>) {
+    for (let key in this.checkers) {
+      if (this.checkers.hasOwnProperty(key)) {
+        const check = await this.checkers[key](bot, session);
+        if (check === false) return false;
+      }
+    }
+
     let argv = typeFlag(this.options, parseArgsStringToArgv(possible));
     // 移除主指令
     remove(argv._, this.name);
@@ -80,6 +94,7 @@ export class CommandInstance<T extends Flags, P extends string> {
     // 使用推断出的参数类型
     const result = await this.commandFunction(argv as any, bot, session);
     if (result) await bot.sendMessage(session.channelId, result);
+    return true;
   }
 }
 
