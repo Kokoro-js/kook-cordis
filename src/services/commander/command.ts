@@ -24,6 +24,11 @@ type callbackFunction<T extends Flags<Record<string, unknown>>, P extends string
   session: MessageSession<MessageExtra>,
 ) => Awaitable<void | string>;
 
+type checkerFunction = (
+  bot: Bot,
+  session: MessageSession<MessageExtra>,
+) => Awaitable<void | boolean>;
+
 export class CommandInstance<T extends Flags, P extends string> {
   readonly name: string;
   readonly description: string;
@@ -31,7 +36,7 @@ export class CommandInstance<T extends Flags, P extends string> {
   aliasArray: string[] = [];
   commandFunction: callbackFunction<T, P>;
   checkers: {
-    [key: string]: (bot: Bot, session: MessageSession<MessageExtra>) => Awaitable<void | boolean>;
+    [key: string]: checkerFunction;
   } = {};
 
   readonly requiredMatches: string[];
@@ -58,6 +63,12 @@ export class CommandInstance<T extends Flags, P extends string> {
 
   alias(alias: string[]) {
     this.aliasArray.concat(alias);
+    return this;
+  }
+
+  addChecker(name: string, check: checkerFunction) {
+    this.checkers[name] = check;
+    return this;
   }
 
   async execute(possible: string, bot: Bot, session: MessageSession<MessageExtra>) {
