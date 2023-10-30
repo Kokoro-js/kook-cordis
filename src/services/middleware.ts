@@ -35,6 +35,7 @@ export namespace Next {
 }
 
 export class Processor {
+  // 不用 Map 来一个 Context 对应数个 Middlewares 优化的原因是要保证顺序
   _hooks: [Context, Middleware][] = [];
 
   constructor(private ctx: Context) {

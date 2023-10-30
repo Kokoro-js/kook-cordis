@@ -43,7 +43,7 @@ declare module '../../context' {
 }
 
 export class Commander {
-  _commands: [Context, CommandInstance<any, any>][] = [];
+  _commands: Map<Context, CommandInstance<any, any>[]> = new Map();
   constructor(private ctx: Context) {
     defineProperty(this, Context.current, ctx);
 
@@ -64,13 +64,13 @@ export class Commander {
       const commandInputMain: string = index !== -1 ? input.substring(0, index) : input;
 
       // 筛选符合特定情境的指令
-      const meetCommands = this._commands
-        .filter(([context]) => {
-          return context.filter(session);
-        })
-        .map(([, command]) => {
-          return command;
-        });
+      const meetCommands = [];
+
+      for (let [context, command] of this._commands.entries()) {
+        if (context.filter(session)) {
+          meetCommands.push(...command);
+        }
+      }
 
       let commandArray = [];
       for (const obj of meetCommands) {
@@ -136,9 +136,15 @@ export class Commander {
   ): CommandInstance<T, P> {
     const command = new CommandInstance<T, P>(commandName, description, options);
     const context = this.caller;
-    this._commands.push([context, command]);
+
+    if (this._commands.has(context)) {
+      this._commands.get(context).push(command);
+    } else {
+      this._commands.set(context, [command]);
+    }
+
     // 在情境卸载的时候也移除注册的指令
-    context.runtime.disposables.push(() => remove(this._commands, [context, command]));
+    context.runtime.disposables.push(() => this._commands.delete(context));
     return command;
   }
 
