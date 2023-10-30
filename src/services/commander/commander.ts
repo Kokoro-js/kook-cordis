@@ -72,10 +72,10 @@ export class Commander {
         }
       }
 
-      let commandArray = [];
+      let commandArray: CommandInstance<any, any>[] = [];
       for (const obj of meetCommands) {
         // 如果匹配到指令就直接结束
-        if (commandInputMain === obj.name) {
+        if (commandInputMain === obj.name || obj.aliasArray.includes(commandInputMain)) {
           ctx.serial(session, 'command/before-execute', obj, bot, session).then((result) => {
             if (typeof result === 'string') {
               bot.sendMessage(session.channelId, result, { quote: session.data.msg_id });
@@ -106,7 +106,9 @@ export class Commander {
 
       // 把 Command 的 name 和 description 取出，做好发卡片准备
       const msg = result.map((item) => ({
-        name: item.name,
+        name: `${item.name} ${
+          item.aliasArray.length !== 0 ? `(${item.aliasArray.toString()})` : ''
+        }`,
         description: item.description,
       }));
 

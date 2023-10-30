@@ -28,6 +28,7 @@ export class CommandInstance<T extends Flags, P extends string> {
   readonly name: string;
   readonly description: string;
   readonly options: T;
+  aliasArray: string[] = [];
   commandFunction: callbackFunction<T, P>;
   checkers: {
     [key: string]: (bot: Bot, session: MessageSession<MessageExtra>) => Awaitable<void | boolean>;
@@ -53,6 +54,10 @@ export class CommandInstance<T extends Flags, P extends string> {
   action(callback: callbackFunction<T, P>) {
     this.commandFunction = callback;
     return this;
+  }
+
+  alias(alias: string[]) {
+    this.aliasArray.concat(alias);
   }
 
   async execute(possible: string, bot: Bot, session: MessageSession<MessageExtra>) {
