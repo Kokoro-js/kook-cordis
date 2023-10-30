@@ -80,8 +80,6 @@ export class CommandInstance<T extends Flags, P extends string> {
     }
 
     let argv = typeFlag(this.options, parseArgsStringToArgv(possible));
-    // 移除主指令
-    remove(argv._, this.name);
     const params: any = {};
 
     // 必要参数比对

@@ -61,7 +61,14 @@ export class Commander {
       }
 
       const index: number = input.indexOf(' ');
-      const commandInputMain: string = index !== -1 ? input.substring(0, index) : input;
+      let commandInputMain: string, args: string;
+      if (index !== -1) {
+        commandInputMain = input.substring(0, index);
+        args = input.substring(index);
+      } else {
+        commandInputMain = input;
+        args = '';
+      }
 
       // 筛选符合特定情境的指令
       const meetCommands = [];
@@ -81,7 +88,7 @@ export class Commander {
               bot.sendMessage(session.channelId, result, { quote: session.data.msg_id });
             } else {
               obj
-                .execute(input, bot, session)
+                .execute(args, bot, session)
                 .then((r) => {
                   if (r) ctx.parallel('command/execute', obj, bot, session);
                 })
