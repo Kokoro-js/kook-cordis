@@ -64,7 +64,7 @@ export class Commander {
       let commandInputMain: string, args: string;
       if (index !== -1) {
         commandInputMain = input.substring(0, index);
-        args = input.substring(index);
+        args = input.substring(index + 1);
       } else {
         commandInputMain = input;
         args = '';
@@ -92,6 +92,7 @@ export class Commander {
                 .then((r) => {
                   if (r) ctx.parallel('command/execute', obj, bot, session);
                 })
+                // 此处会把所有指令调用时发生的错误捕获并发布，比如 bot.sendMessage 遇到错误时。
                 .catch((e) => logger.error(e));
             }
           });
@@ -113,9 +114,7 @@ export class Commander {
 
       // 把 Command 的 name 和 description 取出，做好发卡片准备
       const msg = result.map((item) => ({
-        name: `${item.name} ${
-          item.aliasArray.length !== 0 ? `(${item.aliasArray.toString()})` : ''
-        }`,
+        name: `${item.name} ${item.aliases.length !== 0 ? `(${item.aliases.toString()})` : ''}`,
         description: item.description,
       }));
 
