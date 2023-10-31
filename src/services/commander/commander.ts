@@ -82,7 +82,7 @@ export class Commander {
       let commandArray: CommandInstance<any, any>[] = [];
       for (const obj of meetCommands) {
         // 如果匹配到指令就直接结束
-        if (commandInputMain === obj.name || obj.aliasArray.includes(commandInputMain)) {
+        if (commandInputMain === obj.name || obj.aliases.includes(commandInputMain)) {
           ctx.serial(session, 'command/before-execute', obj, bot, session).then((result) => {
             if (typeof result === 'string') {
               bot.sendMessage(session.channelId, result, { quote: session.data.msg_id });
