@@ -9,7 +9,7 @@ dependencies:
     specifier: ^1.6.0
     version: 1.6.0
   cordis:
-    specifier: ^3.1.1
+    specifier: ^3.1.2
     version: 3.1.2
   cosmokit:
     specifier: ^1.5.1
@@ -277,7 +277,7 @@ packages:
       '@tapjs/core': 1.4.2
     dependencies:
       '@tapjs/core': 1.4.2(@types/node@20.8.9)(react-dom@18.2.0)(react@18.2.0)
-      is-actual-promise: 1.0.0
+      is-actual-promise: 1.0.1
     dev: true
 
   /@tapjs/asserts@1.1.13(@tapjs/core@1.4.2)(react-dom@18.2.0)(react@18.2.0):
@@ -288,7 +288,7 @@ packages:
     dependencies:
       '@tapjs/core': 1.4.2(@types/node@20.8.9)(react-dom@18.2.0)(react@18.2.0)
       '@tapjs/stack': 1.2.6
-      is-actual-promise: 1.0.0
+      is-actual-promise: 1.0.1
       tcompare: 6.4.3(react-dom@18.2.0)(react@18.2.0)
       trivial-deferred: 2.0.0
     transitivePeerDependencies:
@@ -313,7 +313,7 @@ packages:
       '@tapjs/core': 1.4.2
     dependencies:
       '@tapjs/core': 1.4.2(@types/node@20.8.9)(react-dom@18.2.0)(react@18.2.0)
-      is-actual-promise: 1.0.0
+      is-actual-promise: 1.0.1
     dev: true
 
   /@tapjs/config@2.4.9(@tapjs/core@1.4.2)(@tapjs/test@1.3.13):
@@ -341,7 +341,7 @@ packages:
       '@tapjs/test': 1.3.13(@tapjs/core@1.4.2)(@types/node@20.8.9)(react-dom@18.2.0)(react@18.2.0)
       async-hook-domain: 4.0.1
       diff: 5.1.0
-      is-actual-promise: 1.0.0
+      is-actual-promise: 1.0.1
       minipass: 7.0.4
       signal-exit: 4.1.0
       tap-parser: 15.3.0
@@ -513,7 +513,7 @@ packages:
       '@tapjs/core': 1.4.2
     dependencies:
       '@tapjs/core': 1.4.2(@types/node@20.8.9)(react-dom@18.2.0)(react@18.2.0)
-      is-actual-promise: 1.0.0
+      is-actual-promise: 1.0.1
       tcompare: 6.4.3(react-dom@18.2.0)(react@18.2.0)
       trivial-deferred: 2.0.0
     transitivePeerDependencies:
@@ -1418,8 +1418,10 @@ packages:
     resolution: {integrity: sha512-WKa+XuLG1A1R0UWhl2+1XQSi+fZWMsYKffMZTTYsiZaUD8k2yDAj5atimTUD2TZkyCkNEeYE5NhFZmupOGtjYQ==}
     dev: true
 
-  /is-actual-promise@1.0.0:
-    resolution: {integrity: sha512-DWSmKTiEoY3Y9LGHG9TVnFgydCCu+3fLJi4rv3fpi0gL/lKoILekh/oF/nO3/Lq1l5Rqo+tQt5TWzxMmYIhWyg==}
+  /is-actual-promise@1.0.1:
+    resolution: {integrity: sha512-PlsL4tNv62lx5yN2HSqaRSTgIpUAPW7U6+crVB8HfWm5161rZpeqWbl0ZSqH2MAfRKXWSZVPRNbE/r8qPcb13g==}
+    dependencies:
+      tshy: 1.7.0
     dev: true
 
   /is-binary-path@2.1.0:
