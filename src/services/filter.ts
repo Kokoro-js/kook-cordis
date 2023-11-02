@@ -179,6 +179,12 @@ export class FilterService {
   }
 
   private(...values: string[]) {
-    return property(this.caller.exclude(property(this.caller, 'guildId')), 'userId', ...values);
+    return property(
+      this.caller.exclude((session) => {
+        return session.guildId == session.channelId;
+      }),
+      'userId',
+      ...values,
+    );
   }
 }
