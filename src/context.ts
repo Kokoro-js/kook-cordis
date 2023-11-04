@@ -35,18 +35,18 @@ export class Context extends cordis.Context {
   constructor(options: Context.Config) {
     super(options);
 
-    this.config = new Context.Config(options);
+    this.root.config = new Context.Config(options);
 
     this.setupMixins();
     this.setupProviders();
-    this.setupWebServer(this.config);
+    this.setupWebServer(this.root.config);
 
     this.on('internal/warning', (format, ...args) => {
       logger.warn(format, ...args);
     });
   }
 
-  prompt(current: Session<any>, timeout = this.config.prompt_timeout) {
+  prompt(current: Session<any>, timeout = this.root.config.prompt_timeout) {
     return new Promise<string>((resolve) => {
       const dispose = this.middleware(async (bot, session, next) => {
         if (session.userId !== current.userId || session.selfId !== current.selfId) return next();
@@ -61,11 +61,12 @@ export class Context extends cordis.Context {
     });
   }
 
-  suggest(current: Session<any>, timeout = this.config.prompt_timeout) {
+  suggest(current: Session<any>, msgId?: string, timeout = this.root.config.prompt_timeout) {
     return new Promise<IMessageButtonClickBody>((resolve) => {
       const dispose = this.on(
         'button-click',
         async (bot, session) => {
+          if (msgId && msgId !== session.data.msg_id) return;
           if (session.userId !== current.userId || session.selfId !== current.selfId) return;
           clearTimeout(timer);
           dispose();
