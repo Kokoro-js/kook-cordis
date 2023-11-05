@@ -22,6 +22,11 @@ export function internalWebhook(ctx: Context, bot, data) {
     return;
   }
   ctx.parallel(session, 'webhook', bot, data);
+  if (data.extra.type == 'message_btn_click') {
+    ctx.serial(session, 'serial-button-click', bot, session);
+    ctx.parallel(session, 'button-click', bot, session);
+    return;
+  }
   ctx.parallel(session, eventMap[data.extra.type], bot, session);
 }
 

@@ -90,5 +90,8 @@ export interface KookEvent {
   'user-updated'(bot: Bot, session: EventSession<IUserUpdatedBody>): void;
   'self-guild-joined'(bot: Bot, session: EventSession<ISelfJoinedGuildBody>): void;
   'self-guild-leave'(bot: Bot, session: EventSession<ISelfExitedGuildBody>): void;
+
+  // 按钮操作
   'button-click'(bot: Bot, session: EventSession<IMessageButtonClickBody>): void;
+  'serial-button-click'(bot: Bot, session: EventSession<IMessageButtonClickBody>): void;
 }

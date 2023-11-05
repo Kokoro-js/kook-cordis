@@ -2,7 +2,7 @@ import * as cordis from 'cordis';
 import Schema from 'schemastery';
 import uWS from 'uWebSockets.js';
 import { KookEvent } from './events';
-import { Data, IMessageButtonClickBody, PayLoad, Session } from './types';
+import { Data, IMessageButtonClickBody, PayLoad, Session, SystemExtra } from './types';
 import { logger } from './Logger';
 import { Bot } from './bot';
 import { internalWebhook } from './event-tigger';
@@ -64,16 +64,15 @@ export class Context extends cordis.Context {
     });
   }
 
-  suggest(current: Session<any>, msgId?: string, timeout = this.root.config.prompt_timeout) {
-    return new Promise<IMessageButtonClickBody>((resolve) => {
+  suggest(current: Session<any>, timeout = this.root.config.prompt_timeout) {
+    return new Promise<Data<SystemExtra<IMessageButtonClickBody>>>((resolve) => {
       const dispose = this.on(
         'button-click',
         async (bot, session) => {
-          if (msgId && msgId !== session.data.msg_id) return;
           if (session.userId !== current.userId || session.selfId !== current.selfId) return;
           clearTimeout(timer);
           dispose();
-          resolve(session.data.extra.body);
+          resolve(session.data);
         },
         true,
       );
