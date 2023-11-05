@@ -1,6 +1,5 @@
 import { Agent } from 'agent-base';
 import { arrayBufferToBase64, base64ToArrayBuffer, Dict, pick, trimSlash } from 'cosmokit';
-import { ClientRequestArgs } from 'http';
 import mimedb from 'mime-db';
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios';
 import * as Axios from 'axios';
@@ -41,7 +40,7 @@ export class Quester {
     }) as Quester;
 
     Object.setPrototypeOf(http, Object.getPrototypeOf(this));
-    for (const key of ['extend', 'get', 'delete', 'post', 'put', 'patch', 'head', 'ws']) {
+    for (const key of ['extend', 'get', 'delete', 'post', 'put', 'patch', 'head']) {
       http[key] = this[key].bind(http);
     }
 

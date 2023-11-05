@@ -7,7 +7,7 @@ import { logger } from './Logger';
 import { Bot } from './bot';
 import { internalWebhook } from './event-tigger';
 import { FilterService, Processor, Commander, Routers, Quester, readJson } from './services';
-import { defineProperty } from 'cosmokit';
+import { defineProperty, Dict } from 'cosmokit';
 
 export { uWS, readJson };
 
@@ -27,7 +27,7 @@ export type { Disposable, ScopeStatus } from 'cordis';
 export interface Context {
   [Context.config]: Context.Config;
   [Context.events]: Events<Context>;
-  bots: Bot[];
+  bots: Bot[] & Dict<Bot>;
   http: Quester;
 }
 
@@ -44,7 +44,7 @@ export class Context extends cordis.Context {
     this.setupProviders();
     this.setupWebServer(this.root.config);
 
-    this.on('internal/warning', (format, ...args) => {
+    this.on('internal/warning', function (format, ...args) {
       logger.warn(format, ...args);
     });
   }
@@ -83,7 +83,7 @@ export class Context extends cordis.Context {
     });
   }
 
-  public bots = new Proxy([] as Bot[], {
+  public bots = new Proxy([], {
     get(target, prop) {
       if (prop in target || typeof prop === 'symbol') {
         return Reflect.get(target, prop);
@@ -99,7 +99,7 @@ export class Context extends cordis.Context {
       target.splice(bot, 1);
       return true;
     },
-  });
+  }) as Bot[] & Dict<Bot>;
 
   private setupMixins() {
     this.mixin('$filter', [
