@@ -6,5 +6,6 @@ export * as utils from './utils';
 export type * as Kook from './types';
 export { CommandInstance } from './services/commander/commander';
 
+export * as axios from 'axios';
 export { default as Schema } from 'schemastery';
 export * from 'cosmokit';
