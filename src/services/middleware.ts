@@ -1,4 +1,4 @@
-import { Awaitable, defineProperty, Dict, makeArray, Time } from 'cosmokit';
+import { Awaitable, defineProperty } from 'cosmokit';
 import { Context } from '../context';
 import { logger } from '../Logger';
 import { Bot } from '../bot';
@@ -45,6 +45,14 @@ export class Processor {
     ctx.on('message', this._handleMessage.bind(this));
   }
 
+  protected get caller() {
+    return this[Context.current] as Context;
+  }
+
+  middleware(middleware: Middleware, prepend = false) {
+    return this.caller.lifecycle.register('middleware', this._hooks, middleware, prepend);
+  }
+
   private async _handleMessage(bot, session) {
     // 筛选出符合特定 session 内容的中间件组成数组
     const queue: Next.Queue = this._hooks
@@ -79,12 +87,5 @@ export class Processor {
     } finally {
       this.ctx.emit(session, 'middleware', bot, session);
     }
-  }
-  protected get caller() {
-    return this[Context.current] as Context;
-  }
-
-  middleware(middleware: Middleware, prepend = false) {
-    return this.caller.lifecycle.register('middleware', this._hooks, middleware, prepend);
   }
 }

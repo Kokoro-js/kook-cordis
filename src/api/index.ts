@@ -5,6 +5,26 @@ import { IBaseAPIResponse } from '../types';
 export abstract class AbstactBot {
   abstract http: AxiosInstance;
 
+  static define(name: string, method: Method, path: string) {
+    AbstactBot.prototype[name] = async function (this: AbstactBot, ...args: any[]) {
+      const config: AxiosRequestConfig = {
+        method,
+      };
+
+      if (method.toLowerCase() === 'get' || method.toLowerCase() === 'delete') {
+        config.params = args[0];
+      } else {
+        config.data = args[0];
+      }
+
+      // Axios 在请求出现错误的时候会丢出详细错误，不需要手动判断
+      const req = await this.http('/api/v3' + path, config);
+      const response: IBaseAPIResponse<any> = req.data;
+      if (response.code !== 0) throw new Error(response.message || 'Unexpected Error');
+      return response.data;
+    };
+  }
+
   async sendMessage(
     target_id: string,
     content: string,
@@ -41,26 +61,6 @@ export abstract class AbstactBot {
     if (response.code != 0) throw new Error(response.message);
 
     return response.data;
-  }
-
-  static define(name: string, method: Method, path: string) {
-    AbstactBot.prototype[name] = async function (this: AbstactBot, ...args: any[]) {
-      const config: AxiosRequestConfig = {
-        method,
-      };
-
-      if (method.toLowerCase() === 'get' || method.toLowerCase() === 'delete') {
-        config.params = args[0];
-      } else {
-        config.data = args[0];
-      }
-
-      // Axios 在请求出现错误的时候会丢出详细错误，不需要手动判断
-      const req = await this.http('/api/v3' + path, config);
-      const response: IBaseAPIResponse<any> = req.data;
-      if (response.code !== 0) throw new Error(response.message || 'Unexpected Error');
-      return response.data;
-    };
   }
 }
 
@@ -153,26 +153,35 @@ AbstactBot.define('deleteGameActivity', 'POST', '/game/delete-activity');
 
 export interface AbstactBot {
   getGuildList(param?: Kook.Pagination): Promise<Kook.GuildList>;
+
   getGuildView(param: { guild_id: string }): Promise<Kook.Guild>;
+
   getGuildUserList(param: { guild_id: string } & Kook.Pagination): Promise<Kook.GuildUserList>;
+
   setGuildUserNickname(param: {
     guild_id: string;
     user_id: string;
     nickname: string;
   }): Promise<void>;
+
   leaveGuild(param: { guild_id: string }): Promise<void>;
+
   kickoutGuildUser(param: { guild_id: string; target_id: string }): Promise<void>;
+
   getGuildMuteList(param: { guild_id: string }): Promise<Kook.GuildMuteList>;
+
   createGuildMute(param: {
     guild_id: string;
     user_id: string;
     type: Kook.GuildMute.Type;
   }): Promise<void>;
+
   deleteGuildMute(param: {
     guild_id: string;
     user_id: string;
     type: Kook.GuildMute.Type;
   }): Promise<void>;
+
   getGuildBoostHistory(param: {
     guild_id: string;
     start_time: number;
@@ -180,7 +189,9 @@ export interface AbstactBot {
   }): Promise<Kook.List<Kook.GuildBoost>>;
 
   getChannelList(param: { guild_id: string } & Kook.Pagination): Promise<Kook.List<Kook.Channel>>;
+
   getChannelView(param: { target_id: string }): Promise<Kook.Channel>;
+
   createChannel(param: {
     guild_id: string;
     parent_id?: string;
@@ -190,6 +201,7 @@ export interface AbstactBot {
     voice_quality?: string;
     is_category?: 0 | 1;
   }): Promise<Kook.Channel>;
+
   updateChannel(param: {
     channel_id: string;
     name?: string;
@@ -210,21 +222,29 @@ export interface AbstactBot {
       | 7200000
       | 21600000;
   }): Promise<Kook.Channel>;
+
   deleteChannel(param: { channel_id: string }): Promise<void>;
+
   getChannelUserList(param: { channel_id: string }): Promise<Kook.List<Kook.User>>;
+
   kickChannelUser(param: { channel_id: string; user_id: string }): Promise<void>;
+
   moveChannelUser(param: { target_id: string; user_ids: string[] }): Promise<void>;
+
   getChannelRoleIndex(param: { channel_id: string }): Promise<Kook.ChannelRoleIndex>;
+
   createChannelRole(param: {
     channel_id: string;
     type?: 'user_id';
     value?: string;
   }): Promise<Omit<Kook.ChannelRole, 'role_id'>>;
+
   createChannelRole(param: {
     channel_id: string;
     type: 'role_id';
     value?: string;
   }): Promise<Omit<Kook.ChannelRole, 'user_id'>>;
+
   updateChannelRole(param: {
     channel_id: string;
     type?: 'user_id';
@@ -232,6 +252,7 @@ export interface AbstactBot {
     allow?: number;
     deny?: number;
   }): Promise<Omit<Kook.ChannelRole, 'role_id'>>;
+
   updateChannelRole(param: {
     channel_id: string;
     type: 'role_id';
@@ -239,6 +260,7 @@ export interface AbstactBot {
     allow?: number;
     deny?: number;
   }): Promise<Omit<Kook.ChannelRole, 'user_id'>>;
+
   deleteChannelRole(param: {
     channel_id: string;
     type?: 'role_id' | 'user_id';
@@ -253,12 +275,16 @@ export interface AbstactBot {
       flag?: 'before' | 'around' | 'after';
     } & Kook.Pagination,
   ): Promise<Kook.List<Kook.Message>>;
+
   getMessageView(param: { msg_id: string }): Promise<Kook.Message>;
+
   // createMessage(param: { type?: Type; target_id: string; content: string; quote?: string; nonce?: string; temp_target_id?: string }): Promise<MessageReturn>
   // updateMessage(param: { msg_id: string; content: string; quote?: string; temp_target_id?: string }): Promise<void>
   // deleteMessage(param: { msg_id: string }): Promise<void>
   getMessageReactionList(param: { msg_id: string; emoji: string }): Promise<Kook.User[]>;
+
   addMessageReaction(param: { msg_id: string; emoji: string }): Promise<void>;
+
   deleteMessageReaction(param: { msg_id: string; emoji: string; user_id?: string }): Promise<void>;
 
   getChannelJoinedUserList(
@@ -268,8 +294,11 @@ export interface AbstactBot {
   getPrivateChatList(
     param?: Kook.Pagination,
   ): Promise<Kook.List<Omit<Kook.PrivateChat, 'is_friend' | 'is_blocked' | 'is_target_blocked'>>>;
+
   getPrivateChatView(param: { chat_code: string }): Promise<Kook.PrivateChat>;
+
   createPrivateChat(param: { target_id: string }): Promise<Kook.PrivateChat>;
+
   deletePrivateChat(param: { chat_code: string }): Promise<void>;
 
   getDirectMessageList(
@@ -280,6 +309,7 @@ export interface AbstactBot {
       flag?: 'before' | 'around' | 'after';
     } & Kook.Pagination,
   ): Promise<{ items: Kook.Message[] }>;
+
   createDirectMessage(param: {
     target_id?: string;
     chat_code?: string;
@@ -288,10 +318,15 @@ export interface AbstactBot {
     quote?: string;
     nonce?: string;
   }): Promise<Kook.MessageReturn>;
+
   updateDirectMessage(param: { msg_id: string; content: string; quote?: string }): Promise<void>;
+
   deleteDirectMessage(param: { msg_id: string }): Promise<void>;
+
   getDirectMessageReactionList(param: { msg_id: string; emoji?: string }): Promise<Kook.User[]>;
+
   addDirectMessageReaction(param: { msg_id: string; emoji: string }): Promise<void>;
+
   deleteDirectMessageReaction(param: {
     msg_id: string;
     emoji: string;
@@ -299,6 +334,7 @@ export interface AbstactBot {
   }): Promise<void>;
 
   getGateway(param: { compress?: 0 | 1 }): Promise<{ url: string }>;
+
   getToken(param: {
     grant_type: 'authorization_code';
     client_id: string;
@@ -306,25 +342,33 @@ export interface AbstactBot {
     code: string;
     redirect_uri: string;
   }): Promise<Kook.AccessToken>;
+
   // createAsset(param: { file: FormData }): Promise<{ url: string }>
 
   getUserMe(): Promise<Kook.User>;
+
   getUserView(param: { user_id: string; guild_id?: string }): Promise<Kook.User>;
+
   offline(): Promise<void>;
 
   getGuildRoleList(
     param: { guild_id: string } & Kook.Pagination,
   ): Promise<Kook.List<Kook.GuildRole>>;
+
   createGuildRole(param: { name?: string; guild_id: string }): Promise<Kook.GuildRole>;
+
   updateGuildRole(
     param: { guild_id: string; role_id: number } & Partial<Omit<Kook.GuildRole, 'role_id'>>,
   ): Promise<Kook.GuildRole>;
+
   deleteGuildRole(param: { guild_id: string; role_id: number }): Promise<void>;
+
   grantGuildRole(param: {
     guild_id: string;
     user_id?: string;
     role_id: number;
   }): Promise<Kook.GuildRoleReturn>;
+
   revokeGuildRole(param: {
     guild_id: string;
     user_id?: string;
@@ -332,6 +376,7 @@ export interface AbstactBot {
   }): Promise<Kook.GuildRoleReturn>;
 
   getIntimacy(param: { user_id: string }): Promise<Kook.Intimacy>;
+
   updateIntimacy(param: {
     user_id: string;
     score?: number;
@@ -340,35 +385,45 @@ export interface AbstactBot {
   }): Promise<void>;
 
   getGuildEmojiList(param?: Kook.Pagination): Promise<Kook.List<Kook.Emoji>>;
+
   // createGuildEmoji(param: { name?: string; guild_id: string; emoji: FormData }): Promise<Emoji>
   updateGuildEmoji(param: { name: string; id: string }): Promise<void>;
+
   deleteGuildEmoji(param: { id: string }): Promise<void>;
 
   getInviteList(
     param: { guild_id?: string; channel_id?: string } & Kook.Pagination,
   ): Promise<Kook.List<Kook.Invite>>;
+
   createInvite(param: {
     guild_id?: string;
     channel_id?: string;
     duration?: number;
     setting_times?: number;
   }): Promise<{ url: string }>;
+
   deleteInvite(param: { url_code: string; guild_id?: string; channel_id?: string }): Promise<void>;
 
   getBlacklist(param: { guild_id: string } & Kook.Pagination): Promise<Kook.List<Kook.BlackList>>;
+
   createBlacklist(param: {
     guild_id: string;
     target_id: string;
     remark?: string;
     del_msg_days?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
   }): Promise<void>;
+
   deleteBlacklist(param: { guild_id: string; target_id: string }): Promise<void>;
 
   // getGuildBadge(param: { guild_id: string; style?: 0|1|2 }): Promise<void> // 未实现
   getGameList(param?: { type?: 0 | 1 | 2 }): Promise<Kook.List<Kook.Game>>;
+
   createGame(param: { name: string; icon?: string }): Promise<Kook.List<Kook.Game>>;
+
   updateGame(param: { id: number; name?: string; icon?: string }): Promise<Kook.List<Kook.Game>>;
+
   deleteGame(param: { id: number }): Promise<void>;
+
   createGameActivity(param: {
     id: number;
     data_type: 1 | 2;
@@ -376,6 +431,7 @@ export interface AbstactBot {
     singer?: string;
     music_name?: string;
   }): Promise<void>;
+
   deleteGameActivity(param: { data_type: 1 | 2 }): Promise<void>;
 
   hasPermission(permissions: number, permission: Permissions): boolean;

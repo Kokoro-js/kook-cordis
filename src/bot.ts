@@ -1,5 +1,5 @@
 import { Context } from './context';
-import { defineProperty, isNullable, remove } from 'cosmokit';
+import { defineProperty, remove } from 'cosmokit';
 import { createLogger } from './Logger';
 import Schema from 'schemastery';
 import pino from 'pino';
@@ -22,7 +22,6 @@ export class Bot extends AbstactBot {
   ) {
     super();
     this.context = ctx;
-    this.config = new Bot.Config(this.config);
     ({ verifyToken: this.verifyToken, token: this.token } = this.config);
     this.logger = createLogger(`bot-${this.verifyToken}`);
     defineProperty(Bot, 'filter', false);

@@ -14,6 +14,7 @@ type Routes = {
 declare module '../context' {
   interface Context {
     $routers: Routers;
+
     router(method: AllowedMethod, path: string, handler: RouteHandler): void;
   }
 }

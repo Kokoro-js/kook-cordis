@@ -6,10 +6,10 @@ import { Data, IMessageButtonClickBody, PayLoad, Session, SystemExtra } from './
 import { logger } from './Logger';
 import { Bot } from './bot';
 import { internalWebhook } from './event-tigger';
-import { FilterService, Processor, Commander, Routers, Quester, readJson } from './services';
+import { Commander, FilterService, Processor, Quester, readJson, Routers } from './services';
 import { defineProperty, Dict } from 'cosmokit';
 
-export { uWS, readJson };
+export { uWS, Quester, readJson };
 
 export interface Events<C extends Context = Context> extends cordis.Events<C>, KookEvent {
   // 'internal/webhook'(bot: Bot, obj: any): void;
@@ -33,6 +33,24 @@ export interface Context {
 
 export class Context extends cordis.Context {
   static readonly session = Symbol('session');
+  public baseDir = process.cwd();
+  public bots = new Proxy([], {
+    get(target, prop) {
+      if (prop in target || typeof prop === 'symbol') {
+        return Reflect.get(target, prop);
+      }
+      return target.find((bot) => bot.verifyToken === prop);
+    },
+    deleteProperty(target, prop) {
+      if (prop in target || typeof prop === 'symbol') {
+        return Reflect.deleteProperty(target, prop);
+      }
+      const bot = target.findIndex((bot) => bot.verifyToken === prop);
+      if (bot < 0) return true;
+      target.splice(bot, 1);
+      return true;
+    },
+  }) as Bot[] & Dict<Bot>;
 
   constructor(options: Context.Config) {
     super(options);
@@ -67,7 +85,7 @@ export class Context extends cordis.Context {
   suggest(current: Session<any>, timeout = this.root.config.prompt_timeout) {
     return new Promise<Data<SystemExtra<IMessageButtonClickBody>>>((resolve) => {
       const dispose = this.on(
-        'button-click',
+        'serial-button-click',
         async (bot, session) => {
           if (session.userId !== current.userId || session.selfId !== current.selfId) return;
           clearTimeout(timer);
@@ -82,24 +100,6 @@ export class Context extends cordis.Context {
       }, timeout);
     });
   }
-
-  public bots = new Proxy([], {
-    get(target, prop) {
-      if (prop in target || typeof prop === 'symbol') {
-        return Reflect.get(target, prop);
-      }
-      return target.find((bot) => bot.verifyToken === prop);
-    },
-    deleteProperty(target, prop) {
-      if (prop in target || typeof prop === 'symbol') {
-        return Reflect.deleteProperty(target, prop);
-      }
-      const bot = target.findIndex((bot) => bot.verifyToken === prop);
-      if (bot < 0) return true;
-      target.splice(bot, 1);
-      return true;
-    },
-  }) as Bot[] & Dict<Bot>;
 
   private setupMixins() {
     this.mixin('$filter', [
@@ -190,6 +190,7 @@ export class Context extends cordis.Context {
     });
   }
 }
+
 export namespace Context {
   export interface Config extends cordis.Context.Config {
     port: number;
@@ -221,6 +222,7 @@ export namespace Context {
 declare module './services/axios' {
   namespace Quester {
     export const Config: Schema<Config>;
+
     export function createConfig(this: typeof Quester, endpoint?: string | boolean): Schema<Config>;
   }
 }

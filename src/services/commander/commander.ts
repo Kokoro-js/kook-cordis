@@ -1,4 +1,4 @@
-import { Awaitable, defineProperty, Dict, remove } from 'cosmokit';
+import { Awaitable, defineProperty } from 'cosmokit';
 import { Context } from '../../context';
 
 import { CommandInstance } from './command';
@@ -14,6 +14,7 @@ export { CommandInstance };
 declare module '../../context' {
   interface Context {
     $commander: Commander;
+
     command<T extends Flags<Record<string, unknown>>, P extends string>(
       commandName: P,
       description: string,
@@ -44,6 +45,7 @@ declare module '../../context' {
 
 export class Commander {
   _commands: Map<Context, CommandInstance<any, any>[]> = new Map();
+
   constructor(private ctx: Context) {
     defineProperty(this, Context.current, ctx);
 
@@ -137,25 +139,6 @@ export class Commander {
     return this[Context.current] as Context;
   }
 
-  command<T extends Flags<Record<string, unknown>>, P extends string>(
-    commandName: P,
-    description: string,
-    options: T,
-  ): CommandInstance<T, P> {
-    const command = new CommandInstance<T, P>(commandName, description, options);
-    const context = this.caller;
-
-    if (this._commands.has(context)) {
-      this._commands.get(context).push(command);
-    } else {
-      this._commands.set(context, [command]);
-    }
-
-    // 在情境卸载的时候也移除注册的指令
-    context.runtime.disposables.push(() => this._commands.delete(context));
-    return command;
-  }
-
   static CardTemplete(
     commands: { name: string; description: string }[],
     input: string,
@@ -211,5 +194,24 @@ export class Commander {
     ];
 
     return JSON.stringify(a);
+  }
+
+  command<T extends Flags<Record<string, unknown>>, P extends string>(
+    commandName: P,
+    description: string,
+    options: T,
+  ): CommandInstance<T, P> {
+    const command = new CommandInstance<T, P>(commandName, description, options);
+    const context = this.caller;
+
+    if (this._commands.has(context)) {
+      this._commands.get(context).push(command);
+    } else {
+      this._commands.set(context, [command]);
+    }
+
+    // 在情境卸载的时候也移除注册的指令
+    context.runtime.disposables.push(() => this._commands.delete(context));
+    return command;
   }
 }

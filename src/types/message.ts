@@ -1,5 +1,5 @@
-import { MessageType, User } from "./base";
-import { Notice } from "./system";
+import { MessageType, User } from './base';
+import { Notice } from './system';
 
 export interface MessageMeta {
   mention: string[];
@@ -37,7 +37,7 @@ export interface MessageExtra extends MessageMeta {
   channel_name: string;
 }
 
-type AttachmentType = "image" | "video" | "audio" | "file";
+type AttachmentType = 'image' | 'video' | 'audio' | 'file';
 
 export interface Attachment {
   type: AttachmentType;
@@ -74,54 +74,47 @@ export interface Emoji {
 }
 
 export interface Card {
-  type: "card";
+  type: 'card';
   theme?: Card.Theme;
-  size?: "lg" | "sm";
+  size?: 'lg' | 'sm';
   color?: string;
   modules: Card.Module[];
 }
 
 export namespace Card {
-  export type Theme = "primary" | "secondary" | "warning" | "danger" | "info";
-  export type Module =
-    | Section
-    | ImageGroup
-    | Header
-    | Divider
-    | File
-    | Countdown
-    | Context;
+  export type Theme = 'primary' | 'secondary' | 'warning' | 'danger' | 'info';
+  export type Module = Section | ImageGroup | Header | Divider | File | Countdown | Context;
 
   export interface Text {
-    type: "plain-text" | "kmarkdown";
+    type: 'plain-text' | 'kmarkdown';
     content: string;
     emoji?: boolean;
   }
 
   export interface Paragraph {
-    type: "paragraph";
+    type: 'paragraph';
     content: string;
     cols: number;
     fields: Text[];
   }
 
   export interface Section {
-    type: "section";
-    mode?: "left" | "right";
+    type: 'section';
+    mode?: 'left' | 'right';
     text: Text | Paragraph;
     accessory?: Image | Button;
   }
 
   export interface Image {
-    type: "image";
-    size?: "lg" | "sm";
+    type: 'image';
+    size?: 'lg' | 'sm';
     src: string;
     alt?: string;
     circle?: boolean;
   }
 
   export interface Button {
-    type: "button";
+    type: 'button';
     theme?: Theme;
     value: string;
     text: Text;
@@ -129,46 +122,46 @@ export namespace Card {
   }
 
   export interface ImageGroup {
-    type: "image-group";
+    type: 'image-group';
     elements: Image[];
   }
 
   export interface Header {
-    type: "header";
+    type: 'header';
     text: Text;
   }
 
   export interface Divider {
-    type: "divider";
+    type: 'divider';
   }
 
   export interface ActionGroup {
-    type: "action-group";
+    type: 'action-group';
     elements: Button[];
   }
 
   export interface Context {
-    type: "context";
+    type: 'context';
     elements: (Text | Image)[];
   }
 
   export interface File {
-    type: "file" | "audio" | "video";
+    type: 'file' | 'audio' | 'video';
     src: string;
     title: string;
     cover?: string;
   }
 
   export interface Countdown {
-    type: "countdown";
+    type: 'countdown';
     end_time: string;
     start_time: string;
-    mode: "day" | "hour" | "second";
+    mode: 'day' | 'hour' | 'second';
   }
 }
 
 export interface MessageReturn {
-  msg_id: string
-  msg_timestamp: number
-  nonce: string
+  msg_id: string;
+  msg_timestamp: number;
+  nonce: string;
 }

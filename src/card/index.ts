@@ -5,18 +5,6 @@ export default class Card {
   private __size: Size = 'lg';
   private __modules: Modules[] = [];
 
-  public get theme() {
-    return this.__theme;
-  }
-  public get size() {
-    return this.__size;
-  }
-  public get modules() {
-    return this.__modules;
-  }
-  public set modules(modules: Modules[]) {
-    this.modules = modules;
-  }
   constructor(card?: Partial<CardType>) {
     if (card?.theme) {
       this.setTheme(card.theme);
@@ -30,18 +18,38 @@ export default class Card {
       }
     }
   }
+
+  public get theme() {
+    return this.__theme;
+  }
+
+  public get size() {
+    return this.__size;
+  }
+
+  public get modules() {
+    return this.__modules;
+  }
+
+  public set modules(modules: Modules[]) {
+    this.modules = modules;
+  }
+
   setTheme(theme: Theme) {
     this.__theme = theme;
     return this;
   }
+
   setSize(size: Size) {
     this.__size = size;
     return this;
   }
+
   addModule(module: Modules) {
     this.__modules.push(module);
     return this;
   }
+
   addText(content: string) {
     return this.addModule({
       type: 'section',
@@ -51,6 +59,7 @@ export default class Card {
       },
     });
   }
+
   addTextWithImage(
     content: string,
     {
@@ -80,6 +89,7 @@ export default class Card {
       },
     });
   }
+
   addTextWithButton(
     content: string,
     {
@@ -113,6 +123,7 @@ export default class Card {
       },
     });
   }
+
   addTitle(content: string) {
     return this.addModule({
       type: 'header',
@@ -122,11 +133,13 @@ export default class Card {
       },
     });
   }
+
   addDivider() {
     return this.addModule({
       type: 'divider',
     });
   }
+
   addImage(...links: string[]) {
     return this.addModule({
       type: 'container',
@@ -135,6 +148,7 @@ export default class Card {
       }),
     });
   }
+
   addImageGroup(...links: string[]) {
     return this.addModule({
       type: 'image-group',
@@ -143,6 +157,7 @@ export default class Card {
       }),
     });
   }
+
   addContext(...content: string[]) {
     return this.addModule({
       type: 'context',
@@ -160,6 +175,7 @@ export default class Card {
       }),
     });
   }
+
   addCountDown(endTime: number, mode: 'second' | 'hour' | 'day') {
     return this.addModule({
       type: 'countdown',
@@ -167,6 +183,7 @@ export default class Card {
       endTime,
     });
   }
+
   toObject(): CardType {
     return {
       type: 'card',
@@ -175,6 +192,7 @@ export default class Card {
       modules: this.__modules,
     };
   }
+
   toString(): string {
     return JSON.stringify([this.toObject()]);
   }

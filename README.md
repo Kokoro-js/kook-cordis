@@ -2,6 +2,7 @@
 [![npm](https://img.shields.io/npm/v/kook-cordis?style=flat-square)](https://www.npmjs.com/package/kook-cordis)
 
 加入我们的 [Kook频道](https://kook.top/UzctXt) 来与开发者取得联系。
+
 ```typescript
 // 目前只支持 Webhook 
 const ctx = new Context({ webhook: '/kook', port: 1000, compressed: false });
@@ -44,7 +45,7 @@ const plugin1 = ctx.plugin((ctx) => {
     return '让我们在这里结束';
   });
 
-  
+
   ctx.middleware(async (bot, session, next) => {
     await bot.sendMessage(session.channelId, '二号中间件');
     await next();

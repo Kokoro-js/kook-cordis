@@ -1,5 +1,5 @@
 import { Emoji, MessageMeta } from './message';
-import { Channel, GuildRole, MessageType, User } from './base';
+import { Channel, GuildRole, User } from './base';
 
 export interface IBaseSystemExtra {
   type: NoticeType;
@@ -15,6 +15,7 @@ export interface Notice {
   type: NoticeType;
   body: NoticeBody;
 }
+
 export interface NoticeBody extends Omit<Channel, 'type'>, MessageMeta, GuildRole {
   value: string;
   msg_id: string;
@@ -114,6 +115,7 @@ export interface IPinnedMessageBody {
   operator_id: string;
   msg_id: string;
 }
+
 export interface IUnPinnedMessageBody extends IPinnedMessageBody {}
 
 export interface IUpdatedPrivateMessageBody {
