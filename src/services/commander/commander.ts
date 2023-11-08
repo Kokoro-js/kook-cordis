@@ -1,4 +1,4 @@
-import { Awaitable, defineProperty } from 'cosmokit';
+import { Awaitable, defineProperty, Dict } from 'cosmokit';
 import { Context } from '../../context';
 
 import { CommandInstance } from './command';
@@ -8,7 +8,7 @@ import { logger } from '../../Logger';
 import { search } from 'fast-fuzzy';
 import { MessageExtra, MessageSession, MessageType } from '../../types';
 import { Bot } from '../../bot';
-import { Middleware, Next } from '../middleware';
+import { Middleware } from '../middleware';
 
 export { CommandInstance };
 
@@ -47,12 +47,67 @@ declare module '../../context' {
 export class Commander {
   _commands: Map<Context, CommandInstance<any, any>[]> = new Map();
   prefix: string;
+  helpCommand: CommandInstance<any, any>; // 方便别人添加检查
+  helpMessageObj: IHelpMessage = {
+    help: { description: '提供指令相关帮助', required: { command: '指令名称' } },
+  };
 
   constructor(private ctx: Context) {
     defineProperty(this, Context.current, ctx);
     this.prefix = ctx.scope.config.commandPrefix;
 
     ctx.middleware(this.setupCommandParser.bind(this), true); // 前置中间件保证指令得到优先处理
+
+    this.helpCommand = ctx
+      .command('help [command]', '指令帮助', {})
+      .action((argv, bot, session) => {
+        const meetCommands = [];
+
+        for (let [context, command] of this._commands.entries()) {
+          if (context.filter(session)) {
+            meetCommands.push(...command);
+          }
+        }
+
+        // 没有指令则列出所有指令
+        if (!argv.command) {
+          const msg = meetCommands.map((item) => ({
+            name: `${item.name} ${item.aliases.length !== 0 ? `(${item.aliases.toString()})` : ''}`,
+            description: item.description,
+          }));
+          bot.sendMessage(
+            session.channelId,
+            Commander.CardTemplete(
+              '指令帮助',
+              msg,
+              session.data.content,
+              session.data.extra.author.avatar,
+            ),
+            {
+              type: MessageType.card,
+              quote: session.data.msg_id,
+            },
+          );
+          return;
+        }
+
+        for (const obj of meetCommands) {
+          if (obj.name == argv.command) {
+            const content = this.helpMessageObj[obj.name];
+            if (!content) {
+              return `指令 **${obj.name}** - ${
+                obj.description
+              }\n **必填参数** ${obj.requiredMatches.toString()}\n **选填参数** ${obj.optionalMatches.toString()}`;
+            }
+            bot.sendMessage(session.channelId, Commander.HelpCardTemplate(obj.name, content), {
+              type: MessageType.card,
+              quote: session.data.msg_id,
+            });
+            return;
+          }
+        }
+        return `没有找到指令 ${argv.command}`;
+      });
   }
 
   protected get caller() {
@@ -130,6 +185,7 @@ export class Commander {
     bot.sendMessage(
       session.channelId,
       Commander.CardTemplete(
+        '相似指令提示',
         msg,
         session.data.content,
         session.data.extra.author.avatar,
@@ -142,6 +198,7 @@ export class Commander {
   };
 
   static CardTemplete(
+    title: string,
     commands: { name: string; description: string }[],
     input: string,
     avatar: string,
@@ -161,7 +218,7 @@ export class Commander {
             type: 'header',
             text: {
               type: 'plain-text',
-              content: '相似指令提示',
+              content: title,
             },
           },
           {
@@ -216,4 +273,69 @@ export class Commander {
     context.runtime.disposables.push(() => this._commands.delete(context));
     return command;
   }
+
+  addHelp(message: IHelpMessage) {
+    this.helpMessageObj = { ...this.helpMessageObj, ...message };
+  }
+
+  static HelpCardTemplate(name: string, obj: IHelpContent) {
+    const base = [
+      {
+        type: 'card',
+        theme: 'secondary',
+        size: 'lg',
+        modules: [
+          {
+            type: 'header',
+            text: {
+              type: 'plain-text',
+              content: `指令帮助 - ${name}`,
+            },
+          },
+          {
+            type: 'context',
+            elements: [
+              {
+                type: 'plain-text',
+                content: obj.description,
+              },
+            ],
+          },
+        ],
+      },
+    ];
+
+    for (const [key, value] of Object.entries(obj?.required)) {
+      addModule(key, value, 'purple');
+    }
+
+    for (const [key, value] of Object.entries(obj?.optional)) {
+      addModule(key, value, 'success');
+    }
+
+    for (const [key, value] of Object.entries(obj?.flags)) {
+      addModule(key, value, 'pink');
+    }
+
+    function addModule(key, value, color) {
+      base[0].modules.push({
+        type: 'section',
+        text: {
+          type: 'kmarkdown',
+          content: `(font)${key}(font)[${color}] - ${value}`,
+        },
+      });
+    }
+
+    return JSON.stringify(base);
+  }
 }
+
+export type IHelpMessage = Dict<IHelpContent>;
+
+type IHelpContent = {
+  description: string;
+  required?: Dict<string>;
+  optional?: Dict<string>;
+  flags?: Dict<string>;
+};

@@ -2,7 +2,7 @@ import { Awaitable, defineProperty } from 'cosmokit';
 import { Context } from '../context';
 import { logger } from '../Logger';
 import { Bot } from '../bot';
-import { Data, MessageExtra, Session } from '../types';
+import { Data, MessageExtra, MessageSession, Session } from '../types';
 
 declare module '../context' {
   interface Context {
@@ -12,7 +12,7 @@ declare module '../context' {
   }
 
   interface Events {
-    'middleware'(bot: Bot, data: Data<MessageExtra>): void;
+    'middleware'(bot: Bot, data: MessageSession<MessageExtra>): void;
   }
 }
 
@@ -53,7 +53,7 @@ export class Processor {
     return this.caller.lifecycle.register('middleware', this._hooks, middleware, prepend);
   }
 
-  private async _handleMessage(bot, session) {
+  private async _handleMessage(bot: Bot, session: MessageSession<any>) {
     // 筛选出符合特定 session 内容的中间件组成数组
     const queue: Next.Queue = this._hooks
       .filter(([context]) => context.filter(session))
@@ -83,7 +83,7 @@ export class Processor {
     // 如果结果是一个字符串，我们将其作为信息发送出去
     try {
       const result = await next();
-      if (result) await bot.sendMessage(session.channelId, result);
+      if (result) await bot.sendMessage(session.channelId, result, { quote: session.data.msg_id });
     } finally {
       this.ctx.emit(session, 'middleware', bot, session);
     }
