@@ -58,9 +58,8 @@ export class Commander {
 
     ctx.middleware(this.setupCommandParser.bind(this), true); // 前置中间件保证指令得到优先处理
 
-    this.helpCommand = ctx
-      .command('help [command]', '指令帮助', {})
-      .action((argv, bot, session) => {
+    this.helpCommand = this.command('help [command]', '指令帮助', {}).action(
+      (argv, bot, session) => {
         const meetCommands = [];
 
         for (let [context, command] of this._commands.entries()) {
@@ -107,7 +106,8 @@ export class Commander {
           }
         }
         return `没有找到指令 ${argv.command}`;
-      });
+      },
+    );
   }
 
   protected get caller() {
@@ -305,15 +305,15 @@ export class Commander {
       },
     ];
 
-    for (const [key, value] of Object.entries(obj?.required)) {
+    for (const [key, value] of Object.entries(obj?.required ?? {})) {
       addModule(key, value, 'purple');
     }
 
-    for (const [key, value] of Object.entries(obj?.optional)) {
+    for (const [key, value] of Object.entries(obj?.optional ?? {})) {
       addModule(key, value, 'success');
     }
 
-    for (const [key, value] of Object.entries(obj?.flags)) {
+    for (const [key, value] of Object.entries(obj?.flags ?? {})) {
       addModule(key, value, 'pink');
     }
 
