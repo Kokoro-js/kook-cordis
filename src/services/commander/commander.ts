@@ -8,9 +8,19 @@ import { logger } from '../../Logger';
 import { search } from 'fast-fuzzy';
 import { MessageExtra, MessageSession, MessageType } from '../../types';
 import { Bot } from '../../bot';
-import { Middleware } from '../middleware';
+import { Middleware, Next } from '../middleware';
+import { CardTemplate } from './Template';
 
 export { CommandInstance };
+
+export type IHelpMessage = Dict<IHelpContent>;
+
+export type IHelpContent = {
+  description: string;
+  required?: Dict<string>;
+  optional?: Dict<string>;
+  flags?: Dict<string>;
+};
 
 declare module '../../context' {
   interface Context {
@@ -21,6 +31,8 @@ declare module '../../context' {
       description: string,
       options: T,
     ): CommandInstance<T, P>;
+
+    addCommandHelp(message: IHelpMessage): IHelpMessage;
   }
 
   interface Events {
@@ -60,7 +72,7 @@ export class Commander {
 
     this.helpCommand = this.command('help [command]', '指令帮助', {}).action(
       (argv, bot, session) => {
-        const meetCommands = [];
+        const meetCommands: CommandInstance<any, any>[] = [];
 
         for (let [context, command] of this._commands.entries()) {
           if (context.filter(session)) {
@@ -70,15 +82,11 @@ export class Commander {
 
         // 没有指令则列出所有指令
         if (!argv.command) {
-          const msg = meetCommands.map((item) => ({
-            name: `${item.name} ${item.aliases.length !== 0 ? `(${item.aliases.toString()})` : ''}`,
-            description: item.description,
-          }));
           bot.sendMessage(
             session.channelId,
-            Commander.CardTemplete(
+            CardTemplate.CommandList(
               '指令帮助',
-              msg,
+              this.formatCommandListOutput(meetCommands),
               session.data.content,
               session.data.extra.author.avatar,
             ),
@@ -96,9 +104,11 @@ export class Commander {
             if (!content) {
               return `指令 **${obj.name}** - ${
                 obj.description
-              }\n **必填参数** ${obj.requiredMatches.toString()}\n **选填参数** ${obj.optionalMatches.toString()}`;
+              }\n **必填参数** ${obj.requiredMatches.toString()}\n **选填参数** ${obj.optionalMatches.toString()}\n **标签** ${Object.keys(
+                obj.options,
+              )}`;
             }
-            bot.sendMessage(session.channelId, Commander.HelpCardTemplate(obj.name, content), {
+            bot.sendMessage(session.channelId, CardTemplate.HelpCardTemplate(obj.name, content), {
               type: MessageType.card,
               quote: session.data.msg_id,
             });
@@ -113,7 +123,32 @@ export class Commander {
   protected get caller() {
     return this[Context.current] as Context;
   }
-  private setupCommandParser: Middleware = async (bot, session, next) => {
+
+  command<T extends Flags<Record<string, unknown>>, P extends string>(
+    commandName: P,
+    description: string,
+    options: T,
+  ): CommandInstance<T, P> {
+    const command = new CommandInstance<T, P>(commandName, description, options);
+    const context = this.caller;
+
+    if (this._commands.has(context)) {
+      this._commands.get(context).push(command);
+    } else {
+      this._commands.set(context, [command]);
+    }
+
+    // 在情境卸载的时候也移除注册的指令
+    context.runtime.disposables.push(() => this._commands.delete(context));
+    return command;
+  }
+
+  addCommandHelp(message: IHelpMessage) {
+    this.helpMessageObj = { ...this.helpMessageObj, ...message };
+    return this.helpMessageObj;
+  }
+
+  private async setupCommandParser(bot: Bot, session: MessageSession<MessageExtra>, next: Next) {
     if (!session.data.content.startsWith(this.prefix)) return next();
     let input = session.data.content.substring(this.prefix.length);
 
@@ -176,17 +211,11 @@ export class Commander {
       return;
     }
 
-    // 把 Command 的 name 和 description 取出，做好发卡片准备
-    const msg = result.map((item) => ({
-      name: `${item.name} ${item.aliases.length !== 0 ? `(${item.aliases.toString()})` : ''}`,
-      description: item.description,
-    }));
-
     bot.sendMessage(
       session.channelId,
-      Commander.CardTemplete(
+      CardTemplate.CommandList(
         '相似指令提示',
-        msg,
+        this.formatCommandListOutput(result),
         session.data.content,
         session.data.extra.author.avatar,
       ).toString(),
@@ -195,147 +224,12 @@ export class Commander {
         quote: session.data.msg_id,
       },
     );
-  };
-
-  static CardTemplete(
-    title: string,
-    commands: { name: string; description: string }[],
-    input: string,
-    avatar: string,
-  ) {
-    let content = '**指令** - *描述* \n';
-    for (const b of commands) {
-      content += `**${b.name}** - *${b.description}*\n`;
-    }
-
-    const a = [
-      {
-        type: 'card',
-        size: 'lg',
-        theme: 'warning',
-        modules: [
-          {
-            type: 'header',
-            text: {
-              type: 'plain-text',
-              content: title,
-            },
-          },
-          {
-            type: 'section',
-            text: {
-              type: 'kmarkdown',
-              content: content,
-            },
-          },
-          {
-            type: 'context',
-            elements: [
-              {
-                type: 'plain-text',
-                content: '匹配触发：',
-              },
-              {
-                type: 'image',
-                src: avatar,
-                alt: '',
-                size: 'lg',
-                circle: false,
-              },
-              {
-                type: 'kmarkdown',
-                content: input,
-              },
-            ],
-          },
-        ],
-      },
-    ];
-
-    return JSON.stringify(a);
   }
 
-  command<T extends Flags<Record<string, unknown>>, P extends string>(
-    commandName: P,
-    description: string,
-    options: T,
-  ): CommandInstance<T, P> {
-    const command = new CommandInstance<T, P>(commandName, description, options);
-    const context = this.caller;
-
-    if (this._commands.has(context)) {
-      this._commands.get(context).push(command);
-    } else {
-      this._commands.set(context, [command]);
-    }
-
-    // 在情境卸载的时候也移除注册的指令
-    context.runtime.disposables.push(() => this._commands.delete(context));
-    return command;
-  }
-
-  addHelp(message: IHelpMessage) {
-    this.helpMessageObj = { ...this.helpMessageObj, ...message };
-  }
-
-  static HelpCardTemplate(name: string, obj: IHelpContent) {
-    const base = [
-      {
-        type: 'card',
-        theme: 'secondary',
-        size: 'lg',
-        modules: [
-          {
-            type: 'header',
-            text: {
-              type: 'plain-text',
-              content: `指令帮助 - ${name}`,
-            },
-          },
-          {
-            type: 'context',
-            elements: [
-              {
-                type: 'plain-text',
-                content: obj.description,
-              },
-            ],
-          },
-        ],
-      },
-    ];
-
-    for (const [key, value] of Object.entries(obj?.required ?? {})) {
-      addModule(key, value, 'purple');
-    }
-
-    for (const [key, value] of Object.entries(obj?.optional ?? {})) {
-      addModule(key, value, 'success');
-    }
-
-    for (const [key, value] of Object.entries(obj?.flags ?? {})) {
-      addModule(key, value, 'pink');
-    }
-
-    function addModule(key, value, color) {
-      base[0].modules.push({
-        type: 'section',
-        text: {
-          type: 'kmarkdown',
-          content: `(font)${key}(font)[${color}] - ${value}`,
-        },
-      });
-    }
-
-    return JSON.stringify(base);
+  private formatCommandListOutput(commandList: CommandInstance<any, any>[]) {
+    return commandList.map((item) => ({
+      name: `${item.name} ${item.aliases.length !== 0 ? `(${item.aliases.toString()})` : ''}`,
+      description: item.description,
+    }));
   }
 }
-
-export type IHelpMessage = Dict<IHelpContent>;
-
-type IHelpContent = {
-  description: string;
-  required?: Dict<string>;
-  optional?: Dict<string>;
-  flags?: Dict<string>;
-};
