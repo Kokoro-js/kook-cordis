@@ -108,10 +108,17 @@ export class Commander {
                 obj.options,
               )}`;
             }
-            bot.sendMessage(session.channelId, CardTemplate.HelpCardTemplate(obj.name, content), {
-              type: MessageType.card,
-              quote: session.data.msg_id,
-            });
+            bot.sendMessage(
+              session.channelId,
+              CardTemplate.HelpCardTemplate(
+                `${obj.name} ${obj.aliases.length !== 0 ? `(${obj.aliases.toString()})` : ''}`,
+                content,
+              ),
+              {
+                type: MessageType.card,
+                quote: session.data.msg_id,
+              },
+            );
             return;
           }
         }
