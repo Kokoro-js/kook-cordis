@@ -28,7 +28,7 @@ type CheckerFunction = (
   session: MessageSession<MessageExtra>,
 ) => Awaitable<void | boolean>;
 
-export class CommandInstance<T extends Flags, P extends string> {
+export class CommandInstance<T extends Flags = any, P extends string = any> {
   readonly name: string;
   readonly description: string;
   readonly options: T;

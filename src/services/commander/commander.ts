@@ -8,7 +8,7 @@ import { logger } from '../../Logger';
 import { search } from 'fast-fuzzy';
 import { MessageExtra, MessageSession, MessageType } from '../../types';
 import { Bot } from '../../bot';
-import { Middleware, Next } from '../middleware';
+import { Next } from '../middleware';
 import { CardTemplate } from './Template';
 
 export { CommandInstance };
@@ -32,6 +32,8 @@ declare module '../../context' {
       options: T,
     ): CommandInstance<T, P>;
 
+    get commands(): CommandInstance[];
+
     addCommandHelp(message: IHelpMessage): IHelpMessage;
   }
 
@@ -43,13 +45,13 @@ declare module '../../context' {
     ): Awaitable<void | string | boolean>;
 
     'command/before-execute'(
-      command: CommandInstance<any, any>,
+      command: CommandInstance,
       bot: Bot,
       session: MessageSession<MessageExtra>,
     ): Awaitable<void | string>;
 
     'command/execute'(
-      command: CommandInstance<any, any>,
+      command: CommandInstance,
       bot: Bot,
       session: MessageSession<MessageExtra>,
     ): void;
@@ -57,9 +59,9 @@ declare module '../../context' {
 }
 
 export class Commander {
-  _commands: Map<Context, CommandInstance<any, any>[]> = new Map();
+  _commands: Map<Context, CommandInstance[]> = new Map();
   prefix: string;
-  helpCommand: CommandInstance<any, any>; // 方便别人添加检查
+  helpCommand: CommandInstance; // 方便别人添加检查
   helpMessageObj: IHelpMessage = {
     help: { description: '提供指令相关帮助', required: { command: '指令名称' } },
   };
@@ -72,7 +74,7 @@ export class Commander {
 
     this.helpCommand = this.command('help [command]', '指令帮助', {}).action(
       (argv, bot, session) => {
-        const meetCommands: CommandInstance<any, any>[] = [];
+        const meetCommands: CommandInstance[] = [];
 
         for (let [context, command] of this._commands.entries()) {
           if (context.filter(session)) {
@@ -131,6 +133,10 @@ export class Commander {
     return this[Context.current] as Context;
   }
 
+  get commands() {
+    return this._commands.get(this.caller);
+  }
+
   command<T extends Flags<Record<string, unknown>>, P extends string>(
     commandName: P,
     description: string,
@@ -185,7 +191,7 @@ export class Commander {
       }
     }
 
-    let commandArray: CommandInstance<any, any>[] = [];
+    let commandArray: CommandInstance[] = [];
     for (const obj of meetCommands) {
       // 如果匹配到指令就直接结束
       if (commandInputMain === obj.name || obj.aliases.includes(commandInputMain)) {
@@ -233,7 +239,7 @@ export class Commander {
     );
   }
 
-  private formatCommandListOutput(commandList: CommandInstance<any, any>[]) {
+  private formatCommandListOutput(commandList: CommandInstance[]) {
     return commandList.map((item) => ({
       name: `${item.name} ${item.aliases.length !== 0 ? `(${item.aliases.toString()})` : ''}`,
       description: item.description,
