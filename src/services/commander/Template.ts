@@ -44,13 +44,17 @@ export class CardTemplate {
                 type: 'plain-text',
                 content: '匹配触发：',
               },
-              {
-                type: 'image',
-                src: avatar,
-                alt: '',
-                size: 'lg',
-                circle: false,
-              },
+              ...(avatar.includes('avatars')
+                ? [
+                    {
+                      type: 'image',
+                      src: avatar,
+                      alt: '',
+                      size: 'lg',
+                      circle: true,
+                    },
+                  ]
+                : []),
               {
                 type: 'kmarkdown',
                 content: input,
