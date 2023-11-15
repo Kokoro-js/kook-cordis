@@ -79,8 +79,8 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
     if (this.requiredMatches.length > argv._.length) {
       bot.sendMessage(
         session.channelId,
-        `须填参数 ${argv._.length} 个，还缺少 ${
-          argv._.length - this.requiredMatches.length
+        `须填参数 ${this.requiredMatches.length} 个，还缺少 ${
+          this.requiredMatches.length - argv._.length
         } 个参数。`,
         { quote: session.data.msg_id },
       );
