@@ -1,6 +1,7 @@
 import { Context } from './context';
 import { NoticeType, Session } from './types';
 import { KookEvent } from './events';
+import { logger } from './Logger';
 
 export function internalWebhook(ctx: Context, bot, data) {
   const session: Session<any> = {
@@ -15,19 +16,34 @@ export function internalWebhook(ctx: Context, bot, data) {
   };
 
   if (data.type != 255) {
-    ctx.parallel(session, 'message', bot, session);
-    if (data.channel_type == 'GROUP') ctx.parallel(session, 'message-created', bot, session);
+    ctx.parallel(session, 'message', bot, session).catch((e) => {
+      logger.error(e);
+    });
+    if (data.channel_type == 'GROUP')
+      ctx.parallel(session, 'message-created', bot, session).catch((e) => {
+        logger.error(e);
+      });
     if (data.channel_type == 'PERSON')
-      ctx.parallel(session, 'private-message-created', bot, session);
+      ctx.parallel(session, 'private-message-created', bot, session).catch((e) => {
+        logger.error(e);
+      });
     return;
   }
-  ctx.parallel(session, 'webhook', bot, data);
+  ctx.parallel(session, 'webhook', bot, data).catch((e) => {
+    logger.error(e);
+  });
   if (data.extra.type == 'message_btn_click') {
-    ctx.serial(session, 'serial-button-click', bot, session);
-    ctx.parallel(session, 'button-click', bot, session);
+    ctx.serial(session, 'serial-button-click', bot, session).catch((e) => {
+      logger.error(e);
+    });
+    ctx.parallel(session, 'button-click', bot, session).catch((e) => {
+      logger.error(e);
+    });
     return;
   }
-  ctx.parallel(session, eventMap[data.extra.type], bot, session);
+  ctx.parallel(session, eventMap[data.extra.type], bot, session).catch((e) => {
+    logger.error(e);
+  });
 }
 
 const eventMap: { [K in NoticeType]: keyof KookEvent } = {
