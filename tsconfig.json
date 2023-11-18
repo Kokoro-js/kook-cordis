@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
     "target": "es2022",
-    "module": "commonjs",
+    "module": "nodenext",
     "outDir": "./dist", // 输出目录为 dist
     "rootDir": "./src", // TypeScript源代码目录为 src
+    "removeComments": false,
     "esModuleInterop": true,
     "moduleResolution": "node",
     "strictBindCallApply": true,
