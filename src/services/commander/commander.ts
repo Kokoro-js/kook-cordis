@@ -61,7 +61,11 @@ declare module '../../context' {
 export class Commander {
   _commands: Map<Context, CommandInstance[]> = new Map();
   prefix: string;
-  helpCommand: CommandInstance; // 方便别人添加检查
+
+  // 方便添加冷却
+  helpCommand: CommandInstance;
+  inspectCommand: CommandInstance;
+
   helpMessageObj: IHelpMessage = {
     help: { description: '提供指令相关帮助', required: { command: '指令名称' } },
   };
@@ -127,6 +131,16 @@ export class Commander {
         return `没有找到指令 ${argv.command}`;
       },
     );
+
+    this.inspectCommand = this.command('inspect', '获取当前情境的信息', {})
+      .guildAdminOnly()
+      .action((argv, bot, session) => {
+        bot.sendMessage(
+          session.channelId,
+          `服务器: ${session.guildId}\n 频道: ${session.channelId}\n 用户: ${session.userId}`,
+          { temp_target_id: session.userId },
+        );
+      });
   }
 
   protected get caller() {

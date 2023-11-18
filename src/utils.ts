@@ -1,5 +1,10 @@
 import { List, Pagination, Permissions } from './types';
 
+/**
+ *
+ * @param permissions 代表权限值
+ * @param permission 对应枚举
+ */
 export function hasPermission(permissions: number, permission: Permissions) {
   return (permissions & (1 << permission)) === 1 << permission;
 }
