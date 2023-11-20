@@ -6,8 +6,8 @@ import { logger } from './Logger';
 export function internalWebhook(ctx: Context, bot, data) {
   const session: Session<any> = {
     userId: data.author_id == '1' ? data.extra.body.user_id : data.author_id,
-    channelId: data.extra.channelId || data.target_id,
-    guildId: data.extra.guild_id || data.target_id,
+    channelId: data.extra.body.channel_id || data.target_id,
+    guildId: data.extra.body.guild_id || data.target_id,
     selfId: bot.userME.id,
     data: data,
   };
