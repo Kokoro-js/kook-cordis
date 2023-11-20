@@ -4,10 +4,11 @@ import { KookEvent } from './events';
 import { logger } from './Logger';
 
 export function internalWebhook(ctx: Context, bot, data) {
+  // 大多数情况下都为信息
   const session: Session<any> = {
     userId: data.author_id == '1' ? data.extra.body.user_id : data.author_id,
-    channelId: data.extra.body?.channel_id || data.extra.body?.target_id || data.target_id,
-    guildId: data.extra.body?.guild_id || data.target_id,
+    channelId: undefined,
+    guildId: undefined,
     selfId: bot.userME.id,
     data: data,
   };
@@ -15,7 +16,10 @@ export function internalWebhook(ctx: Context, bot, data) {
     return ctx.filter(session);
   };
 
+  // 不是 255 则为普通信息
   if (data.type != 255) {
+    session.guildId = data.extra.guildId;
+    session.channelId = data.target_id;
     ctx.parallel(session, 'message', bot, session).catch((e) => {
       logger.error(e);
     });
@@ -29,10 +33,15 @@ export function internalWebhook(ctx: Context, bot, data) {
       });
     return;
   }
+
+  session.guildId = data.extra.body.guildId;
+  session.channelId = data.extra.body?.channelId || data.target_id;
+
   ctx.parallel(session, 'webhook', bot, data).catch((e) => {
     logger.error(e);
   });
   if (data.extra.type == 'message_btn_click') {
+    session.channelId = data.extra.body.target_id;
     ctx.serial(session, 'serial-button-click', bot, session).catch((e) => {
       logger.error(e);
     });
