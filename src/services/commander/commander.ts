@@ -71,7 +71,7 @@ export class Commander {
     defineProperty(this, Context.current, ctx);
     this.prefix = ctx.scope.config.commandPrefix;
 
-    ctx.middleware(this.useCommandParser.bind(this), true); // 前置中间件保证指令得到优先处理
+    ctx.middleware(this.setupCommandParser.bind(this), true); // 前置中间件保证指令得到优先处理
 
     this.helpCommand = this.command('help [command]', '指令帮助', {}).action(
       (argv, bot, session) => {
@@ -148,8 +148,10 @@ export class Commander {
     return this._commands.get(this.caller);
   }
 
-  executeString(bot: Bot, session: MessageSession<MessageExtra>) {
-    this.useCommandParser(bot, session, null);
+  executeString(bot: Bot, session: MessageSession, input?: string) {
+    input = input ?? session.data.content;
+    if (!input.startsWith(this.prefix)) return;
+    return this.parseStringAndExecuteFound(bot, session);
   }
 
   command<T extends Flags<Record<string, unknown>>, P extends string>(
@@ -176,8 +178,7 @@ export class Commander {
     return this.helpMessageObj;
   }
 
-  private async useCommandParser(bot: Bot, session: MessageSession<MessageExtra>, next: Next) {
-    if (!session.data.content.startsWith(this.prefix)) return next();
+  private async parseStringAndExecuteFound(bot, session) {
     let input = session.data.content.substring(this.prefix.length);
 
     const response = await this.ctx.bail('command/before-parse', input, bot, session);
@@ -231,7 +232,14 @@ export class Commander {
     }
 
     // 默认使用 damerau-levenshtein，只有相似度达到 0.6 返回结果
-    const result = search(commandInputMain, commandArray, { keySelector: (obj) => obj.name });
+    return search(commandInputMain, commandArray, { keySelector: (obj) => obj.name });
+  }
+
+  private async setupCommandParser(bot: Bot, session: MessageSession, next: Next) {
+    if (!session.data.content.startsWith(this.prefix)) return next();
+
+    const result = await this.parseStringAndExecuteFound(bot, session);
+    if (!result) return;
 
     // 没有相似的，告诉用户找不到指令
     if (result.length === 0) {
