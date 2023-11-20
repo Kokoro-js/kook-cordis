@@ -119,7 +119,7 @@ export class Context extends cordis.Context {
       'addOrFilterToThis',
     ]);
     this.mixin('$processor', ['middleware']);
-    this.mixin('$commander', ['command', 'commands', 'addCommandHelp']);
+    this.mixin('$commander', ['command', 'commands', 'executeString', 'addCommandHelp']);
     this.mixin('$routers', ['router']);
   }
 

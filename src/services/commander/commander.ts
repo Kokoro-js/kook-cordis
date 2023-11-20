@@ -34,6 +34,7 @@ declare module '../../context' {
 
     get commands(): CommandInstance[];
 
+    executeString(bot: Bot, session: MessageSession): void;
     addCommandHelp(message: IHelpMessage): IHelpMessage;
   }
 
@@ -41,20 +42,16 @@ declare module '../../context' {
     'command/before-parse'(
       input: string,
       bot: Bot,
-      session: MessageSession<MessageExtra>,
+      session: MessageSession,
     ): Awaitable<void | string | boolean>;
 
     'command/before-execute'(
       command: CommandInstance,
       bot: Bot,
-      session: MessageSession<MessageExtra>,
+      session: MessageSession,
     ): Awaitable<void | string>;
 
-    'command/execute'(
-      command: CommandInstance,
-      bot: Bot,
-      session: MessageSession<MessageExtra>,
-    ): void;
+    'command/execute'(command: CommandInstance, bot: Bot, session: MessageSession): void;
   }
 }
 
@@ -74,7 +71,7 @@ export class Commander {
     defineProperty(this, Context.current, ctx);
     this.prefix = ctx.scope.config.commandPrefix;
 
-    ctx.middleware(this.setupCommandParser.bind(this), true); // 前置中间件保证指令得到优先处理
+    ctx.middleware(this.useCommandParser.bind(this), true); // 前置中间件保证指令得到优先处理
 
     this.helpCommand = this.command('help [command]', '指令帮助', {}).action(
       (argv, bot, session) => {
@@ -151,6 +148,10 @@ export class Commander {
     return this._commands.get(this.caller);
   }
 
+  executeString(bot: Bot, session: MessageSession<MessageExtra>) {
+    this.useCommandParser(bot, session, null);
+  }
+
   command<T extends Flags<Record<string, unknown>>, P extends string>(
     commandName: P,
     description: string,
@@ -175,7 +176,7 @@ export class Commander {
     return this.helpMessageObj;
   }
 
-  private async setupCommandParser(bot: Bot, session: MessageSession<MessageExtra>, next: Next) {
+  private async useCommandParser(bot: Bot, session: MessageSession<MessageExtra>, next: Next) {
     if (!session.data.content.startsWith(this.prefix)) return next();
     let input = session.data.content.substring(this.prefix.length);
 
