@@ -18,7 +18,7 @@ export function internalWebhook(ctx: Context, bot, data) {
 
   // 不是 255 则为普通信息
   if (data.type != 255) {
-    session.guildId = data.extra.guildId;
+    session.guildId = data.extra.guild_id;
     session.channelId = data.target_id;
     ctx.parallel(session, 'message', bot, session).catch((e) => {
       logger.error(e);
@@ -34,8 +34,8 @@ export function internalWebhook(ctx: Context, bot, data) {
     return;
   }
 
-  session.guildId = data.extra.body.guildId;
-  session.channelId = data.extra.body?.channelId || data.target_id;
+  session.guildId = data.extra.body?.guild_id || data.target_id;
+  session.channelId = data.extra.body?.channel_id || data.target_id;
 
   ctx.parallel(session, 'webhook', bot, data).catch((e) => {
     logger.error(e);
