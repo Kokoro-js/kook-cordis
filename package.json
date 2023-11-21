@@ -38,7 +38,8 @@
     "dev:start": "cross-env LEVEL=trace ts-node-dev --respawn --debounce 1000 src/app.ts | pino-pretty"
   },
   "files": [
-    "dist/"
+    "dist/",
+    "!/dist/app.*"
   ],
   "keywords": [],
   "author": "",
