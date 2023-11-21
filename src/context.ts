@@ -113,10 +113,6 @@ export class Context extends cordis.Context {
       'guild',
       'channel',
       'private',
-      'mergeFilterData',
-      'removeFilterData',
-      'addAndFilterToThis',
-      'addOrFilterToThis',
     ]);
     this.mixin('$processor', ['middleware']);
     this.mixin('$commander', ['command', 'commands', 'executeString', 'addCommandHelp']);
