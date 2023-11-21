@@ -74,7 +74,7 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
       const guildRoles = await bot.getGuildRoleList({ guild_id: session.guildId });
       const role = session.data.extra.author.roles[0];
       const targetRole = guildRoles.items.find((item) => item.role_id == role);
-      if (hasPermission(targetRole.permissions, Permissions.GUILD_ADMIN)) return true;
+      if (targetRole && hasPermission(targetRole.permissions, Permissions.GUILD_ADMIN)) return true;
       bot.sendMessage(session.channelId, '你没有权限执行此操作。');
       return false;
     };
