@@ -6,52 +6,50 @@ import { logger } from './Logger';
 export function internalWebhook(ctx: Context, bot, data) {
   // 大多数情况下都为信息
   const session: Session<any> = {
-    userId: data.author_id == '1' ? data.extra.body.user_id : data.author_id,
+    userId: data.author_id === '1' ? data.extra.body.user_id : data.author_id,
     channelId: undefined,
     guildId: undefined,
     selfId: bot.userME.id,
     data: data,
   };
-  session[Context.filter] = (ctx) => {
-    return ctx.filter(session);
-  };
+  session[Context.filter] = (ctx) => ctx.filter(session);
 
-  // 不是 255 则为普通信息
-  if (data.type != 255) {
+  // 不是特定类型，当作普通信息
+  if (data.type !== 255) {
     session.guildId = data.extra.guild_id;
     session.channelId = data.target_id;
-    ctx.parallel(session, 'message', bot, session).catch((e) => {
-      logger.error(e);
-    });
-    if (data.channel_type == 'GROUP')
-      ctx.parallel(session, 'message-created', bot, session).catch((e) => {
-        logger.error(e);
-      });
-    if (data.channel_type == 'PERSON')
-      ctx.parallel(session, 'private-message-created', bot, session).catch((e) => {
-        logger.error(e);
-      });
+
+    processEvent(ctx, session, 'message', bot);
+    if (data.channel_type === 'GROUP') {
+      processEvent(ctx, session, 'message-created', bot);
+    }
+    if (data.channel_type === 'PERSON') {
+      session.guildId = data.target_id;
+      processEvent(ctx, session, 'private-message-created', bot);
+    }
     return;
   }
+  // Handle webhook and button clicks
+  handleSpecialTypes(data, session, ctx, bot);
+}
 
+function handleSpecialTypes(data, session, ctx, bot) {
   session.guildId = data.extra.body?.guild_id || data.target_id;
   session.channelId = data.extra.body?.channel_id || data.target_id;
 
-  ctx.parallel(session, 'webhook', bot, data).catch((e) => {
-    logger.error(e);
-  });
-  if (data.extra.type == 'message_btn_click') {
+  processEvent(ctx, session, 'webhook', bot);
+  if (data.extra.type === 'message_btn_click') {
     session.channelId = data.extra.body.target_id;
-    ctx.serial(session, 'serial-button-click', bot, session).catch((e) => {
-      logger.error(e);
-    });
-    ctx.parallel(session, 'button-click', bot, session).catch((e) => {
-      logger.error(e);
-    });
+    processEvent(ctx, session, 'serial-button-click', bot);
+    processEvent(ctx, session, 'button-click', bot);
     return;
   }
-  ctx.parallel(session, eventMap[data.extra.type], bot, session).catch((e) => {
-    logger.error(e);
+  processEvent(ctx, session, eventMap[data.extra.type], bot);
+}
+
+function processEvent(ctx, session, eventType, bot) {
+  ctx.parallel(session, eventType, bot, session).catch((e) => {
+    logger.error(e, `Error processing event ${eventType}:`);
   });
 }
 
