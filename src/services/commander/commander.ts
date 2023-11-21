@@ -6,7 +6,7 @@ import { Flags } from 'type-flag';
 import { logger } from '../../Logger';
 
 import { search } from 'fast-fuzzy';
-import { MessageExtra, MessageSession, MessageType } from '../../types';
+import { MessageSession, MessageType } from '../../types';
 import { Bot } from '../../bot';
 import { Next } from '../middleware';
 import { CardTemplate } from './Template';
@@ -26,7 +26,7 @@ declare module '../../context' {
   interface Context {
     $commander: Commander;
 
-    command<T extends Flags<Record<string, unknown>>, P extends string>(
+    command<T extends Flags, P extends string>(
       commandName: P,
       description: string,
       options: T,
@@ -56,8 +56,8 @@ declare module '../../context' {
 }
 
 export class Commander {
-  _commands: Map<Context, CommandInstance[]> = new Map();
-  prefix: string;
+  readonly _commands: Map<Context, CommandInstance[]> = new Map();
+  readonly prefix: string;
 
   // 方便添加冷却
   helpCommand: CommandInstance;
@@ -85,19 +85,23 @@ export class Commander {
 
         // 没有指令则列出所有指令
         if (!argv.command) {
-          bot.sendMessage(
-            session.channelId,
-            CardTemplate.CommandList(
-              '指令帮助',
-              this.formatCommandListOutput(meetCommands),
-              session.data.content,
-              session.data.extra.author.avatar,
-            ),
-            {
-              type: MessageType.card,
-              quote: session.data.msg_id,
-            },
-          );
+          bot
+            .sendMessage(
+              session.channelId,
+              CardTemplate.CommandList(
+                '指令帮助',
+                this.formatCommandListOutput(meetCommands),
+                session.data.content,
+                session.data.extra.author.avatar,
+              ),
+              {
+                type: MessageType.card,
+                quote: session.data.msg_id,
+              },
+            )
+            .catch((e) => {
+              bot.logger.error(e, '处理 Help 时遇到错误');
+            });
           return;
         }
 
@@ -111,17 +115,21 @@ export class Commander {
                 obj.options,
               )}`;
             }
-            bot.sendMessage(
-              session.channelId,
-              CardTemplate.HelpCardTemplate(
-                `${obj.name} ${obj.aliases.length !== 0 ? `(${obj.aliases.toString()})` : ''}`,
-                content,
-              ),
-              {
-                type: MessageType.card,
-                quote: session.data.msg_id,
-              },
-            );
+            bot
+              .sendMessage(
+                session.channelId,
+                CardTemplate.HelpCardTemplate(
+                  `${obj.name} ${obj.aliases.length !== 0 ? `(${obj.aliases.toString()})` : ''}`,
+                  content,
+                ),
+                {
+                  type: MessageType.card,
+                  quote: session.data.msg_id,
+                },
+              )
+              .catch((e) => {
+                bot.logger.error(e, '处理 Help 时遇到错误');
+              });
             return;
           }
         }
@@ -132,11 +140,15 @@ export class Commander {
     this.inspectCommand = this.command('inspect', '获取当前情境的信息', {})
       .guildAdminOnly()
       .action((argv, bot, session) => {
-        bot.sendMessage(
-          session.channelId,
-          `服务器: ${session.guildId}\n 频道: ${session.channelId}\n 用户: ${session.userId}`,
-          { temp_target_id: session.userId },
-        );
+        bot
+          .sendMessage(
+            session.channelId,
+            `服务器: ${session.guildId}\n 频道: ${session.channelId}\n 用户: ${session.userId}`,
+            { temp_target_id: session.userId },
+          )
+          .catch((e) => {
+            bot.logger.error(e, '处理 inspect 时遇到错误');
+          });
       });
   }
 
@@ -154,7 +166,7 @@ export class Commander {
     return this.parseStringAndExecuteFound(bot, session);
   }
 
-  command<T extends Flags<Record<string, unknown>>, P extends string>(
+  command<T extends Flags, P extends string>(
     commandName: P,
     description: string,
     options: T,
@@ -221,7 +233,7 @@ export class Commander {
                 if (r) this.ctx.parallel('command/execute', obj, bot, session);
               })
               // 此处会把所有指令调用时发生的错误捕获并发布，比如 bot.sendMessage 遇到错误时。
-              .catch((e) => logger.error(e));
+              .catch((e) => bot.logger.error(e));
           }
         });
 
@@ -243,11 +255,11 @@ export class Commander {
 
     // 没有相似的，告诉用户找不到指令
     if (result.length === 0) {
-      bot.sendMessage(session.channelId, '找不到相关指令', { quote: session.data.msg_id });
+      await bot.sendMessage(session.channelId, '找不到相关指令', { quote: session.data.msg_id });
       return;
     }
 
-    bot.sendMessage(
+    await bot.sendMessage(
       session.channelId,
       CardTemplate.CommandList(
         '相似指令提示',

@@ -2,6 +2,16 @@ import { AxiosInstance, AxiosRequestConfig, Method } from 'axios';
 import * as Kook from '../types';
 import { IBaseAPIResponse } from '../types';
 
+export class ResponseError extends Error {
+  code: number;
+
+  constructor(message: string, code: number) {
+    super(message);
+    this.name = 'ResponseError';
+    this.code = code;
+  }
+}
+
 export abstract class AbstactBot {
   abstract http: AxiosInstance;
 
@@ -20,7 +30,8 @@ export abstract class AbstactBot {
       // Axios 在请求出现错误的时候会丢出详细错误，不需要手动判断
       const req = await this.http('/api/v3' + path, config);
       const response: IBaseAPIResponse<any> = req.data;
-      if (response.code !== 0) throw new Error(response.message || 'Unexpected Error');
+      if (response.code !== 0)
+        throw new ResponseError(response.message || 'Unexpected Error', response.code);
       return response.data;
     };
   }
@@ -33,7 +44,7 @@ export abstract class AbstactBot {
     const res = await this.http.post('/api/v3/message/create', { target_id, content, ...options });
     const response: IBaseAPIResponse<Kook.MessageReturn> = res.data;
     if (response.code != 0) {
-      throw new Error(response.message);
+      throw new ResponseError(response.message || 'Unexpected Error', response.code);
     }
 
     return response.data;
@@ -50,7 +61,8 @@ export abstract class AbstactBot {
   ) {
     const res = await this.http.post('/api/v3/message/update', { msg_id, content, ...options });
     const response: IBaseAPIResponse<[]> = res.data;
-    if (response.code != 0) throw new Error(response.message);
+    if (response.code != 0)
+      throw new ResponseError(response.message || 'Unexpected Error', response.code);
 
     return response.data;
   }
@@ -58,7 +70,8 @@ export abstract class AbstactBot {
   async deleteMessage(msg_id: string) {
     const res = await this.http.post('/api/v3/message/delete', { msg_id });
     const response: IBaseAPIResponse<[]> = res.data;
-    if (response.code != 0) throw new Error(response.message);
+    if (response.code != 0)
+      throw new ResponseError(response.message || 'Unexpected Error', response.code);
 
     return response.data;
   }

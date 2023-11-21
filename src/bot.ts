@@ -11,7 +11,7 @@ export class Bot extends AbstactBot {
   static reusable = true;
   readonly verifyToken: string;
   readonly token: string;
-  logger: pino.Logger<{ name: string }>;
+  readonly logger: pino.Logger<{ name: string }>;
   readonly http: AxiosInstance;
   userME: UserME;
   protected context: Context;
@@ -34,7 +34,11 @@ export class Bot extends AbstactBot {
 
     this.ctx.bots.push(this);
 
-    ctx.start();
+    ctx.start().catch((e) => {
+      this.logger.error(e);
+      ctx.stop();
+    });
+
     ctx.on('ready', () => {
       return this.start();
     });
@@ -43,18 +47,12 @@ export class Bot extends AbstactBot {
   }
 
   protected async start() {
-    try {
-      const response = await this.http.get('/api/v3/user/me');
-      const data = response.data as IBaseAPIResponse<UserME>;
-      if (data.code !== 0) {
-        this.logger.error('机器人获取自身信息失败');
-      }
-      this.userME = data.data;
-    } catch (error) {
-      this.logger.error('启动机器人失败，请检查 Token 是否相符。');
-      this.dispose();
-      throw error;
+    const response = await this.http.get('/api/v3/user/me');
+    const data = response.data as IBaseAPIResponse<UserME>;
+    if (data.code !== 0) {
+      throw new Error('机器人获取自身信息失败。');
     }
+    this.userME = data.data;
   }
 
   protected dispose() {

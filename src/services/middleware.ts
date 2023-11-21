@@ -12,7 +12,7 @@ declare module '../context' {
   }
 
   interface Events {
-    'middleware'(bot: Bot, data: MessageSession<MessageExtra>): void;
+    'middleware'(bot: Bot, data: MessageSession): void;
   }
 }
 
