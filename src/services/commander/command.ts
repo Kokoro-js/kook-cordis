@@ -127,9 +127,9 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
     return true;
   }
 
-  handleError(e: Error) {
+  handleError = (e: Error) => {
     this.logger.error(e);
-  }
+  };
 }
 
 function parseArgsStringToArgv(value: string) {
