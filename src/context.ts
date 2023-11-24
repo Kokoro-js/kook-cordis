@@ -195,6 +195,7 @@ export namespace Context {
     compressed?: boolean;
     prompt_timeout?: number;
     commandPrefix?: string;
+    developerIds?: string[];
     request?: Quester.Config;
   }
 
@@ -206,6 +207,7 @@ export namespace Context {
       compressed: Schema.boolean().default(true),
       prompt_timeout: Schema.natural().default(5000),
       commandPrefix: Schema.string().default('/'),
+      developerIds: Schema.array(Schema.string()).default([]),
     }),
     Quester.Config,
   ]);

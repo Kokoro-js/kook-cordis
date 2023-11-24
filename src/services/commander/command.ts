@@ -85,6 +85,12 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
     return this;
   }
 
+  developerOnly() {
+    this.checkers['developer'] = (bot, session) => {
+      return Commander.developerIds.includes(session.userId);
+    };
+  }
+
   async execute(possible: string, bot: Bot, session: MessageSession<MessageExtra>) {
     for (const check of Object.values(this.checkers)) {
       if ((await check(bot, session)) === false) return false;

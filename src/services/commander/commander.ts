@@ -59,6 +59,7 @@ declare module '../../context' {
 export class Commander {
   readonly _commands: Map<Context, CommandInstance[]> = new Map();
   readonly prefix: string;
+  static developerIds: string[];
   static readonly CommandLogger = createLogger('Command');
 
   // 方便添加冷却
@@ -72,6 +73,7 @@ export class Commander {
   constructor(private ctx: Context) {
     defineProperty(this, Context.current, ctx);
     this.prefix = ctx.scope.config.commandPrefix;
+    Commander.developerIds = ctx.scope.config.developerIds;
 
     ctx.middleware(this.setupCommandParser.bind(this), true); // 前置中间件保证指令得到优先处理
 
