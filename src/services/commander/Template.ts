@@ -6,6 +6,7 @@ export class CardTemplate {
     optional: 'success',
     flags: 'pink',
   };
+
   static CommandList(
     title: string,
     commands: { name: string; description: string }[],

@@ -1,6 +1,6 @@
 import { Awaitable, defineProperty } from 'cosmokit';
 import { Context } from '../context';
-import { logger } from '../Logger';
+import { createLogger } from '../Logger';
 import { Bot } from '../bot';
 import { Data, MessageExtra, MessageSession, Session } from '../types';
 
@@ -37,6 +37,7 @@ export namespace Next {
 export class Processor {
   // 不用 Map 来一个 Context 对应数个 Middlewares 优化的原因是要保证顺序
   _hooks: [Context, Middleware][] = [];
+  protected _logger = createLogger('Middleware');
 
   constructor(private ctx: Context) {
     defineProperty(this, Context.current, ctx);
@@ -75,7 +76,7 @@ export class Processor {
         // 如果中间件函数内部调用了 next()，则会递归调用下一个中间件函数，实现洋葱模型
         return await queue[index++]?.(next);
       } catch (error) {
-        logger.warn(error);
+        this._logger.warn(error);
       }
     };
 

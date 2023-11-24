@@ -3,6 +3,8 @@ import { Awaitable } from 'cosmokit';
 import { MessageExtra, MessageSession, Permissions } from '../../types';
 import { Bot } from '../../bot';
 import { hasPermission } from '../../utils';
+import { pino } from '../../Logger';
+import { Commander } from './commander';
 
 type ParseRequired<T extends string> = T extends `${infer Before} <${infer Param}> ${infer After}`
   ? { [K in Param]: string } & ParseRequired<`${Before} ${After}`>
@@ -33,6 +35,7 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
   readonly name: string;
   readonly description: string;
   readonly options: T;
+  readonly logger: pino.Logger<{ name: string; level: string }>;
   aliases: string[] = [];
   commandFunction: CallbackFunction<T, P>;
   checkers: Record<string, CheckerFunction> = {};
@@ -51,6 +54,7 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
     }
     this.description = desc;
     this.options = options;
+    this.logger = Commander.CommandLogger.child({ name, desc });
   }
 
   action(callback: CallbackFunction<T, P>) {
@@ -75,7 +79,7 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
       const role = session.data.extra.author.roles[0];
       const targetRole = guildRoles.items.find((item) => item.role_id == role);
       if (targetRole && hasPermission(targetRole.permissions, Permissions.GUILD_ADMIN)) return true;
-      bot.sendMessage(session.channelId, '你没有权限执行此操作。');
+      await bot.sendMessage(session.channelId, '你没有权限执行此操作。');
       return false;
     };
     return this;
@@ -90,7 +94,7 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
     const params: Record<string, string> = {};
 
     if (this.requiredMatches.length > argv._.length) {
-      bot.sendMessage(
+      await bot.sendMessage(
         session.channelId,
         `须填参数 ${this.requiredMatches.length} 个，还缺少 ${
           this.requiredMatches.length - argv._.length
@@ -114,6 +118,10 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
     const result = await this.commandFunction(argv as any, bot, session);
     if (result) await bot.sendMessage(session.channelId, result);
     return true;
+  }
+
+  handleError(e: Error) {
+    this.logger.error(e);
   }
 }
 

@@ -3,7 +3,7 @@ import { Context } from '../../context';
 
 import { CommandInstance } from './command';
 import { Flags } from 'type-flag';
-import { logger } from '../../Logger';
+import { createLogger } from '../../Logger';
 
 import { search } from 'fast-fuzzy';
 import { MessageSession, MessageType } from '../../types';
@@ -35,6 +35,7 @@ declare module '../../context' {
     get commands(): CommandInstance[];
 
     executeString(bot: Bot, session: MessageSession): void;
+
     addCommandHelp(message: IHelpMessage): IHelpMessage;
   }
 
@@ -58,6 +59,7 @@ declare module '../../context' {
 export class Commander {
   readonly _commands: Map<Context, CommandInstance[]> = new Map();
   readonly prefix: string;
+  static readonly CommandLogger = createLogger('Command');
 
   // 方便添加冷却
   helpCommand: CommandInstance;
@@ -233,7 +235,7 @@ export class Commander {
                 if (r) this.ctx.parallel('command/execute', obj, bot, session);
               })
               // 此处会把所有指令调用时发生的错误捕获并发布，比如 bot.sendMessage 遇到错误时。
-              .catch((e) => bot.logger.error(e));
+              .catch(obj.handleError);
           }
         });
 
