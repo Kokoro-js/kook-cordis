@@ -83,17 +83,20 @@ export abstract class AbstactBot {
     if (typeof file === 'string') {
       file = Buffer.from(file, 'base64');
     }
-    if (Buffer.isBuffer(file) || file instanceof Blob) {
+    if (Buffer.isBuffer(file)) {
+      file = new Blob([file], { type: 'application/octet-stream' });
+    }
+    if (file instanceof Blob) {
       const payload = new FormData();
-      payload.append('file', file as any, name);
+      payload.append('file', file, name);
       file = payload;
     }
-
-    const res = await this.http.post('/asset/create', file, {
+    const res = await this.http.post('/api/v3/asset/create', file, {
       headers: {
         'Content-Type': 'form-data',
       },
     });
+
     const response: IBaseAPIResponse<{ url: string }> = res.data;
     if (response.code != 0)
       throw new ResponseError(response.message || 'Unexpected Error', response.code);

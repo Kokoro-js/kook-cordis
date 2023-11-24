@@ -54,7 +54,7 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
     }
     this.description = desc;
     this.options = options;
-    this.logger = Commander.CommandLogger.child({ name, desc });
+    this.logger = Commander.CommandLogger.child({ command: name, desc });
   }
 
   action(callback: CallbackFunction<T, P>) {
