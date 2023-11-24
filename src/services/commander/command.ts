@@ -9,14 +9,14 @@ import { Commander } from './commander';
 type ParseRequired<T extends string> = T extends `${infer Before} <${infer Param}> ${infer After}`
   ? { [K in Param]: string } & ParseRequired<`${Before} ${After}`>
   : T extends `${infer Before} <${infer Param}>`
-  ? { [K in Param]: string }
-  : {};
+    ? { [K in Param]: string }
+    : {};
 
 type ParseOptional<T extends string> = T extends `${infer Before} [${infer Param}] ${infer After}`
   ? { [K in Param]?: string } & ParseOptional<`${Before} ${After}`>
   : T extends `${infer Before} [${infer Param}]`
-  ? { [K in Param]?: string }
-  : {};
+    ? { [K in Param]?: string }
+    : {};
 
 type ExtractCommandParams<T extends string> = ParseRequired<T> & ParseOptional<T>;
 
@@ -89,6 +89,7 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
     this.checkers['developer'] = (bot, session) => {
       return Commander.developerIds.includes(session.userId);
     };
+    return this;
   }
 
   async execute(possible: string, bot: Bot, session: MessageSession<MessageExtra>) {

@@ -60,7 +60,7 @@ export abstract class AbstactBot {
     },
   ) {
     const res = await this.http.post('/api/v3/message/update', { msg_id, content, ...options });
-    const response: IBaseAPIResponse<[]> = res.data;
+    const response: IBaseAPIResponse<{}> = res.data;
     if (response.code != 0)
       throw new ResponseError(response.message || 'Unexpected Error', response.code);
 
@@ -69,11 +69,36 @@ export abstract class AbstactBot {
 
   async deleteMessage(msg_id: string) {
     const res = await this.http.post('/api/v3/message/delete', { msg_id });
-    const response: IBaseAPIResponse<[]> = res.data;
+    const response: IBaseAPIResponse<{}> = res.data;
     if (response.code != 0)
       throw new ResponseError(response.message || 'Unexpected Error', response.code);
 
     return response.data;
+  }
+
+  async createAssest(
+    file: Buffer | Blob | string | FormData,
+    name: string = 'assest',
+  ): Promise<string> {
+    if (typeof file === 'string') {
+      file = Buffer.from(file, 'base64');
+    }
+    if (Buffer.isBuffer(file) || file instanceof Blob) {
+      const payload = new FormData();
+      payload.append('file', file as any, name);
+      file = payload;
+    }
+
+    const res = await this.http.post('/asset/create', file, {
+      headers: {
+        'Content-Type': 'form-data',
+      },
+    });
+    const response: IBaseAPIResponse<{ url: string }> = res.data;
+    if (response.code != 0)
+      throw new ResponseError(response.message || 'Unexpected Error', response.code);
+
+    return response.data.url;
   }
 }
 
@@ -127,7 +152,7 @@ AbstactBot.define('deleteDirectMessageReaction', 'POST', '/direct-message/delete
 
 AbstactBot.define('getGateway', 'GET', '/gateway/index');
 AbstactBot.define('getToken', 'POST', '/oauth2/token');
-AbstactBot.define('createAsset', 'POST', '/asset/create');
+// AbstactBot.define('createAsset', 'POST', '/asset/create');
 
 AbstactBot.define('getUserMe', 'GET', '/user/me');
 AbstactBot.define('getUserView', 'GET', '/user/view');
@@ -449,6 +474,4 @@ export interface AbstactBot {
   }): Promise<void>;
 
   deleteGameActivity(param: { data_type: 1 | 2 }): Promise<void>;
-
-  hasPermission(permissions: number, permission: Permissions): boolean;
 }

@@ -5,7 +5,7 @@ import { KookEvent } from './events';
 import { Data, IMessageButtonClickBody, PayLoad, Session, SystemExtra } from './types';
 import { logger } from './Logger';
 import { Bot } from './bot';
-import { internalWebhook } from './event-tigger';
+import { internalWebhook } from './event-trigger';
 import { Commander, FilterService, Processor, Quester, readJson, Routers } from './services';
 import { defineProperty, Dict } from 'cosmokit';
 

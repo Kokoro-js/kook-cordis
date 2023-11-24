@@ -1,4 +1,4 @@
-export interface IBaseAPIResponse<T> {
+export interface IBaseAPIResponse<T = any> {
   code: number;
   message: string;
   data: T;
