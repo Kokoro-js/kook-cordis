@@ -41,8 +41,9 @@ import {
 import { Bot } from './bot';
 
 export interface KookEvent {
-  'webhook'(bot: Bot, payload: PayLoad): void;
-  //  "interaction/command"(session: Session): void;
+  'internal/webhook'(bot: Bot, payload: PayLoad): void;
+  'internal/button'(bot: Bot, session: EventSession<IMessageButtonClickBody>): any;
+
   'message'(bot: Bot, session: MessageSession<MessageExtra>): void;
   // 群组
   'message-created'(bot: Bot, session: MessageSession<MessageExtra>): void;

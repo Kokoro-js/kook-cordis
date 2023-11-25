@@ -40,6 +40,13 @@ function handleSpecialTypes(data, session, ctx, bot) {
   processEvent(ctx, session, 'webhook', bot);
   if (data.extra.type === 'message_btn_click') {
     session.channelId = data.extra.body.target_id;
+    // 由于按钮大部分情况下消耗资源很多，所以应先过内部检查
+    const result = ctx.bail('internal/button', bot, session);
+    if (result !== undefined) {
+      if (typeof result == 'string') session.data.extra.body.value = result;
+      else if (!result) return;
+    }
+
     processEvent(ctx, session, 'serial-button-click', bot);
     processEvent(ctx, session, 'button-click', bot);
     return;
