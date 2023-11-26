@@ -33,7 +33,7 @@
     "test": "npm run build:ts && tsc -p test/tsconfig.json && tap --ts \"test/**/*.test.ts\"",
     "build:ts": "tsc",
     "watch:ts": "tsc -w",
-    "start": "clinic doctor -- node app.js",
+    "prepublish": "tsc",
     "dev": "if \"%OS%\"==\"Windows_NT\" (chcp 65001) && npm run dev:start",
     "dev:start": "cross-env LEVEL=trace ts-node-dev --respawn --debounce 1000 src/app.ts | pino-pretty"
   },
