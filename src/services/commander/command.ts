@@ -20,16 +20,13 @@ type ParseOptional<T extends string> = T extends `${infer Before} [${infer Param
 
 type ExtractCommandParams<T extends string> = ParseRequired<T> & ParseOptional<T>;
 
-type CallbackFunction<T extends Flags<Record<string, unknown>>, P extends string> = (
+type CallbackFunction<T extends Flags, P extends string> = (
   argv: TypeFlag<T> & ExtractCommandParams<P>,
   bot: Bot,
-  session: MessageSession<MessageExtra>,
+  session: MessageSession,
 ) => Awaitable<void | string>;
 
-type CheckerFunction = (
-  bot: Bot,
-  session: MessageSession<MessageExtra>,
-) => Awaitable<void | boolean>;
+type CheckerFunction = (bot: Bot, session: MessageSession) => Awaitable<void | boolean>;
 
 export class CommandInstance<T extends Flags = any, P extends string = any> {
   readonly name: string;
@@ -92,7 +89,7 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
     return this;
   }
 
-  async execute(possible: string, bot: Bot, session: MessageSession<MessageExtra>) {
+  async execute(possible: string, bot: Bot, session: MessageSession) {
     for (const check of Object.values(this.checkers)) {
       if ((await check(bot, session)) === false) return false;
     }

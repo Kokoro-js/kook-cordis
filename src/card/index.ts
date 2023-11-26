@@ -32,7 +32,7 @@ export default class Card {
   }
 
   public set modules(modules: Modules[]) {
-    this.modules = modules;
+    this.__modules = modules;
   }
 
   setTheme(theme: Theme) {

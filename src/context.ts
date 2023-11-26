@@ -26,7 +26,7 @@ export type { Disposable, ScopeStatus } from 'cordis';
 
 export interface Context {
   [Context.config]: Context.Config;
-  [Context.events]: Events<Context>;
+  [Context.events]: Events;
   bots: Bot[] & Dict<Bot>;
   http: Quester;
 }
