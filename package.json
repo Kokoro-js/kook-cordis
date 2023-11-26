@@ -1,6 +1,6 @@
 {
   "name": "kook-cordis",
-  "version": "1.6.4",
+  "version": "1.6.6",
   "description": "Kook 在 Cordis 下的 SDK 包装。",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -33,7 +33,7 @@
     "test": "npm run build:ts && tsc -p test/tsconfig.json && tap --ts \"test/**/*.test.ts\"",
     "build:ts": "tsc",
     "watch:ts": "tsc -w",
-    "start": "clinic doctor -- node app.js",
+    "prepublish": "pnpm build:ts",
     "dev": "if \"%OS%\"==\"Windows_NT\" (chcp 65001) && npm run dev:start",
     "dev:start": "cross-env LEVEL=trace ts-node-dev --respawn --debounce 1000 src/app.ts | pino-pretty"
   },
