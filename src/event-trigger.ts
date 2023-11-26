@@ -1,8 +1,9 @@
 import { Context } from './context';
 import { NoticeType, Session } from './types';
 import { KookEvent } from './events';
-import { logger } from './Logger';
+import { createLogger } from './Logger';
 
+const logger = createLogger('Kook-Events');
 export function internalWebhook(ctx: Context, bot, data) {
   // 大多数情况下都为信息
   const session: Session<any> = {
@@ -47,7 +48,9 @@ function handleSpecialTypes(data, session, ctx, bot) {
       else if (!result) return;
     }
 
-    processEvent(ctx, session, 'serial-button-click', bot);
+    ctx
+      .serial(session, 'serial-button-click', bot, session)
+      .catch((e) => logger.error(e, 'Error processing event "serial-button-click"'));
     processEvent(ctx, session, 'button-click', bot);
     return;
   }
