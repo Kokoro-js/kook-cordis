@@ -197,7 +197,18 @@ export interface AbstactBot {
 
   getGuildView(param: { guild_id: string }): Promise<Kook.Guild>;
 
-  getGuildUserList(param: { guild_id: string } & Kook.Pagination): Promise<Kook.GuildUserList>;
+  getGuildUserList(
+    param: { guild_id: string } & Partial<{
+      channel_id: string;
+      search: string;
+      role_id: number;
+      mobile_verified: 0 | 1;
+      active_time: 0 | 1;
+      joined_at: 0 | 1;
+      filter_user_id: string;
+    }> &
+      Kook.Pagination,
+  ): Promise<Kook.GuildUserList>;
 
   setGuildUserNickname(param: {
     guild_id: string;
