@@ -93,7 +93,7 @@ export class Commander {
             .sendMessage(
               session.channelId,
               CardTemplate.CommandList(
-                '指令帮助',
+                `指令帮助 (指令前缀 "${this.prefix}")`,
                 this.formatCommandListOutput(meetCommands),
                 session.data.content,
                 session.data.extra.author.avatar,
@@ -173,7 +173,7 @@ export class Commander {
   command<T extends Flags, P extends string>(
     commandName: P,
     description: string,
-    options: T,
+    options: T = {} as T,
   ): CommandInstance<T, P> {
     const command = new CommandInstance<T, P>(commandName, description, options);
     const context = this.caller;
@@ -266,7 +266,7 @@ export class Commander {
     await bot.sendMessage(
       session.channelId,
       CardTemplate.CommandList(
-        '相似指令提示',
+        `相似指令提示 (指令前缀 "${this.prefix}")`,
         this.formatCommandListOutput(result),
         session.data.content,
         session.data.extra.author.avatar,
