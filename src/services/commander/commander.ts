@@ -3,7 +3,7 @@ import { Context } from '../../context';
 
 import { CommandInstance } from './command';
 import { Flags } from 'type-flag';
-import { createLogger } from '../../Logger';
+import { createLogger, logger } from '../../Logger';
 
 import { search } from 'fast-fuzzy';
 import { MessageSession, MessageType } from '../../types';
@@ -198,7 +198,7 @@ export class Commander {
   private async parseStringAndExecuteFound(
     bot: Bot,
     session: MessageSession,
-  ): CommandInstance[] | undefined {
+  ): Promise<CommandInstance[] | undefined> {
     let input = session.data.content.substring(this.prefix.length);
 
     const response = await this.ctx.bail('command/before-parse', input, bot, session);
@@ -245,8 +245,9 @@ export class Commander {
           }
         });
         // 匹配到了就直接返回只有一个指令的数组
-        commandArray.push(obj);
-        return commandArray;
+        /*        commandArray.push(obj);
+        return commandArray;*/
+        return;
       }
       // 没匹配到就把该指令放进相似指令匹配列表
       commandArray.push(obj);
@@ -260,16 +261,16 @@ export class Commander {
     if (!session.data.content.startsWith(this.prefix)) return next();
 
     const result = await this.parseStringAndExecuteFound(bot, session);
-    if (!result || result.length === 1) return;
 
+    if (!(result && result.length !== 0)) return;
     // 没有相似的，告诉用户找不到指令
-    if (result.length === 0) {
+    /*    if (result.length === 0) {
       const response = await this.ctx.bail('command/not-found', bot, session);
       // 返回任意内容则取消找不到相关指令的提示
       if (response !== undefined) return;
       await bot.sendMessage(session.channelId, '找不到相关指令', { quote: session.data.msg_id });
       return;
-    }
+    }*/
 
     await bot.sendMessage(
       session.channelId,
