@@ -52,6 +52,7 @@ declare module '../../context' {
       session: MessageSession,
     ): Awaitable<void | string>;
 
+    'command/not-found'(bot: Bot, session: MessageSession): Awaitable<void | string>;
     'command/execute'(command: CommandInstance, bot: Bot, session: MessageSession): void;
   }
 }
@@ -194,7 +195,10 @@ export class Commander {
     return this.helpMessageObj;
   }
 
-  private async parseStringAndExecuteFound(bot, session) {
+  private async parseStringAndExecuteFound(
+    bot: Bot,
+    session: MessageSession,
+  ): CommandInstance[] | undefined {
     let input = session.data.content.substring(this.prefix.length);
 
     const response = await this.ctx.bail('command/before-parse', input, bot, session);
@@ -240,8 +244,9 @@ export class Commander {
               .catch(obj.handleError);
           }
         });
-
-        return;
+        // 匹配到了就直接返回只有一个指令的数组
+        commandArray.push(obj);
+        return commandArray;
       }
       // 没匹配到就把该指令放进相似指令匹配列表
       commandArray.push(obj);
@@ -255,10 +260,13 @@ export class Commander {
     if (!session.data.content.startsWith(this.prefix)) return next();
 
     const result = await this.parseStringAndExecuteFound(bot, session);
-    if (!result) return;
+    if (!result || result.length === 1) return;
 
     // 没有相似的，告诉用户找不到指令
     if (result.length === 0) {
+      const response = await this.ctx.bail('command/not-found', bot, session);
+      // 返回任意内容则取消找不到相关指令的提示
+      if (response !== undefined) return;
       await bot.sendMessage(session.channelId, '找不到相关指令', { quote: session.data.msg_id });
       return;
     }
