@@ -1,4 +1,4 @@
-import { MessageType, User } from './base';
+import { Channel, GuildRole, MessageType, User } from './base';
 import { Notice } from './system';
 
 export interface MessageMeta {
@@ -9,11 +9,7 @@ export interface MessageMeta {
   attachments: Attachment;
   quote: Message;
   author: Author;
-  kmarkdown?: {
-    raw_content: string;
-    mention_part: KmarkdownUserMeta[];
-    mention_role_part: KmarkdownRoleMeta[];
-  };
+  kmarkdown?: Omit<IKMarkdownParts, 'item_part'>;
 }
 
 export interface MessageBase {
@@ -34,7 +30,25 @@ export interface MessageExtra extends MessageMeta {
   type: MessageType;
   code: string;
   guild_id: string;
+  guild_type: number;
   channel_name: string;
+  visible_only: any | null;
+  nav_channels: string[];
+  interact_res?: {
+    emoji_id: number;
+    result: number[];
+    result_img: string[];
+    dynamic_url: string;
+  };
+  editable?: boolean;
+  emoji: Record<
+    string,
+    {
+      type: number;
+    }
+  >[];
+  last_msg_content?: string;
+  send_msg_device?: number;
 }
 
 type AttachmentType = 'image' | 'video' | 'audio' | 'file';
@@ -51,8 +65,16 @@ export interface Attachment {
 }
 
 export interface Author extends User {
-  roles: number[];
-  nickname?: string;
+  system?: boolean;
+}
+
+export interface IKMarkdownParts {
+  raw_content: string;
+  mention_part: KmarkdownUserMeta[];
+  mention_role_part: KmarkdownRoleMeta[];
+  channel_part: Pick<Channel, 'id' | 'guild_id' | 'name'>[];
+  item_part: any[];
+  spl: string[];
 }
 
 export interface KmarkdownUserMeta {

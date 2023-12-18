@@ -34,16 +34,32 @@ export interface User {
   id: string;
   username: string;
   identify_num: string;
-  avatar: string;
   online: boolean;
-  bot?: boolean;
-  roles: number[];
+  os: string;
+  status: UserStatus;
+  avatar: string;
   vip_avatar?: string;
-  is_vip?: boolean;
-  mobile_verified: boolean;
+  banner: string;
+  nickname: string;
+  roles: number[];
+  is_vip: boolean;
+  vip_amp: boolean;
+  bot: boolean;
+  nameplate: {
+    name: string;
+    type: number;
+    icon: string;
+    tips?: string;
+  }[];
+  decorations_id_map?: Partial<{
+    join_voice: number;
+    avatar_border: number;
+    background: number;
+  }>;
+  mobile_verified?: boolean;
+  is_sys: boolean;
   joined_at?: number;
   active_time?: number;
-  status: UserStatus;
 }
 
 export enum UserStatus {

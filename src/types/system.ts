@@ -1,5 +1,5 @@
-import { Emoji, MessageMeta } from './message';
-import { Channel, GuildRole, User } from './base';
+import { Emoji, IKMarkdownParts, MessageMeta } from './message';
+import { Channel, GuildRole, MessageType, User } from './base';
 
 export interface IBaseSystemExtra {
   type: NoticeType;
@@ -76,6 +76,13 @@ export type NoticeType =
   | 'guild_member_online'
   | 'guild_member_offline';
 
+export interface IMentions {
+  mention: number[];
+  mention_all: boolean;
+  mention_here: boolean;
+  mention_roles: number[];
+}
+
 export interface IAddedReactionBody {
   msg_id: string;
   user_id: string;
@@ -85,21 +92,26 @@ export interface IAddedReactionBody {
 
 export interface IDeletedReactionBody extends IAddedReactionBody {}
 
-export interface IUpdatedMessageBody {
-  msg_id: string;
+export type IUpdatedMessageBody = {
+  version_id: string;
+  channel_id: string;
   content: string;
-  channel_id: string;
-  mention: string[];
-  mention_all: boolean;
-  mention_here: boolean;
-  mention_roles: GuildRole[];
   updated_at: number;
-}
-
-export interface IDeletedMessageBody {
-  channel_id: string;
+  kmarkdown?: Omit<IKMarkdownParts, 'raw_content' | 'spl'>;
+  last_msg_content: string;
+  embeds: any[];
   msg_id: string;
-}
+} & IMentions;
+
+export type IDeletedMessageBody = {
+  channel_id: string;
+  content: string;
+  pin: number | null;
+  pined_time: number | null;
+  type: MessageType;
+  msg_id: string;
+  created_at: number;
+} & IMentions;
 
 export interface IAddedChannelBody extends Channel {}
 
