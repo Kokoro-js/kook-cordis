@@ -13,7 +13,7 @@ dependencies:
     version: 1.6.2
   cordis:
     specifier: ^3.4.0
-    version: 3.4.0
+    version: 3.5.1
   cosmokit:
     specifier: ^1.5.1
     version: 1.5.1
@@ -1026,14 +1026,18 @@ packages:
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     dev: true
 
-  /cordis@3.4.0:
-    resolution: {integrity: sha512-CzZA2pj+/gEdgvF3XxlVY7OB7XAOZLve0aWdJ65jYWYheCItGBFo9H7Yx9qnhAg4eTiEkkNF6JaTv0uD/LKoqA==}
+  /cordis@3.5.1:
+    resolution: {integrity: sha512-1o4fdrIeNdi0/BZLN1RTrTmNbq72RBrHVfZvVoZ/sbEPdxiCyNsrkyYhp/uJytOwtYJ3NnhDJaFa/hHZnuYoaQ==}
     dependencies:
-      cosmokit: 1.5.1
+      cosmokit: 1.5.2
     dev: false
 
   /cosmokit@1.5.1:
     resolution: {integrity: sha512-+O6f3G5Wei8X65bVgXuOGDy5J8ksltGshMwWerE8ToG0hu3zQHw2Yvr22tHOibfU5z177+FCs7sorfG1E7HnuA==}
+    dev: false
+
+  /cosmokit@1.5.2:
+    resolution: {integrity: sha512-l4m/Iz0ZZ4nMaVsCC493suyUgeuAoxnDQI+UKt+vVXO+8zBVcrRKzv8m8q+SkXwxHcWluSMHw1AaZc9U2amabw==}
     dev: false
 
   /create-require@1.1.1:
