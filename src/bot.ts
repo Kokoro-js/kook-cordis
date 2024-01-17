@@ -11,7 +11,7 @@ export class Bot extends AbstactBot {
   static reusable = true;
   readonly verifyToken: string;
   readonly token: string;
-  readonly logger: pino.Logger<{ name: string }>;
+  readonly logger: pino.Logger;
   readonly http: AxiosInstance;
   userME: UserME;
   protected context: Context;

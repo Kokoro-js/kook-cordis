@@ -95,7 +95,7 @@ export class Commander {
               session.channelId,
               CardTemplate.CommandList(
                 `指令帮助 (指令前缀 "${this.prefix}")`,
-                this.formatCommandListOutput(meetCommands),
+                this.formatCommandListOutput(meetCommands.filter((command) => command.isPublic)),
                 session.data.content,
                 session.data.extra.author.avatar,
               ),

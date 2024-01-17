@@ -10,7 +10,7 @@ export function internalWebhook(ctx: Context, bot, data) {
     userId: data.author_id === '1' ? data.extra.body.user_id : data.author_id,
     channelId: undefined,
     guildId: undefined,
-    selfId: bot.userME.id,
+    selfId: bot?.userME.id,
     data: data,
   };
   session[Context.filter] = (ctx) => ctx.filter(session);

@@ -32,7 +32,8 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
   readonly name: string;
   readonly description: string;
   readonly options: T;
-  readonly logger: pino.Logger<{ name: string; level: string }>;
+  readonly logger: pino.Logger;
+  isPublic: boolean = true;
   aliases: string[] = [];
   commandFunction: CallbackFunction<T, P>;
   checkers: Record<string, CheckerFunction> = {};
@@ -71,6 +72,7 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
   }
 
   guildAdminOnly() {
+    this.isPublic = false;
     this.checkers['admin'] = async (bot, session) => {
       const guildRoles = await bot.getGuildRoleList({ guild_id: session.guildId });
       const role = session.data.extra.author.roles[0];
@@ -83,9 +85,15 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
   }
 
   developerOnly() {
+    this.isPublic = false;
     this.checkers['developer'] = (bot, session) => {
       return Commander.developerIds.includes(session.userId);
     };
+    return this;
+  }
+
+  private() {
+    this.isPublic = false;
     return this;
   }
 
