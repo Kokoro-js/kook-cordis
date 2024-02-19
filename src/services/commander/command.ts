@@ -1,6 +1,6 @@
 import { Flags, typeFlag, TypeFlag } from 'type-flag';
 import { Awaitable } from 'cosmokit';
-import { MessageExtra, MessageSession, Permissions } from '../../types';
+import { MessageSession, Permissions } from '../../types';
 import { Bot } from '../../bot';
 import { hasPermission } from '../../utils';
 import { pino } from '../../Logger';
@@ -68,6 +68,11 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
 
   addChecker(name: string, check: CheckerFunction) {
     this.checkers[name] = check;
+    return this;
+  }
+
+  addPermissionChecker(check: CheckerFunction) {
+    this.addChecker(Commander.PERMISSION, check);
     return this;
   }
 

@@ -62,6 +62,7 @@ export class Commander {
   readonly prefix: string;
   static developerIds: string[];
   static readonly CommandLogger = createLogger('Command');
+  static readonly PERMISSION = 'PERMISSION';
 
   // 方便添加冷却
   helpCommand: CommandInstance;
@@ -79,7 +80,7 @@ export class Commander {
     ctx.middleware(this.setupCommandParser.bind(this), true); // 前置中间件保证指令得到优先处理
 
     this.helpCommand = this.command('help [command]', '指令帮助', {}).action(
-      (argv, bot, session) => {
+      async (argv, bot, session) => {
         const meetCommands: CommandInstance[] = [];
 
         for (let [context, command] of this._commands.entries()) {
@@ -90,12 +91,31 @@ export class Commander {
 
         // 没有指令则列出所有指令
         if (!argv.command) {
+          const checkResults = await Promise.all(
+            meetCommands.map(async (command) => {
+              // 首先检查命令是否是公开的
+              if (!command.isPublic) {
+                // 如果命令不是公开的，可以直接返回 false 或根据实际需求返回 true
+                return false;
+              }
+
+              // 对于公开的命令，如果没有设置权限检查器，则认为检查通过
+              if (!command.checkers[Commander.PERMISSION]) {
+                return true;
+              }
+
+              // 如果设置了权限检查器，则异步执行并等待结果
+              return !((await command.checkers[Commander.PERMISSION]?.(bot, session)) === false);
+            }),
+          );
           bot
             .sendMessage(
               session.channelId,
               CardTemplate.CommandList(
                 `指令帮助 (指令前缀 "${this.prefix}")`,
-                this.formatCommandListOutput(meetCommands.filter((command) => command.isPublic)),
+                this.formatCommandListOutput(
+                  meetCommands.filter((_, index) => checkResults[index]),
+                ),
                 session.data.content,
                 session.data.extra.author.avatar,
               ),
@@ -111,33 +131,38 @@ export class Commander {
         }
 
         for (const obj of meetCommands) {
-          if (obj.name == argv.command) {
-            const content = this.helpMessageObj[obj.name];
-            if (!content) {
-              return `指令 **${obj.name}** - ${
-                obj.description
-              }\n **必填参数** ${obj.requiredMatches.toString()}\n **选填参数** ${obj.optionalMatches.toString()}\n **标签** ${Object.keys(
-                obj.options,
-              )}`;
-            }
-            bot
-              .sendMessage(
-                session.channelId,
-                CardTemplate.HelpCardTemplate(
-                  `${obj.name} ${obj.aliases.length !== 0 ? `(${obj.aliases.toString()})` : ''}`,
-                  content,
-                ),
-                {
-                  type: MessageType.card,
-                  quote: session.data.msg_id,
-                },
-              )
-              .catch((e) => {
-                bot.logger.error(e, '处理 Help 时遇到错误');
-              });
-            return;
+          if (obj.name !== argv.command) continue;
+
+          // 匹配到相应指令，首先检查有没有权限过滤器
+          if ((await obj.checkers[Commander.PERMISSION]?.(bot, session)) === false) {
+            return '你在该服务器内没有查看该指令的权限噢。';
           }
+          const content = this.helpMessageObj[obj.name];
+          if (!content) {
+            return `指令 **${obj.name}** - ${
+              obj.description
+            }\n **必填参数** ${obj.requiredMatches.toString()}\n **选填参数** ${obj.optionalMatches.toString()}\n **标签** ${Object.keys(
+              obj.options,
+            )}`;
+          }
+          bot
+            .sendMessage(
+              session.channelId,
+              CardTemplate.HelpCardTemplate(
+                `${obj.name} ${obj.aliases.length !== 0 ? `(${obj.aliases.toString()})` : ''}`,
+                content,
+              ),
+              {
+                type: MessageType.card,
+                quote: session.data.msg_id,
+              },
+            )
+            .catch((e) => {
+              bot.logger.error(e, '处理 Help 时遇到错误');
+            });
+          return;
         }
+
         return `没有找到指令 ${argv.command}`;
       },
     );
