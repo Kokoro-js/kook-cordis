@@ -50,6 +50,34 @@ export abstract class AbstactBot {
     return response.data;
   }
 
+  createTempMessageBuilder(
+    target_id: string,
+    user_id: string,
+    builderOptions?: { type?: Kook.MessageType; quote?: string },
+  ) {
+    // 返回一个新的函数，这个新函数只接受一个参数
+    return async (content: string, options?: { type?: Kook.MessageType; quote?: string }) => {
+      return await this.sendMessage(target_id, content, {
+        ...builderOptions,
+        ...options,
+        temp_target_id: user_id,
+      });
+    };
+  }
+
+  createMessageBuilder(
+    target_id: string,
+    builderOptions?: { type?: Kook.MessageType; quote?: string },
+  ) {
+    return async (content: string, options?: { type?: Kook.MessageType; quote?: string }) => {
+      // 直接调用 sendMessage，不需要传递 temp_target_id
+      return await this.sendMessage(target_id, content, {
+        ...builderOptions,
+        ...options,
+      });
+    };
+  }
+
   async updateMessage(
     msg_id: string,
     content: string,
