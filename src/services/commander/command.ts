@@ -26,7 +26,7 @@ type CallbackFunction<T extends Flags, P extends string> = (
   session: MessageSession,
 ) => Awaitable<void | string>;
 
-type CheckerFunction = (bot: Bot, session: MessageSession) => Awaitable<void | boolean>;
+type CheckerFunction = (bot: Bot, session: MessageSession) => Awaitable<void | boolean | Object>;
 
 export class CommandInstance<T extends Flags = any, P extends string = any> {
   readonly name: string;
@@ -104,7 +104,10 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
 
   async execute(possible: string, bot: Bot, session: MessageSession) {
     for (const check of Object.values(this.checkers)) {
-      if ((await check(bot, session)) === false) return false;
+      const returned = await check(bot, session);
+      if (returned === false) return false;
+      // 在 js 中 undefined 也是一个 object
+      if (returned !== undefined && typeof returned == 'object') session.internalData = returned;
     }
 
     let argv = typeFlag(this.options, parseArgsStringToArgv(possible));

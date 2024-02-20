@@ -131,7 +131,7 @@ export class Commander {
         }
 
         for (const obj of meetCommands) {
-          if (obj.name !== argv.command) continue;
+          if (obj.name !== argv.command && !obj.aliases.includes(argv.command)) continue;
 
           // 匹配到相应指令，首先检查有没有权限过滤器
           if ((await obj.checkers[Commander.PERMISSION]?.(bot, session)) === false) {
