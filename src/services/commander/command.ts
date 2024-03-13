@@ -3,7 +3,6 @@ import { Awaitable } from 'cosmokit';
 import { MessageSession, Permissions } from '../../types';
 import { Bot } from '../../bot';
 import { hasPermission } from '../../utils';
-import { pino } from '../../Logger';
 import { Commander } from './commander';
 
 type ParseRequired<T extends string> = T extends `${infer Before} <${infer Param}> ${infer After}`
@@ -32,7 +31,7 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
   readonly name: string;
   readonly description: string;
   readonly options: T;
-  readonly logger: pino.Logger;
+  readonly logger;
   isPublic: boolean = true;
   aliases: string[] = [];
   commandFunction: CallbackFunction<T, P>;

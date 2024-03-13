@@ -2,8 +2,19 @@
   "name": "kook-cordis",
   "version": "1.7.6",
   "description": "Kook 在 Cordis 下的 SDK 包装。",
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "exports": {
+    "require": {
+      "types": "./dist/index.d.cts",
+      "default": "./dist/index.cjs"
+    },
+    "import": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
   "directories": {
     "test": "test"
   },
@@ -20,20 +31,20 @@
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.32.0"
   },
   "devDependencies": {
-    "@types/node": "^20.11.19",
+    "@types/node": "^20.11.26",
     "@types/tap": "^15.0.11",
     "cross-env": "^7.0.3",
     "pino-pretty": "^10.3.1",
+    "pkgroll": "^2.0.2",
     "prettier": "3.1.1",
-    "tap": "^18.7.0",
+    "tap": "^18.7.1",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.4.2"
   },
   "scripts": {
     "test": "npm run build:ts && tsc -p test/tsconfig.json && tap --ts \"test/**/*.test.ts\"",
-    "build:ts": "tsc",
-    "watch:ts": "tsc -w",
-    "prepublish": "tsc",
+    "build": "pkgroll",
+    "prepublish": "pkgroll",
     "dev": "if \"%OS%\"==\"Windows_NT\" (chcp 65001) && npm run dev:start",
     "dev:start": "cross-env LEVEL=trace ts-node-dev --respawn --debounce 1000 src/app.ts | pino-pretty"
   },
