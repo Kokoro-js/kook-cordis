@@ -91,23 +91,18 @@ export class Commander {
 
         // 没有指令则列出所有指令
         if (!argv.command) {
-          const checkResults = await Promise.all(
-            meetCommands.map(async (command) => {
-              // 首先检查命令是否是公开的
-              if (!command.isPublic) {
-                // 如果命令不是公开的，可以直接返回 false 或根据实际需求返回 true
-                return false;
-              }
+          const checkResults = meetCommands.map((command) => {
+            // 首先检查命令是否是公开的
+            if (!command.isPublic) {
+              // 如果命令不是公开的，可以直接返回 false 或根据实际需求返回 true
+              return false;
+            }
 
-              // 对于公开的命令，如果没有设置权限检查器，则认为检查通过
-              if (!command.checkers[Commander.PERMISSION]) {
-                return true;
-              }
-
-              // 如果设置了权限检查器，则异步执行并等待结果
-              return !((await command.checkers[Commander.PERMISSION]?.(bot, session)) === false);
-            }),
-          );
+            // 对于公开的命令，如果没有设置权限检查器，则认为检查通过
+            if (!command.checkers[Commander.PERMISSION]) {
+              return true;
+            }
+          });
           bot
             .sendMessage(
               session.channelId,
@@ -135,7 +130,7 @@ export class Commander {
 
           // 匹配到相应指令，首先检查有没有权限过滤器
           if ((await obj.checkers[Commander.PERMISSION]?.(bot, session)) === false) {
-            return '你在该服务器内没有查看该指令的权限噢。';
+            return;
           }
           const content = this.helpMessageObj[obj.name];
           if (!content) {
