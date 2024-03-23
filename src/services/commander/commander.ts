@@ -22,41 +22,6 @@ export type IHelpContent = {
   flags?: Dict<string>;
 };
 
-declare module '../../context' {
-  interface Context {
-    $commander: Commander;
-
-    command<T extends Flags, P extends string>(
-      commandName: P,
-      description: string,
-      options: T,
-    ): CommandInstance<T, P>;
-
-    get commands(): CommandInstance[];
-
-    executeString(bot: Bot, session: MessageSession): void;
-
-    addCommandHelp(message: IHelpMessage): IHelpMessage;
-  }
-
-  interface Events {
-    'command/before-parse'(
-      input: string,
-      bot: Bot,
-      session: MessageSession,
-    ): Awaitable<void | string | boolean>;
-
-    'command/before-execute'(
-      command: CommandInstance,
-      bot: Bot,
-      session: MessageSession,
-    ): Awaitable<void | string>;
-
-    'command/not-found'(bot: Bot, session: MessageSession): Awaitable<void | string>;
-    'command/execute'(command: CommandInstance, bot: Bot, session: MessageSession): void;
-  }
-}
-
 export class Commander {
   readonly _commands: Map<Context, CommandInstance[]> = new Map();
   readonly prefix: string;

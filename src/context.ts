@@ -1,7 +1,7 @@
 import * as cordis from 'cordis';
 import Schema from 'schemastery';
 import uWS from 'uWebSockets.js';
-import { KookEvent } from './events';
+import { KookEvent, ServiceContext, ServiceEvent } from './events';
 import { Data, IMessageButtonClickBody, PayLoad, Session, SystemExtra } from './types';
 import { logger } from './Logger';
 import { Bot } from './bot';
@@ -11,7 +11,10 @@ import { defineProperty, Dict } from 'cosmokit';
 
 export { uWS, Quester, readJson };
 
-export interface Events<C extends Context = Context> extends cordis.Events<C>, KookEvent {
+export interface Events<C extends Context = Context>
+  extends cordis.Events<C>,
+    KookEvent,
+    ServiceEvent {
   // 'internal/webhook'(bot: Bot, obj: any): void;
 }
 
@@ -24,7 +27,7 @@ export const Service = cordis.Service<Context>;
 
 export type { Disposable, ScopeStatus } from 'cordis';
 
-export interface Context {
+export interface Context extends ServiceContext {
   [Context.config]: Context.Config;
   [Context.events]: Events;
   bots: Bot[] & Dict<Bot>;

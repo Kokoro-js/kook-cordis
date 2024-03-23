@@ -4,22 +4,6 @@ import { Session } from '../types';
 
 export type Filter = (session: Session<any>) => boolean;
 // 移除 Session 中的 data，并将所有 string 属性转为 string[]
-declare module '../context' {
-  interface Context {
-    $filter: FilterService;
-    filter: Filter;
-    any(): this;
-    never(): this;
-    union(arg: Filter | this): this;
-    intersect(arg: Filter | this): this;
-    exclude(arg: Filter | this): this;
-    user(...values: string[]): this;
-    self(...values: string[]): this;
-    guild(...values: string[]): this;
-    channel(...values: string[]): this;
-    private(...values: string[]): this;
-  }
-}
 
 function property<K extends keyof Session<any>>(
   ctx: Context,

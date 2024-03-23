@@ -3,21 +3,13 @@ import { Context, uWS } from '../context';
 import { HttpResponse } from 'uWebSockets.js';
 import zlib from 'zlib';
 
-type AllowedMethod = 'get' | 'post' | 'put' | 'delete' | 'patch';
-type RouteHandler = (res: uWS.HttpResponse, req: uWS.HttpRequest) => void;
-type Routes = {
+export type AllowedMethod = 'get' | 'post' | 'put' | 'delete' | 'patch';
+export type RouteHandler = (res: uWS.HttpResponse, req: uWS.HttpRequest) => void;
+export type Routes = {
   [method in AllowedMethod]: {
     [path: string]: RouteHandler;
   };
 };
-
-declare module '../context' {
-  interface Context {
-    $routers: Routers;
-
-    router(method: AllowedMethod, path: string, handler: RouteHandler): void;
-  }
-}
 
 export class Routers {
   _routes: Routes = { delete: {}, get: {}, patch: {}, post: {}, put: {} };

@@ -39,6 +39,20 @@ import {
   PayLoad,
 } from './types';
 import { Bot } from './bot';
+import {
+  AllowedMethod,
+  Commander,
+  CommandInstance,
+  Filter,
+  FilterService,
+  IHelpMessage,
+  Middleware,
+  Processor,
+  RouteHandler,
+  Routers,
+} from './services';
+import { Flags } from 'type-flag';
+import { Awaitable } from 'cosmokit';
 
 export interface KookEvent {
   'internal/webhook'(bot: Bot, payload: PayLoad): void;
@@ -95,4 +109,62 @@ export interface KookEvent {
   // 按钮操作
   'button-click'(bot: Bot, session: EventSession<IMessageButtonClickBody>): void;
   'serial-button-click'(bot: Bot, session: EventSession<IMessageButtonClickBody>): void;
+}
+
+export interface ServiceEvent {
+  'middleware'(bot: Bot, data: MessageSession): void;
+
+  'command/before-parse'(
+    input: string,
+    bot: Bot,
+    session: MessageSession,
+  ): Awaitable<void | string | boolean>;
+
+  'command/before-execute'(
+    command: CommandInstance,
+    bot: Bot,
+    session: MessageSession,
+  ): Awaitable<void | string>;
+
+  'command/not-found'(bot: Bot, session: MessageSession): Awaitable<void | string>;
+  'command/execute'(command: CommandInstance, bot: Bot, session: MessageSession): void;
+}
+
+export interface ServiceContext {
+  //
+  $filter: FilterService;
+  filter: Filter;
+  any(): this;
+  never(): this;
+  union(arg: Filter | this): this;
+  intersect(arg: Filter | this): this;
+  exclude(arg: Filter | this): this;
+  user(...values: string[]): this;
+  self(...values: string[]): this;
+  guild(...values: string[]): this;
+  channel(...values: string[]): this;
+  private(...values: string[]): this;
+
+  // middleware
+  $processor: Processor;
+  middleware(middleware: Middleware, prepend?: boolean): () => boolean;
+
+  // router
+  $routers: Routers;
+  router(method: AllowedMethod, path: string, handler: RouteHandler): void;
+
+  // commander
+  $commander: Commander;
+
+  command<T extends Flags, P extends string>(
+    commandName: P,
+    description: string,
+    options: T,
+  ): CommandInstance<T, P>;
+
+  get commands(): CommandInstance[];
+
+  executeString(bot: Bot, session: MessageSession): void;
+
+  addCommandHelp(message: IHelpMessage): IHelpMessage;
 }

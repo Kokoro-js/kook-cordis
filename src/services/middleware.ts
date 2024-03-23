@@ -4,18 +4,6 @@ import { createLogger } from '../Logger';
 import { Bot } from '../bot';
 import { Data, MessageExtra, MessageSession, Session } from '../types';
 
-declare module '../context' {
-  interface Context {
-    $processor: Processor;
-
-    middleware(middleware: Middleware, prepend?: boolean): () => boolean;
-  }
-
-  interface Events {
-    'middleware'(bot: Bot, data: MessageSession): void;
-  }
-}
-
 export type Next = (next?: Next.Callback) => Promise<void | string>;
 export type Middleware = (
   bot: Bot,
