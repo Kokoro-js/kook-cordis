@@ -1,6 +1,6 @@
 {
   "name": "kook-cordis",
-  "version": "1.7.8",
+  "version": "1.8.0",
   "description": "Kook 在 Cordis 下的 SDK 包装。",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
