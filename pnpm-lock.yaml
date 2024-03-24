@@ -35,6 +35,9 @@ dependencies:
   uWebSockets.js:
     specifier: github:uNetworking/uWebSockets.js#v20.32.0
     version: github.com/uNetworking/uWebSockets.js/21c0e41a662c27bcc29b64f3e9d7f0bdaa6d7ee7
+  websocket-reconnect:
+    specifier: ^1.0.10
+    version: 1.0.10
 
 devDependencies:
   '@types/node':
@@ -3431,6 +3434,16 @@ packages:
     resolution: {integrity: sha512-9YlCL/ynK3CTlrSRrDxZvUauLzAswPCrsaCgilqFevUYpeEW0/3ScEjaa3kbW/T0ghhkEr7mv+fpjqn1Y1YuTA==}
     dev: true
 
+  /websocket-reconnect@1.0.10:
+    resolution: {integrity: sha512-XKOLCZ1vTey+VuljMzVEIKrfbO/bpslJDl2bH7mUZsraXbV9qfqgQGvgUeBF89NReIUpimmpIIi0dwBQEvFhJQ==}
+    dependencies:
+      events: 3.3.0
+      ws: 8.16.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: false
+
   /which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
     engines: {node: '>= 8'}
@@ -3487,7 +3500,6 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
-    dev: true
 
   /xtend@4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}

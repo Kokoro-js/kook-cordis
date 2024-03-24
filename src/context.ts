@@ -130,9 +130,11 @@ export class Context extends cordis.Context {
   }
 
   private setupWebServer(config: Context.Config) {
+    const path = config.webhook;
+    if (!path) return;
     const app = uWS.App();
     const webhookLogger = logger.child({ name: 'webhook' });
-    const path = config.webhook;
+
     const port = config.port;
     const pluginPath = config.pluginRouterPath;
 
@@ -193,7 +195,7 @@ export class Context extends cordis.Context {
 export namespace Context {
   export interface Config extends cordis.Context.Config {
     port: number;
-    webhook: string;
+    webhook?: string;
     pluginRouterPath?: string;
     compressed?: boolean;
     prompt_timeout?: number;
@@ -205,7 +207,7 @@ export namespace Context {
   export const Config: Schema<Config> = Schema.intersect([
     Schema.object({
       port: Schema.number().default(3000).required(),
-      webhook: Schema.string().default('/kook').required(),
+      webhook: Schema.string(),
       pluginRouterPath: Schema.string().default('/api'),
       compressed: Schema.boolean().default(true),
       prompt_timeout: Schema.natural().default(5000),

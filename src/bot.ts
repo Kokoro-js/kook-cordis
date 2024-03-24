@@ -1,11 +1,12 @@
 import { Context } from './context';
 import { defineProperty, remove } from 'cosmokit';
-import { createLogger } from './Logger';
+import { createLogger, logger } from './Logger';
 import Schema from 'schemastery';
 import pino from 'pino';
 import axios, { AxiosInstance } from 'axios';
 import { AbstactBot } from './api';
 import { IBaseAPIResponse, UserME } from './types';
+import WSClient from './WSClient';
 
 export class Bot extends AbstactBot {
   static reusable = true;
@@ -15,6 +16,7 @@ export class Bot extends AbstactBot {
   readonly http: AxiosInstance;
   userME: UserME;
   protected context: Context;
+  private ws: WSClient;
 
   constructor(
     public ctx: Context,
@@ -53,6 +55,14 @@ export class Bot extends AbstactBot {
       throw new Error('机器人获取自身信息失败。');
     }
     this.userME = data.data;
+    // 如果未设置 webhook 则尝试 ws。
+    if (this.ctx.root.config.webhook !== undefined) return;
+
+    const { data: ws } = await this.http.get<{ bot: string; code: number; data: { url: string } }>(
+      '/api/v3/gateway/index?compress=0',
+    );
+    if (ws.code !== 0) throw new Error('机器人尝试获取 WS 链接失败。');
+    this.ws = new WSClient(ws.data.url, this);
   }
 
   protected dispose() {
