@@ -305,7 +305,7 @@ export interface AbstactBot {
 
   deleteChannel(param: { channel_id: string }): Promise<void>;
 
-  getChannelUserList(param: { channel_id: string }): Promise<Kook.List<Kook.User>>;
+  getChannelUserList(param: { channel_id: string }): Promise<Kook.User[]>;
 
   kickChannelUser(param: { channel_id: string; user_id: string }): Promise<void>;
 
