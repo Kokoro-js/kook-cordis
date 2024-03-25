@@ -166,7 +166,7 @@ AbstactBot.define('getMessageReactionList', 'GET', '/message/reaction-list');
 AbstactBot.define('addMessageReaction', 'POST', '/message/add-reaction');
 AbstactBot.define('deleteMessageReaction', 'POST', '/message/delete-reaction');
 
-AbstactBot.define('getChannelJoinedUserList', 'GET', '/channel-user/get-joined-channel');
+AbstactBot.define('getUserJoinedChannelList', 'GET', '/channel-user/get-joined-channel');
 
 AbstactBot.define('getPrivateChatList', 'GET', '/user-chat/list');
 AbstactBot.define('getPrivateChatView', 'GET', '/user-chat/view');
@@ -370,7 +370,7 @@ export interface AbstactBot {
 
   deleteMessageReaction(param: { msg_id: string; emoji: string; user_id?: string }): Promise<void>;
 
-  getChannelJoinedUserList(
+  getUserJoinedChannelList(
     param: { guild_id: string; user_id: string } & Kook.Pagination,
   ): Promise<Kook.List<Kook.Channel>>;
 
