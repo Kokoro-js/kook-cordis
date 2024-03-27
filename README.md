@@ -1,10 +1,11 @@
 [![downloads](https://img.shields.io/npm/dm/kook-cordis?style=flat-square)](https://www.npmjs.com/package/kook-cordis)
 [![npm](https://img.shields.io/npm/v/kook-cordis?style=flat-square)](https://www.npmjs.com/package/kook-cordis)
 
-加入我们的 [Kook频道](https://kook.top/UzctXt) 来与开发者取得联系。
+没有文档，下边的演示足以理解，你可以选择加入我们的 [Kook频道](https://kook.top/UzctXt) 来与开发者取得联系。
 
+## 演示
 ```typescript
-// 目前只支持 Webhook 
+// 同时支持 webhook / websocket，如果要使用 websocket，webhook 留空即可
 const ctx = new Context({ webhook: '/kook', port: 1000, compressed: false });
 
 const botFork1 = ctx.plugin(Bot, {
@@ -33,7 +34,7 @@ ctx.router('get', '/abab/a', (res, req) => {
   res.end('ni hao');
 });
 
-// 期望顺序 2 - 3 - 1，输入 /unregister 后不再生效
+// 期望顺序 2 - 1 - 3，输入 /unregister 后不再生效
 ctx.command('unregister', '取消注册中间件', {}).action((argv) => {
   plugin1.dispose()
 });
@@ -55,4 +56,12 @@ const plugin1 = ctx.plugin((ctx) => {
     bot.sendMessage(session.channelId, '三号中间件');
   });
 })
+
+// 实现一个复读机
+ctx.middleware(async (bot, session) => {
+  await bot.sendMessage(session.channelId, '请输入一些内容我之后会给你复读');
+  const reply = await ctx.prompt(session);
+  logger.info(reply);
+  await bot.sendMessage(session.channelId, reply);
+});
 ```
