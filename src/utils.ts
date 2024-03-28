@@ -9,6 +9,14 @@ export function hasPermission(permissions: number, permission: Permissions) {
   return (permissions & (1 << permission)) === 1 << permission;
 }
 
+export function generatePermission(bitValues: Permissions[]) {
+  let permissions = 0;
+  for (const bitValue of bitValues) {
+    permissions |= 1 << bitValue;
+  }
+  return permissions;
+}
+
 export async function allPagesRequest<DataType, Input extends Omit<Pagination, 'page'>>(
   botFunction: (param: Input) => Promise<List<DataType>>,
   params: Input,

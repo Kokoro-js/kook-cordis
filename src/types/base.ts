@@ -82,33 +82,61 @@ export interface GuildRole {
 }
 
 export enum Permissions {
+  /** 管理员 */
   GUILD_ADMIN = 0,
+  /** 管理服务器 */
   GUILD_MANAGE = 1,
+  /** 查看管理日志 */
   GUILD_LOG = 2,
+  /** 创建服务器邀请 */
   GUILD_INVITE_CREATE = 3,
+  /** 管理邀请 */
   GUILD_INVITE_MANAGE = 4,
+  /** 频道管理 */
   CHANNEL_MANAGE = 5,
+  /** 踢出用户 */
   GUILD_USER_KICK = 6,
+  /** 封禁用户 */
   GUILD_USER_BAN = 7,
+  /** 管理自定义表情 */
   GUILD_EMOJI_MANAGE = 8,
+  /** 修改服务器昵称 */
   GUILD_USER_NAME_CHANGE = 9,
+  /** 管理角色权限 */
   GUILD_ROLE_MANAGE = 10,
+  /** 查看文字、语音频道 */
   CHANNEL_VIEW = 11,
+  /** 发布消息 */
   CHANNEL_MESSAGE = 12,
+  /** 管理消息 */
   CHANNEL_MANAGE_MESSAGE = 13,
+  /** 上传文件 */
   CHANNEL_UPLOAD = 14,
+  /** 语音链接 */
   CHANNEL_VOICE_CONNECT = 15,
+  /** 语音管理 */
   CHANNEL_VOICE_MANAGE = 16,
+  /** 提及@全体成员 */
   CHANNEL_MESSAGE_AT_ALL = 17,
+  /** 添加反应 */
   CHANNEL_MESSAGE_REACTION_CREATE = 18,
+  /** 跟随添加反应 */
   CHANNEL_MESSAGE_REACTION_FOLLOW = 19,
+  /** 被动连接语音频道 */
   CHANNEL_VOICE_CONNECT_PASSIVE = 20,
+  /** 仅使用按键说话 */
   CHANNEL_VOICE_SPEAK_KEY_ONLY = 21,
+  /** 使用自由麦 */
   CHANNEL_VOICR_SPEAK_FREE = 22,
+  /** 说话 */
   CHANNEL_VOICE_SPEAK = 23,
+  /** 服务器静音 */
   GUILD_USER_DEAFEN = 24,
-  GUILD_USER_MUTEGUILD_USER_NAME_CHANGE_OTHER = 25,
+  /** 服务器闭麦 */
+  GUILD_USER_MUTE = 25,
+  /** 修改他人昵称 */
   GUILD_USER_NAME_CHANGE_OTHER = 26,
+  /** 播放伴奏 */
   CHANNEL_VOICE_BGM = 27,
 }
 
