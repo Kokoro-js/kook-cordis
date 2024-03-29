@@ -153,6 +153,7 @@ AbstactBot.define('getChannelUserList', 'GET', '/channel/user-list');
 AbstactBot.define('kickChannelUser', 'POST', '/channel/kickout');
 AbstactBot.define('moveChannelUser', 'POST', '/channel/move-user');
 AbstactBot.define('getChannelRoleIndex', 'GET', '/channel-role/index');
+AbstactBot.define('syncChannelRole', 'POST', '/channel-role/sync');
 AbstactBot.define('createChannelRole', 'POST', '/channel-role/create');
 AbstactBot.define('updateChannelRole', 'POST', '/channel-role/update');
 AbstactBot.define('deleteChannelRole', 'POST', '/channel-role/delete');
@@ -315,6 +316,8 @@ export interface AbstactBot {
   }): Promise<{ user_ids: string[] }>;
 
   getChannelRoleIndex(param: { channel_id: string }): Promise<Kook.ChannelRoleIndex>;
+
+  syncChannelRole(param: { channel_id: string }): Promise<Kook.ChannelRoleIndex>;
 
   createChannelRole(param: {
     channel_id: string;

@@ -1,8 +1,8 @@
 import { Channel, GuildRole, Overwrite, User } from '../base';
 
 export interface ChannelRoleIndex {
-  permission_overwrites: Overwrite;
-  permission_users: List<User>;
+  permission_overwrites: Overwrite[];
+  permission_users: Array<{ user: User } & Omit<Overwrite, 'role_id'>>;
   permission_sync: 0 | 1;
 }
 
