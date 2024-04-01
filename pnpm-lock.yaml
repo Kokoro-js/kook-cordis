@@ -28,7 +28,7 @@ dependencies:
     version: 8.19.0
   schemastery:
     specifier: ^3.14.4
-    version: 3.14.4
+    version: 3.14.5
   type-flag:
     specifier: ^3.0.0
     version: 3.0.0
@@ -2891,8 +2891,8 @@ packages:
       loose-envify: 1.4.0
     dev: true
 
-  /schemastery@3.14.4:
-    resolution: {integrity: sha512-8Q3AJdP9g/miV4f8Ys66hqBPXGkqnIO1YB+/IDW3lKRHjhubttNf4/wgdHkeQaGroK4+4raTBoKaViy80CYbow==}
+  /schemastery@3.14.5:
+    resolution: {integrity: sha512-tSqyuYswPduRSz9K8vjW9HzCafcfhJzlRKKud5HWU7cXDxNxkcpdGm25KHGoxkcJi48JqMhacRdRhhE/B+Hx4A==}
     dependencies:
       cosmokit: 1.5.2
     dev: false
