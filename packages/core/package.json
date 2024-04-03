@@ -1,0 +1,52 @@
+{
+  "name": "kook-cordis",
+  "version": "1.8.14",
+  "description": "Kook 在 Cordis 下的 SDK 包装。",
+  "repository": "github:Kokoro-js/kook-cordis",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "exports": {
+    "require": {
+      "types": "./dist/index.d.cts",
+      "default": "./dist/index.cjs"
+    },
+    "import": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "agent-base": "^7.1.0",
+    "axios": "^1.6.8",
+    "cordis": "3.4.1",
+    "cosmokit": "^1.5.2",
+    "fast-fuzzy": "^1.12.0",
+    "mime-db": "^1.52.0",
+    "pino": "^8.19.0",
+    "schemastery": "^3.14.4",
+    "websocket-reconnect": "^1.0.10",
+    "type-flag": "^3.0.0",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.32.0"
+  },
+  "scripts": {
+    "test": "npm run build:ts && tsc -p test/tsconfig.json && tap --ts \"test/**/*.test.ts\"",
+    "build": "pkgroll",
+    "prepublish": "pkgroll",
+    "dev": "if \"%OS%\"==\"Windows_NT\" (chcp 65001) && npm run dev:start",
+    "dev:start": "cross-env LEVEL=trace ts-node-dev --respawn --debounce 1000 ../../src/app.ts | pino-pretty"
+  },
+  "files": [
+    "dist/",
+    "!/dist/app.*"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "LGPL-3.0",
+  "devDependencies": {
+    "@types/bun": "^1.0.12"
+  }
+}

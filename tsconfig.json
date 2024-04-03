@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib",
+    "paths": {
+      "kook-cordis": ["./packages/core/src"],
+    }
+  },
+  "include": [
+    "src"
+  ],
+  "references": [
+    { "path": "./packages/core"},
+  ]
+}
