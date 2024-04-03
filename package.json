@@ -1,5 +1,5 @@
 {
-  "name": "kook-cordis",
+  "name": "kook-cordis-repo",
   "workspaces": [
     "packages/*",
 	"services/*"
