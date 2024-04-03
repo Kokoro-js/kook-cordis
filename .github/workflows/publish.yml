@@ -31,10 +31,13 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+        working-directory: ./packages/core
 
       - name: Build Packages
         run: pnpm build
+        working-directory: ./packages/core
         
       - uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.NPM_TOKEN }}
+          package: "/packages/core"
