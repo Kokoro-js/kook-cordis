@@ -148,7 +148,7 @@ export class Context extends cordis.Context {
       fetch(req) {
         const url = new URL(req.url);
         const urlPath = url.pathname;
-
+        webhookLogger.trace(urlPath);
         // 对于 POST 请求的处理
         if (req.method === 'POST' && urlPath === path) {
           return req
@@ -159,7 +159,7 @@ export class Context extends cordis.Context {
               // 根据 compressed 决定是否解压数据
               if (isExpectCompressed) {
                 // 使用 Bun 的 zlib 解压
-                dataPromise = Bun.inflateSync(new Uint8Array(buffer));
+                dataPromise = Bun.inflateSync(buffer);
               } else {
                 // 直接使用未压缩的数据
                 dataPromise = Promise.resolve(buffer);
@@ -189,7 +189,7 @@ export class Context extends cordis.Context {
               });
             })
             .catch((error) => {
-              webhookLogger.error(error.message);
+              webhookLogger.error(error);
               return new Response(null, { status: 500 });
             });
         }
