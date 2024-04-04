@@ -195,9 +195,10 @@ export class Context extends cordis.Context {
         }
 
         // 对于其他类型请求的处理
-        const method = req.method;
-        if (ctx.$routers._routes[method] && ctx.$routers._routes[method][path]) {
-          return ctx.$routers._routes[method][path](req);
+        const method = req.method.toLowerCase();
+        const routes = ctx.$routers._routes;
+        if (routes[method] && routes[method][urlPath]) {
+          return routes[method][urlPath](req);
         } else {
           return new Response('404 Not Found', { status: 404 });
         }

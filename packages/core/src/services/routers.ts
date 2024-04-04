@@ -1,10 +1,10 @@
 import { defineProperty } from 'cosmokit';
 import { Context } from '../context';
-import type { HttpRequest, HttpResponse } from 'uWebSockets.js';
 import zlib from 'zlib';
+import type { HttpResponse } from 'uWebSockets.js';
 
 export type AllowedMethod = 'get' | 'post' | 'put' | 'delete' | 'patch';
-export type RouteHandler = (res: HttpResponse, req: HttpRequest) => void;
+export type RouteHandler = (req: Request) => Response;
 export type Routes = {
   [method in AllowedMethod]: {
     [path: string]: RouteHandler;
@@ -17,8 +17,8 @@ export class Routers {
   constructor(private ctx: Context) {
     defineProperty(this, Context.current, ctx);
 
-    this.router('get', '/', (res, req) => {
-      res.writeStatus('200 OK').end('Kook-cordis Routers is working!');
+    this.router('get', '/', (req) => {
+      return new Response('Kook-cordis Routers is working!');
     });
   }
 
@@ -27,10 +27,10 @@ export class Routers {
   }
 
   router(method: AllowedMethod, path: string, handler: RouteHandler) {
+    path = this.ctx.runtime.config.pluginRouterPath + path;
     if (this._routes[method][path]) {
       throw new Error('该路由方法的路径上已经有处理函数了');
     }
-
     this._routes[method][path] = handler;
     // 情境卸载移除路由
     this.caller.runtime.disposables.push(() => this.removeRoute(method, path));
