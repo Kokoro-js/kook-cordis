@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "NodeNext",
+    "outDir": "./dist", // 输出目录为 dist
+    "rootDir": "./src", // TypeScript源代码目录为 src
+    "removeComments": false,
+    "esModuleInterop": true,
+    "moduleResolution": "NodeNext",
+    "strictBindCallApply": true,
+    "composite": true,
+    "declaration": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts"], // 包含的 TypeScript 文件
+  "exclude": ["node_modules"] // 排除的文件夹
+}

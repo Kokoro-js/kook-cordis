@@ -1,0 +1,30 @@
+{
+  "name": "cordis-service-rates",
+  "version": "0.1.0",
+  "description": "Kook-Cordis Rates Service.",
+  "repository": "github:Kokoro-js/kook-cordis",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "exports": {
+    "require": {
+      "types": "./dist/index.d.cts",
+      "default": "./dist/index.cjs"
+    },
+    "import": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "pkgroll",
+    "prepublish": "pkgroll"
+  },
+  "files": [
+    "dist/"
+  ],
+  "license": "LGPL-3.0",
+  "dependencies": {
+    "redis": "^4.6.13"
+  }
+}
