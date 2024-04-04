@@ -47,6 +47,7 @@
   "author": "",
   "license": "LGPL-3.0",
   "devDependencies": {
+    "@types/bun": "^1.0.12",
     "@types/node": "^20.12.4",
     "pkgroll": "^2.0.2",
     "typescript": "^5.4.3"
