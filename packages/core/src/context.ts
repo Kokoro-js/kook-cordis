@@ -144,6 +144,7 @@ export class Context extends cordis.Context {
     }
     // 如果是在 Bun 下运行的
 
+    // @ts-ignore
     Bun.serve({
       fetch(req) {
         const url = new URL(req.url);
@@ -158,7 +159,8 @@ export class Context extends cordis.Context {
 
               // 根据 compressed 决定是否解压数据
               if (isExpectCompressed) {
-                // 使用 Bun 的 zlib 解压
+                // 使用 Bun 的 zlib 解压(不支持 Brotli)
+                // @ts-ignore
                 dataPromise = Bun.inflateSync(buffer);
               } else {
                 // 直接使用未压缩的数据
