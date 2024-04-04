@@ -5,8 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e1625220-74f2-4e4c-b244-a0605096b806" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/.env.example" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/packages/core/src/context.ts" beforeDir="false" afterPath="$PROJECT_DIR$/packages/core/src/context.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/rates/lib/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/rates/lib/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/redis/lib/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/redis/lib/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/render/lib/index.d.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/render/lib/index.js" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -88,8 +97,8 @@
       <recent name="G:\kook-ts-cordis\src" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="G:\kook-ts-cordis\src" />
       <recent name="G:\kook-ts-cordis" />
+      <recent name="G:\kook-ts-cordis\src" />
       <recent name="G:\kook-ts-cordis\packages\services\src" />
       <recent name="G:\kook-ts-cordis\packages\core\src" />
       <recent name="G:\kook-ts-cordis\src\services" />

@@ -1,6 +1,6 @@
 # 本地测试不应上传的文件
-src/app.ts
-
+**/dist
+**/lib
 
 # Logs
 logs
@@ -120,7 +120,7 @@ dist
 # TernJS port file
 .tern-port
 
-# Stores VSCode versions used for testing VSCode extensions
+# Stores `VSCode` versions used for testing VSCode extensions
 .vscode-test
 
 # yarn v2
