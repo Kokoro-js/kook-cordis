@@ -1,10 +1,14 @@
 on:
   push:
-    branches: main
+    branches: 
+      - main
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/core
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
@@ -31,13 +35,11 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-        working-directory: ./packages/core
 
       - name: Build Packages
         run: pnpm build
-        working-directory: ./packages/core
         
       - uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.NPM_TOKEN }}
-          package: "/packages/core"
+          package: packages/core
