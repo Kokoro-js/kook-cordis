@@ -16,7 +16,7 @@ dependencies:
     version: 3.4.1
   cosmokit:
     specifier: ^1.5.2
-    version: 1.5.2
+    version: 1.6.2
   fast-fuzzy:
     specifier: ^1.12.0
     version: 1.12.0
@@ -606,11 +606,11 @@ packages:
   /cordis@3.4.1:
     resolution: {integrity: sha512-0l7DOh/CFnkcfz6MmDpgMxgv/miczxVYX+91JUHIahY/bdcgrFKKFXOsBNu9n1zVlHDzSlZ42FtrFyogmsad/g==}
     dependencies:
-      cosmokit: 1.5.2
+      cosmokit: 1.6.2
     dev: false
 
-  /cosmokit@1.5.2:
-    resolution: {integrity: sha512-l4m/Iz0ZZ4nMaVsCC493suyUgeuAoxnDQI+UKt+vVXO+8zBVcrRKzv8m8q+SkXwxHcWluSMHw1AaZc9U2amabw==}
+  /cosmokit@1.6.2:
+    resolution: {integrity: sha512-KnicClOb834OGjzAxjuH5WFoIxzcQwiDbvwRykgCRxHq103lrW4vpogPs3LBuZDsb2asEax4C70OYFd+JfAmgQ==}
     dev: false
 
   /debug@4.3.4:
@@ -977,7 +977,7 @@ packages:
   /schemastery@3.14.5:
     resolution: {integrity: sha512-tSqyuYswPduRSz9K8vjW9HzCafcfhJzlRKKud5HWU7cXDxNxkcpdGm25KHGoxkcJi48JqMhacRdRhhE/B+Hx4A==}
     dependencies:
-      cosmokit: 1.5.2
+      cosmokit: 1.6.2
     dev: false
 
   /slash@4.0.0:
