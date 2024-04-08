@@ -48,10 +48,10 @@ devDependencies:
     version: 20.12.4
   pkgroll:
     specifier: ^2.0.2
-    version: 2.0.2(typescript@5.4.3)
+    version: 2.0.2(typescript@5.4.4)
   typescript:
     specifier: ^5.4.3
-    version: 5.4.3
+    version: 5.4.4
 
 packages:
 
@@ -875,7 +875,7 @@ packages:
       thread-stream: 2.4.1
     dev: false
 
-  /pkgroll@2.0.2(typescript@5.4.3):
+  /pkgroll@2.0.2(typescript@5.4.4):
     resolution: {integrity: sha512-gRQ293zs67H2nN/CKwdLnlxCKpE5qi5rJwVvDUqep8qOLs57PlTl3MAXmLlFztwI2Iv6mP9k5BSlhBjzFJmerg==}
     engines: {node: '>=18'}
     hasBin: true
@@ -895,7 +895,7 @@ packages:
       esbuild: 0.20.2
       magic-string: 0.30.8
       rollup: 4.14.0
-      typescript: 5.4.3
+      typescript: 5.4.4
     dev: true
 
   /process-warning@3.0.0:
@@ -1021,8 +1021,8 @@ packages:
     resolution: {integrity: sha512-3YaYwMseXCAhBB14RXW5cRQfJQlEknS6i4C8fCfeUdS3ihG9EdccdR9kt3vP73ZdeTGmPb4bZtkDn5XMIn1DLA==}
     dev: false
 
-  /typescript@5.4.3:
-    resolution: {integrity: sha512-KrPd3PKaCLr78MalgiwJnA25Nm8HAmdwN3mYUYZgG/wizIo9EainNVQI9/yDavtVFRN2h3k8uf3GLHuhDMgEHg==}
+  /typescript@5.4.4:
+    resolution: {integrity: sha512-dGE2Vv8cpVvw28v8HCPqyb08EzbBURxDpuhJvTrusShUfGnhHBafDsLdS1EhhxyL6BJQE+2cT3dDPAv+MQ6oLw==}
     engines: {node: '>=14.17'}
     hasBin: true
     dev: true
