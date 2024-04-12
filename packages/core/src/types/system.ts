@@ -249,5 +249,7 @@ export interface IMessageButtonClickBody {
   msg_id: string;
   user_id: string;
   target_id: string;
+  channel_type: 'GROUP' | 'PERSON';
   user_info: User;
+  guild_id?: string;
 }
