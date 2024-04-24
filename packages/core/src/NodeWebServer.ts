@@ -40,7 +40,7 @@ export default function setupUWSJS(
         // @ts-ignore
         // this.emit('internal/webhook', bot, data);
 
-        internalWebhook(this, bot, data);
+        internalWebhook(ctx, bot, data);
       },
       (message: string) => {
         webhookLogger.error(message);
@@ -49,7 +49,7 @@ export default function setupUWSJS(
     );
   });
 
-  app.any(`${config.pluginPath}/*`, (res, req) => {
+  /*  app.any(`${config.pluginPath}/!*`, (res, req) => {
     const method = req.getMethod();
     const url = (req.getUrl() || '/').substring(config.pluginPath.length);
 
@@ -58,7 +58,7 @@ export default function setupUWSJS(
     } else {
       res.end('404 Not Found');
     }
-  });
+  });*/
 
   app.listen(config.port, (token) => {
     if (token) {
