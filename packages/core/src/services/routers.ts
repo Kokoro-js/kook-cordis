@@ -1,10 +1,10 @@
-import { defineProperty } from 'cosmokit';
+import { Awaitable, defineProperty } from 'cosmokit';
 import { Context } from '../context';
 import zlib from 'zlib';
 import type { HttpResponse } from 'uWebSockets.js';
 
 export type AllowedMethod = 'get' | 'post' | 'put' | 'delete' | 'patch';
-export type RouteHandler = (req: Request) => Response;
+export type RouteHandler = (req: Request) => Awaitable<Response>;
 export type Routes = {
   [method in AllowedMethod]: {
     [path: string]: RouteHandler;

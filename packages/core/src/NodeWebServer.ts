@@ -15,7 +15,7 @@ export default function setupUWSJS(
   ctx: Context,
   webhookLogger,
 ) {
-  const app = require('uWebSockets.js').App;
+  const app = require('uWebSockets.js').App();
   app.post(config.path, (res, req) => {
     readJson(
       res,
