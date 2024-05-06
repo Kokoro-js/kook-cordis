@@ -42,7 +42,7 @@ dependencies:
 devDependencies:
   '@types/bun':
     specifier: ^1.0.12
-    version: 1.0.12
+    version: 1.1.1
   '@types/node':
     specifier: ^20.12.4
     version: 20.12.4
@@ -492,10 +492,10 @@ packages:
     dev: true
     optional: true
 
-  /@types/bun@1.0.12:
-    resolution: {integrity: sha512-qPb5FcygbpSS1NDBjWyQCWeI9kKXwSYSR1Enu7yb+gMXgFwGMhlyOvgV/7FGrdvAjlSXWRY6IDepos7k8WzAtQ==}
+  /@types/bun@1.1.1:
+    resolution: {integrity: sha512-lUe9rLMhgDCViciZtgDj5CMl2u7uTq/IP149kSZH/Si6FWkCioximABFf+baRQgbm8QlH4bzT0qJRteQFNqeGA==}
     dependencies:
-      bun-types: 1.0.36
+      bun-types: 1.1.6
     dev: true
 
   /@types/estree@1.0.5:
@@ -585,8 +585,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /bun-types@1.0.36:
-    resolution: {integrity: sha512-gaIb1SyhB0JZfIEg73/kSFhqolUqJXC68peguhXGwqr27HuvI8nkD0LTIHp/1DY4cNadfXHYgYrZIWX7oEoXlg==}
+  /bun-types@1.1.6:
+    resolution: {integrity: sha512-LK2aaJdBBTUkDyN+kRiJHLF3VGrAcdkEHrbBvbmTkccShPw6ZalxxKjWSBJwn4UkikhZdrdA87bZWmfUgkRUYg==}
     dependencies:
       '@types/node': 20.11.30
       '@types/ws': 8.5.10
