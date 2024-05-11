@@ -8,20 +8,19 @@ import { internalWebhook } from './event-trigger';
 
 const heartbeatIntervals = [6, 2, 4];
 export default class WSClient {
-  socket;
+  socket: WsReconnect;
   wsLogger: pino.Logger;
   _sn = 0;
-  _ping: NodeJS.Timeout;
-  _heartbeat: NodeJS.Timeout;
+  _ping;
+  _heartbeat;
 
   constructor(url: string, p: Bot) {
     this.wsLogger = logger.child({ name: 'websocket' });
     this.wsLogger.info(url);
-    const socket = new WsReconnect({ reconnectDelay: 5000 });
+    const socket = new WsReconnect({ reconnectDelay: 8000 });
     socket.open(url);
     socket.on('open', (e) => {
       this.wsLogger.info(`成功连接到 ${url}`);
-      this._sn = 0;
       clearInterval(this._heartbeat);
     });
     socket.on('message', (e) => {
@@ -42,14 +41,17 @@ export default class WSClient {
       } else if (parsed.s === Signal.pong) {
         clearTimeout(this._ping);
       } else if (parsed.s === Signal.resume) {
-        this.socket.close(1013);
+        this.socket.close();
       }
     });
     socket.on('close', (e) => {
       this.wsLogger.info(e, 'Websocket Closed.');
     });
     socket.on('error', (e) => this.wsLogger.error(e, `Meet Error with ${url}`));
-    socket.on('reconnect', (e) => this.wsLogger.info(e, 'Reconnecting...'));
+    socket.on('reconnect', (e) => {
+      this.wsLogger.info(e, 'Reconnecting...');
+      this.socket.send(JSON.stringify({ s: Signal.resume, sn: this._sn }));
+    });
     this.socket = socket;
   }
 
@@ -62,7 +64,7 @@ export default class WSClient {
     const send = () => {
       if (!this.socket) return;
       if (trials >= 2) {
-        return this.socket.close(1013);
+        return this.socket.close();
       }
       this.socket.send(JSON.stringify({ s: Signal.ping, sn: this._sn }));
       this._ping = setTimeout(send, heartbeatIntervals[trials++] * Time.second);

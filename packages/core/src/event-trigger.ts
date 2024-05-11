@@ -10,14 +10,14 @@ export function internalWebhook(ctx: Context, bot, data) {
     userId: data.author_id === '1' ? data.extra.body.user_id : data.author_id,
     channelId: undefined,
     guildId: undefined,
-    selfId: bot?.userME.id,
+    selfId: bot?.userME?.id,
     data: data,
   };
   session[Context.filter] = (ctx) => ctx.filter(session);
 
   // 不是特定类型，当作普通信息
   if (data.type !== 255) {
-    session.guildId = data.extra.guild_id;
+    session.guildId = data.extra?.guild_id;
     session.channelId = data.target_id;
 
     processEvent(ctx, session, 'message', bot);
@@ -38,23 +38,23 @@ function handleSpecialTypes(data, session, ctx, bot) {
   session.guildId = data.extra.body?.guild_id || data.target_id;
   session.channelId = data.extra.body?.channel_id || data.target_id;
 
-  processEvent(ctx, session, 'webhook', bot);
-  if (data.extra.type === 'message_btn_click') {
-    session.channelId = data.extra.body.target_id;
-    // 由于按钮大部分情况下消耗资源很多，所以应先过内部检查
-    const result = ctx.bail('internal/button', bot, session);
-    if (result !== undefined) {
-      if (typeof result == 'string') session.data.extra.body.value = result;
-      else if (!result) return;
-    }
+  switch (data.extra.type) {
+    case 'message_btn_click':
+      session.channelId = data.extra.body.target_id;
+      const result = ctx.bail('internal/button', bot, session);
+      if (result !== undefined) {
+        if (typeof result == 'string') session.data.extra.body.value = result;
+        else if (!result) return;
+      }
 
-    ctx
-      .serial(session, 'serial-button-click', bot, session)
-      .catch((e) => logger.error(e, 'Error processing event "serial-button-click"'));
-    processEvent(ctx, session, 'button-click', bot);
-    return;
+      ctx
+        .serial(session, 'serial-button-click', bot, session)
+        .catch((e) => logger.error(e, 'Error processing event "serial-button-click"'));
+      processEvent(ctx, session, 'button-click', bot);
+      break;
+    default:
+      processEvent(ctx, session, eventMap[data.extra.type] || 'webhook', bot);
   }
-  processEvent(ctx, session, eventMap[data.extra.type], bot);
 }
 
 function processEvent(ctx, session, eventType, bot) {
