@@ -7,7 +7,7 @@ const logger = createLogger('Kook-Events');
 export function internalWebhook(ctx: Context, bot, data) {
   // 大多数情况下都为信息
   const session: Session<any> = {
-    userId: data.author_id === '1' ? data.extra.body.user_id : data.author_id,
+    userId: data.author_id === '1' ? data?.extra?.body?.user_id : data?.author_id,
     channelId: undefined,
     guildId: undefined,
     selfId: bot?.userME?.id,
@@ -17,15 +17,15 @@ export function internalWebhook(ctx: Context, bot, data) {
 
   // 不是特定类型，当作普通信息
   if (data.type !== 255) {
-    session.guildId = data.extra?.guild_id;
-    session.channelId = data.target_id;
+    session.guildId = data?.extra?.guild_id;
+    session.channelId = data?.target_id;
 
     processEvent(ctx, session, 'message', bot);
     if (data.channel_type === 'GROUP') {
       processEvent(ctx, session, 'message-created', bot);
     }
     if (data.channel_type === 'PERSON') {
-      session.guildId = data.target_id;
+      session.guildId = data?.target_id;
       processEvent(ctx, session, 'private-message-created', bot);
     }
     return;
@@ -35,8 +35,8 @@ export function internalWebhook(ctx: Context, bot, data) {
 }
 
 function handleSpecialTypes(data, session, ctx, bot) {
-  session.guildId = data.extra.body?.guild_id || data.target_id;
-  session.channelId = data.extra.body?.channel_id || data.target_id;
+  session.guildId = data?.extra?.body?.guild_id || data?.target_id;
+  session.channelId = data?.extra?.body?.channel_id || data?.target_id;
 
   switch (data.extra.type) {
     case 'message_btn_click':
@@ -53,7 +53,12 @@ function handleSpecialTypes(data, session, ctx, bot) {
       processEvent(ctx, session, 'button-click', bot);
       break;
     default:
-      processEvent(ctx, session, eventMap[data.extra.type] || 'webhook', bot);
+      processEvent(
+        ctx,
+        session,
+        eventMap[data?.extra?.type] || data?.extra?.type || 'webhook',
+        bot,
+      );
   }
 }
 
