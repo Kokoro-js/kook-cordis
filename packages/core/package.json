@@ -30,7 +30,7 @@
     "schemastery": "^3.14.5",
     "type-flag": "^3.0.0",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.32.0",
-    "websocket-reconnect": "^1.0.10"
+    "ws": "^8.17.0"
   },
   "scripts": {
     "test": "npm run build:ts && tsc -p test/tsconfig.json && tap --ts \"test/**/*.test.ts\"",
