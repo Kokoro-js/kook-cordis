@@ -153,3 +153,4 @@ dist
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 .idea/**/dbnavigator.xml
+services/pocketbase/src/pocketbase-types.ts
