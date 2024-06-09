@@ -63,7 +63,7 @@ export class Render extends Service {
         );
       });
 
-    ctx.router('get', '/render/leafer', async (res, req) => {
+    /*ctx.router('get', '/render/leafer', async (res, req) => {
       const leafer = new this.leaferui.Leafer({ width: 600, height: 800 });
       const background = new Rect({
         width: 600, // 设定宽度为 600
@@ -111,7 +111,7 @@ export class Render extends Service {
       res.onAborted(() => {
         logger.error('请求被中断');
       });
-    });
+    });*/
   }
 
   async createChart(

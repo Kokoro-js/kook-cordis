@@ -1,0 +1,33 @@
+lockfileVersion: '6.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+dependencies:
+  '@influxdata/influxdb-client':
+    specifier: ^1.33.2
+    version: 1.33.2
+  time-range-parser:
+    specifier: ^0.1.4
+    version: 0.1.4(typescript@5.4.5)
+
+packages:
+
+  /@influxdata/influxdb-client@1.33.2:
+    resolution: {integrity: sha512-RT5SxH+grHAazo/YK3UTuWK/frPWRM0N7vkrCUyqVprDgQzlLP+bSK4ak2Jv3QVF/pazTnsxWjvtKZdwskV5Xw==}
+    dev: false
+
+  /time-range-parser@0.1.4(typescript@5.4.5):
+    resolution: {integrity: sha512-Bil23IwooNJ69kRst93ZDQq2Zx2e2h6oAmxB8zdTxOiKOPby5HeV3N6W815GIjG44eS8zZzW78NYnoZzLBCEBA==}
+    peerDependencies:
+      typescript: ^5.0.0
+    dependencies:
+      typescript: 5.4.5
+    dev: false
+
+  /typescript@5.4.5:
+    resolution: {integrity: sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+    dev: false

@@ -1,5 +1,5 @@
 {
-  "name": "cordis-service-render",
+  "name": "cordis-service-pocketbase",
   "version": "0.0.0",
   "description": "> TODO: description",
   "author": "ahdg <36436808+ahdg6@users.noreply.github.com>",
@@ -10,9 +10,7 @@
     "dist"
   ],
   "dependencies": {
-    "echarts": "^5.5.0",
-    "@leafer-ui/node": "1.0.0-rc.17",
-    "@napi-rs/canvas": "^0.1.49"
+    "pocketbase": "^0.21.3"
   },
   "main": "src/index.ts",
   "scripts": {
