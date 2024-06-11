@@ -4,6 +4,8 @@ import { MessageSession, Permissions } from '../../types';
 import { Bot } from '../../bot';
 import { hasPermission } from '../../utils';
 import { Commander } from './commander';
+import { parseArgsStringToArgv } from './helper';
+import { req } from 'agent-base';
 
 type ParseRequired<T extends string> = T extends `${infer Before} <${infer Param}> ${infer After}`
   ? { [K in Param]: string } & ParseRequired<`${Before} ${After}`>
@@ -109,32 +111,31 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
       if (returned !== undefined && typeof returned == 'object') session.internalData = returned;
     }
 
-    let argv = typeFlag(this.options, parseArgsStringToArgv(possible));
-    const params: Record<string, string> = {};
+    const parsedArgv = parseArgsStringToArgv(possible);
 
-    if (this.requiredMatches.length > argv._.length) {
+    if (this.requiredMatches.length > parsedArgv.length) {
       await bot.sendMessage(
         session.channelId,
         `须填参数 ${this.requiredMatches.length} 个，还缺少 ${
-          this.requiredMatches.length - argv._.length
+          this.requiredMatches.length - parsedArgv.length
         } 个参数。`,
         { quote: session.data.msg_id },
       );
       return;
     }
 
+    const params: Record<string, string> = {};
     this.requiredMatches.forEach((paramName, index) => {
+      params[paramName] = parsedArgv[index];
+    });
+
+    const argv = typeFlag(this.options, parsedArgv.slice(this.requiredMatches.length));
+
+    this.optionalMatches.forEach((paramName, index) => {
       params[paramName] = argv._[index];
     });
 
-    this.optionalMatches.forEach((paramName, index) => {
-      if (index + this.requiredMatches.length < argv._.length) {
-        params[paramName] = argv._[index + this.requiredMatches.length];
-      }
-    });
-
-    argv = { ...argv, ...params };
-    const result = await this.commandFunction(argv as any, bot, session);
+    const result = await this.commandFunction(Object.assign(argv, params) as any, bot, session);
     if (result) await bot.sendMessage(session.channelId, result);
     return true;
   }
@@ -142,33 +143,4 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
   handleError = (e: Error) => {
     this.logger.error(e);
   };
-}
-
-function parseArgsStringToArgv(value: string) {
-  const args = [];
-  let inQuotes = false;
-  let escape = false;
-  let arg = '';
-
-  for (const current of value) {
-    if (escape) {
-      arg += current;
-      escape = false;
-    } else if (current === '\\') {
-      escape = true;
-    } else if (current === '"') {
-      inQuotes = !inQuotes;
-    } else if (current === ' ' && !inQuotes) {
-      if (arg) {
-        args.push(arg);
-        arg = '';
-      }
-    } else {
-      arg += current;
-    }
-  }
-
-  if (arg) args.push(arg);
-
-  return args;
 }
