@@ -125,7 +125,7 @@ export class Context extends cordis.Context {
   private setupProviders() {
     this.provide('$filter', new FilterService(this), true);
     this.provide('$processor', new Processor(this), true);
-    this.provide('$commander', new Commander(this), true);
+    this.provide('$commander', new Commander(this, this.root.config.command), true);
     this.provide('$routers', new Routers(this), true);
   }
 
@@ -219,9 +219,8 @@ export namespace Context {
     pluginRouterPath?: string;
     compressed?: boolean;
     prompt_timeout?: number;
-    commandPrefix?: string;
-    developerIds?: string[];
     request?: Quester.Config;
+    command?: Commander.Config;
   }
 
   export const Config: Schema<Config> = Schema.intersect([
@@ -231,8 +230,7 @@ export namespace Context {
       pluginRouterPath: Schema.string().default('/api'),
       compressed: Schema.boolean().default(true),
       prompt_timeout: Schema.natural().default(5000),
-      commandPrefix: Schema.string().default('/'),
-      developerIds: Schema.array(Schema.string()).default([]),
+      command: Commander.Config,
     }),
     Quester.Config,
   ]);

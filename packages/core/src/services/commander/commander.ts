@@ -1,4 +1,4 @@
-import { Awaitable, defineProperty, Dict } from 'cosmokit';
+import { defineProperty, Dict } from 'cosmokit';
 import { Context } from '../../context';
 
 import { CommandInstance } from './command';
@@ -10,6 +10,7 @@ import { MessageSession, MessageType } from '../../types';
 import { Bot } from '../../bot';
 import { Next } from '../middleware';
 import { CardTemplate } from './Template';
+import Schema from 'schemastery';
 
 export { CommandInstance };
 
@@ -37,10 +38,13 @@ export class Commander {
     help: { description: '提供指令相关帮助', required: { command: '指令名称' } },
   };
 
-  constructor(private ctx: Context) {
+  constructor(
+    private ctx: Context,
+    public config: Commander.Config,
+  ) {
     defineProperty(this, Context.current, ctx);
-    this.prefix = ctx.scope.config.commandPrefix;
-    Commander.developerIds = ctx.scope.config.developerIds;
+    this.prefix = config.commandPrefix;
+    Commander.developerIds = config.developerIds;
 
     ctx.middleware(this.setupCommandParser.bind(this), true); // 前置中间件保证指令得到优先处理
 
@@ -235,7 +239,7 @@ export class Commander {
         return;
       }
       // 没匹配到就把该指令放进相似指令匹配列表
-      commandArray.push(obj);
+      if (this.config.enableLikelyCommand) commandArray.push(obj);
     }
 
     // 默认使用 damerau-levenshtein，只有相似度达到 0.6 返回结果
@@ -249,13 +253,13 @@ export class Commander {
 
     if (!(result && result.length !== 0)) return;
     // 没有相似的，告诉用户找不到指令
-    /*    if (result.length === 0) {
+    if (this.config.enableNotFoundMessage && result.length === 0) {
       const response = await this.ctx.bail('command/not-found', bot, session);
       // 返回任意内容则取消找不到相关指令的提示
       if (response !== undefined) return;
       await bot.sendMessage(session.channelId, '找不到相关指令', { quote: session.data.msg_id });
       return;
-    }*/
+    }
 
     await bot.sendMessage(
       session.channelId,
@@ -278,4 +282,19 @@ export class Commander {
       description: item.description,
     }));
   }
+}
+
+export namespace Commander {
+  export interface Config {
+    commandPrefix?: string;
+    enableLikelyCommand?: boolean;
+    enableNotFoundMessage?: boolean;
+    developerIds?: string[];
+  }
+  export const Config: Schema<Commander.Config> = Schema.object({
+    commandPrefix: Schema.string().default('/'),
+    enableLikelyCommand: Schema.boolean().default(true),
+    enableNotFoundMessage: Schema.boolean().default(false),
+    developerIds: Schema.array(String).default([]),
+  });
 }

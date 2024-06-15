@@ -11,8 +11,8 @@
   ],
   "dependencies": {
     "echarts": "^5.5.0",
-    "@leafer-ui/node": "1.0.0-rc.17",
-    "@napi-rs/canvas": "^0.1.49"
+    "@leafer-ui/node": "^1.0.0-rc.25",
+    "@napi-rs/canvas": "^0.1.52"
   },
   "main": "src/index.ts",
   "scripts": {

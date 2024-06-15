@@ -28,7 +28,7 @@ export class PocketBase extends Service {
   }
 
   protected async start() {
-    this.PB.admins.authWithPassword('example@example.com', 'F4++e7^HTJaz;Lp');
+    this.PB.admins.authWithPassword(this.config.email, this.config.password).then();
   }
 
   protected stop() {}
@@ -93,9 +93,13 @@ export default PocketBase;
 export namespace PocketBase {
   export interface Config {
     url?: string;
+    email: string;
+    password: string;
   }
 
   export const Config: Schema<Config> = Schema.object({
     url: Schema.string().description('PocketBase').default('http://127.0.0.1:8090'),
+    email: Schema.string().description('PocketBase email').required(),
+    password: Schema.string().description('PocketBase password').required(),
   });
 }

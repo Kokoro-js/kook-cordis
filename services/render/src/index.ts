@@ -23,7 +23,7 @@ export class Render extends Service {
   leaferui = leaferNode;
 
   get presetFont() {
-    return 'LXGW WenKai Lite';
+    return 'LXGW WenKai';
   }
 
   constructor(
@@ -41,7 +41,8 @@ export class Render extends Service {
       },
       // https://github.com/apache/echarts/issues/19054
       // https://github.com/Brooooooklyn/canvas/issues/719
-      loadImage(src, onload, onerror) {
+      loadImage(src: any, onload, onerror) {
+        if (src instanceof Napi.Image) return src;
         const img = new Napi.Image() as any;
         let source: any = src;
         if (typeof source == 'string') {
