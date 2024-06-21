@@ -7,7 +7,6 @@ import axios, { AxiosInstance } from 'axios';
 import { AbstactBot } from './api';
 import { IBaseAPIResponse, UserME } from './types';
 import WSClient from './WSClient';
-import { clearInterval } from 'node:timers';
 
 export class Bot extends AbstactBot {
   static reusable = true;
@@ -19,7 +18,7 @@ export class Bot extends AbstactBot {
   readonly http: AxiosInstance;
   userME: UserME;
   private ws: WSClient;
-  private webhookKeepAlive: NodeJS.Timer;
+  private webhookKeepAlive;
 
   constructor(
     public ctx: Context,
@@ -72,7 +71,7 @@ export class Bot extends AbstactBot {
       return;
     }
 
-    this.webhookKeepAlive = <NodeJS.Timer>setInterval(async () => {
+    this.webhookKeepAlive = setInterval(async () => {
       const { data: status } = await this.http.get<{ code: number; data: { online: boolean } }>(
         '/api/v3/user/get-online-status',
       );
