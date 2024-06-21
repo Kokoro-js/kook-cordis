@@ -19,7 +19,7 @@ export class Bot extends AbstactBot {
   readonly http: AxiosInstance;
   userME: UserME;
   private ws: WSClient;
-  private webhookKeepAlive: Timer;
+  private webhookKeepAlive: NodeJS.Timer;
 
   constructor(
     public ctx: Context,
@@ -72,7 +72,7 @@ export class Bot extends AbstactBot {
       return;
     }
 
-    this.webhookKeepAlive = setInterval(async () => {
+    this.webhookKeepAlive = <NodeJS.Timer>setInterval(async () => {
       const { data: status } = await this.http.get<{ code: number; data: { online: boolean } }>(
         '/api/v3/user/get-online-status',
       );

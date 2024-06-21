@@ -13,8 +13,8 @@ export default class WSClient {
   socket: WebSocket;
   wsLogger: pino.Logger;
   _sn = 0;
-  _ping: number | Timer;
-  _heartbeat: number | Timer;
+  private _ping: NodeJS.Timer | Timer;
+  private _heartbeat: NodeJS.Timer | Timer;
 
   constructor(url: string, p: Bot) {
     this.wsLogger = logger.child({ name: 'websocket' });
