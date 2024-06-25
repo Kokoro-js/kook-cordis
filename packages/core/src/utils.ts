@@ -42,3 +42,8 @@ export async function allPagesRequest<DataType, Input extends Omit<Pagination, '
 
   return items;
 }
+
+const kmarkdownChars = /([*~\[\]()>\-\\:`])/g;
+export function escapeKmdText(text: string): string {
+  return text.replace(kmarkdownChars, '\\$1');
+}
