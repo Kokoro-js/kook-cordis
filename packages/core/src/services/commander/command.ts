@@ -129,7 +129,7 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
       params[paramName] = parsedArgv[index];
     });
 
-    const argv = typeFlag(this.options, parsedArgv.slice(this.requiredMatches.length));
+    const argv = typeFlag(this.options, parsedArgv);
 
     this.optionalMatches.forEach((paramName, index) => {
       params[paramName] = argv._[index];
