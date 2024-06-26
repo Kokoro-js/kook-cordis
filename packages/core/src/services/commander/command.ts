@@ -132,7 +132,9 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
     const argv = typeFlag(this.options, parsedArgv);
 
     this.optionalMatches.forEach((paramName, index) => {
-      params[paramName] = argv._[index];
+      if (index + this.requiredMatches.length < argv._.length) {
+        params[paramName] = argv._[index + this.requiredMatches.length];
+      }
     });
 
     const result = await this.commandFunction(Object.assign(argv, params) as any, bot, session);
