@@ -164,7 +164,7 @@ export interface ServiceContext {
 
   get commands(): CommandInstance[];
 
-  executeString(bot: Bot, session: MessageSession): void;
+  executeString(bot: Bot, session: MessageSession, input?: string): void;
 
   addCommandHelp(message: IHelpMessage): IHelpMessage;
 }
