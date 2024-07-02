@@ -155,9 +155,7 @@ export class Commander {
   }
 
   executeString(bot: Bot, session: MessageSession, input?: string) {
-    input = input ?? session.data.content;
-    if (!input.startsWith(this.prefix)) return;
-    return this.parseStringAndExecuteFound(bot, session);
+    return this.parseStringAndExecuteFound(bot, session, input);
   }
 
   command<T extends Flags, P extends string>(
@@ -187,8 +185,11 @@ export class Commander {
   private async parseStringAndExecuteFound(
     bot: Bot,
     session: MessageSession,
+    input?: string,
   ): Promise<CommandInstance[] | undefined> {
-    let input = session.data.content.substring(this.prefix.length);
+    if (input == undefined) {
+      input = session.data.content.substring(this.prefix.length);
+    }
 
     const response = await this.ctx.bail('command/before-parse', input, bot, session);
     // 如果 response 没被返回任何内容，则正常解析，如果返回了一个字符串则覆盖要解析的内容，如果返回了 false 则取消该指令解析

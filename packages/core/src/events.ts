@@ -164,7 +164,11 @@ export interface ServiceContext {
 
   get commands(): CommandInstance[];
 
-  executeString(bot: Bot, session: MessageSession): void;
+  executeString(
+    bot: Bot,
+    session: MessageSession,
+    input?: string,
+  ): Promise<CommandInstance[] | undefined>;
 
   addCommandHelp(message: IHelpMessage): IHelpMessage;
 }
