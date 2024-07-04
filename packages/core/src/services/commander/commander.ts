@@ -11,6 +11,7 @@ import { Bot } from '../../bot';
 import { Next } from '../middleware';
 import { CardTemplate } from './Template';
 import Schema from 'schemastery';
+import { escapeKmdText } from '../../utils';
 
 export { CommandInstance };
 
@@ -127,7 +128,7 @@ export class Commander {
           return;
         }
 
-        return `没有找到指令 ${argv.command}`;
+        return `没有找到指令 ${escapeKmdText(argv.command ?? '')}`;
       },
     );
 
