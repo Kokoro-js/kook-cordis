@@ -169,3 +169,13 @@ export interface BlackList {
   remark: string;
   user: User;
 }
+
+export interface IVoiceInfo {
+  ip: string;
+  port: string;
+  rtcp_mux: boolean;
+  rtcp_port: number;
+  bitrate: number;
+  audio_ssrc: string;
+  audio_pt: string;
+}

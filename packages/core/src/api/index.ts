@@ -1,6 +1,6 @@
 import { AxiosInstance, AxiosRequestConfig, Method } from 'axios';
 import * as Kook from '../types';
-import { IBaseAPIResponse } from '../types';
+import { IBaseAPIResponse, IVoiceInfo } from '../types';
 
 export class ResponseError extends Error {
   code: number;
@@ -220,6 +220,10 @@ AbstactBot.define('updateGame', 'POST', '/game/update');
 AbstactBot.define('deleteGame', 'POST', '/game/delete');
 AbstactBot.define('createGameActivity', 'POST', '/game/activity');
 AbstactBot.define('deleteGameActivity', 'POST', '/game/delete-activity');
+
+AbstactBot.define('joinVoice', 'POST', '/voice/join');
+AbstactBot.define('listJoinedVoice', 'GET', '/voice/list');
+AbstactBot.define('leaveVoice', 'POST', '/voice/leave');
 
 export interface AbstactBot {
   getGuildList(param?: Kook.Pagination): Promise<Kook.GuildList>;
@@ -519,4 +523,16 @@ export interface AbstactBot {
   }): Promise<void>;
 
   deleteGameActivity(param: { data_type: 1 | 2 }): Promise<void>;
+
+  joinVoice(param: {
+    channel_id: string;
+    audio_ssrc?: string;
+    audio_pt?: string;
+    rtcp_mux?: boolean;
+    password?: string;
+  }): Promise<IVoiceInfo>;
+  listJoinedVoice(
+    param: Kook.Pagination,
+  ): Promise<Kook.List<{ id: string; guild_id: string; parent_id: string; name: string }>>;
+  leaveVoice(param: { channel_id: string }): Promise<void>;
 }
