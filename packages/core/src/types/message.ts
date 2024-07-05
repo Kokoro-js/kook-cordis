@@ -32,6 +32,7 @@ export interface MessageExtra extends MessageMeta {
   guild_id: string;
   guild_type: number;
   channel_name: string;
+  channel_type: 1 | 2;
   visible_only: any | null;
   nav_channels: string[];
   interact_res?: {

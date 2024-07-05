@@ -88,6 +88,7 @@ export interface IAddedReactionBody {
   user_id: string;
   channel_id: string;
   emoji: Emoji;
+  channel_type: 1 | 2;
 }
 
 export interface IDeletedReactionBody extends IAddedReactionBody {}
@@ -101,6 +102,7 @@ export type IUpdatedMessageBody = {
   last_msg_content: string;
   embeds: any[];
   msg_id: string;
+  channel_type: 1 | 2;
 } & IMentions;
 
 export type IDeletedMessageBody = {
@@ -111,6 +113,7 @@ export type IDeletedMessageBody = {
   type: MessageType;
   msg_id: string;
   created_at: number;
+  channel_type: 1 | 2;
 } & IMentions;
 
 export interface IAddedChannelBody extends Channel {}
@@ -120,12 +123,14 @@ export interface IUpdatedChannelBody extends Channel {}
 export interface IDeletedChannelBody {
   id: string;
   deleted_at: number;
+  type: 1 | 2;
 }
 
 export interface IPinnedMessageBody {
   channel_id: string;
   operator_id: string;
   msg_id: string;
+  channel_type: 1 | 2;
 }
 
 export interface IUnPinnedMessageBody extends IPinnedMessageBody {}

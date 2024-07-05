@@ -532,7 +532,7 @@ export interface AbstactBot {
     password?: string;
   }): Promise<IVoiceInfo>;
   listJoinedVoice(
-    param: Kook.Pagination,
+    param?: Kook.Pagination,
   ): Promise<Kook.List<{ id: string; guild_id: string; parent_id: string; name: string }>>;
   leaveVoice(param: { channel_id: string }): Promise<void>;
 }
