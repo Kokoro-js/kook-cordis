@@ -216,6 +216,8 @@ export namespace Context {
   export interface Config extends cordis.Context.Config {
     port: number;
     webhook?: string;
+    kafka_brokers?: string[];
+    msgpackr_structure?: string[];
     pluginRouterPath?: string;
     compressed?: boolean;
     prompt_timeout?: number;
@@ -223,10 +225,12 @@ export namespace Context {
     command?: Commander.Config;
   }
 
-  export const Config: Schema<Config> = Schema.intersect([
+  export const Config: Schema<Context.Config> = Schema.intersect([
     Schema.object({
       port: Schema.number().default(3000).required(),
       webhook: Schema.string(),
+      kafka_brokers: Schema.array(Schema.string()).default([]),
+      msgpackr_structure: Schema.any().default([]),
       pluginRouterPath: Schema.string().default('/api'),
       compressed: Schema.boolean().default(true),
       prompt_timeout: Schema.natural().default(5000),

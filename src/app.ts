@@ -5,6 +5,7 @@ const useWebHook = false;
 const ctx = new Context({
   webhook: useWebHook ? '/kook' : undefined,
   port: 1000,
+  kafka_brokers: ['172.20.254.159:9092'],
   compressed: false,
 });
 
@@ -16,7 +17,7 @@ ctx.plugin(Bot, {
 
 // 一个可行的访问机器人的方式
 const bot1: Bot = ctx.bots[process.env.BOT_TOKEN];
-bot1.sendMessage('8385444041238345', '你好').catch((e) => logger.error(e));
+// bot1.sendMessage('8385444041238345', '你好').catch((e) => logger.error(e));
 
 // 过滤器
 ctx.channel('8385444041238345').on('message', (bot, payload) => {
@@ -64,6 +65,10 @@ ctx.command('inspectd', '显示当前环境下的信息', {}).action((argv, bot,
 
 ctx.command('inspecte', '显示当前环境下的信息', {}).action((argv, bot, session) => {
   return `用户ID: ${session.userId} \n 频道ID: ${session.channelId} \n 群组ID: ${session.guildId}`;
+});
+
+ctx.command('inspectccc', '显示当前环境下的信息', {}).action((argv, bot, session) => {
+  bot1.ctx.scope.dispose();
 });
 
 // 使用插件来管理
