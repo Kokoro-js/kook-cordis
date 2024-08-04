@@ -170,10 +170,13 @@ export interface Channel {
   has_password: boolean;
   limit_amount: number;
   is_category: boolean;
+  is_readonly?: boolean;
+  is_private?: boolean;
   permission_sync: 0 | 1;
   permission_overwrites: Overwrite[];
   permission_users: any[];
-  voice_quality?: '1' | '2' | '3';
+  voice_quality?: string;
+  server_type?: number;
   server_url?: string;
   children?: string[];
   region?: string;

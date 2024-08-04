@@ -290,6 +290,8 @@ export interface AbstactBot {
   updateChannel(param: {
     channel_id: string;
     name?: string;
+    level?: number;
+    parent_id?: string;
     topic?: string;
     slow_mode?:
       | 0
@@ -306,6 +308,9 @@ export interface AbstactBot {
       | 3600000
       | 7200000
       | 21600000;
+    limit_amount?: number;
+    voice_quality?: string;
+    password?: string;
   }): Promise<Kook.Channel>;
 
   deleteChannel(param: { channel_id: string }): Promise<void>;
