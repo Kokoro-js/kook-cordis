@@ -3,7 +3,7 @@ import { Context } from '../../context';
 
 import { CommandInstance } from './command';
 import { Flags } from 'type-flag';
-import { createLogger, logger } from '../../Logger';
+import { createLogger } from '../../Logger';
 
 import { search } from 'fast-fuzzy';
 import { MessageSession, MessageType } from '../../types';
@@ -224,7 +224,9 @@ export class Commander {
       if (commandInputMain === obj.name || obj.aliases.includes(commandInputMain)) {
         this.ctx.serial(session, 'command/before-execute', obj, bot, session).then((result) => {
           if (typeof result === 'string') {
-            bot.sendMessage(session.channelId, result, { quote: session.data.msg_id });
+            bot
+              .sendMessage(session.channelId, result, { quote: session.data.msg_id })
+              .catch(obj.handleError);
           } else {
             obj
               .execute(args, bot, session)
