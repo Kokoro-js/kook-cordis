@@ -81,9 +81,14 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
     this.isPublic = false;
     this.checkers['admin'] = async (bot, session) => {
       const guildRoles = await bot.getGuildRoleList({ guild_id: session.guildId });
-      const role = session.data.extra.author.roles[0];
-      const targetRole = guildRoles.items.find((item) => item.role_id == role);
-      if (targetRole && hasPermission(targetRole.permissions, Permissions.GUILD_ADMIN)) return true;
+      const userRoles = session.data.extra.author.roles;
+      const hasAdminPermission = userRoles.some(roleId => {
+        const targetRole = guildRoles.items.find((item) => item.role_id == roleId);
+        return targetRole && hasPermission(targetRole.permissions, Permissions.GUILD_ADMIN);
+      });
+      if (hasAdminPermission) {
+        return true;
+      }
       await bot.sendMessage(session.channelId, '你没有权限执行此操作。');
       return false;
     };
