@@ -13,6 +13,8 @@ export function internalWebhook(ctx: Context, bot, data) {
     selfId: bot?.userME?.id,
     data: data,
   };
+
+  if (session.selfId == session.userId) return;
   session[Context.filter] = (ctx) => ctx.filter(session);
 
   // 不是特定类型，当作普通信息
