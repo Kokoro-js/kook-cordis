@@ -1,6 +1,6 @@
 {
   "name": "kook-cordis",
-  "version": "1.10.6",
+  "version": "1.10.8,
   "description": "Kook 在 Cordis 下的 SDK 包装。",
   "repository": "github:Kokoro-js/kook-cordis",
   "main": "./dist/index.cjs",
