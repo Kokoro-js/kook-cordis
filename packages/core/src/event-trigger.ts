@@ -14,11 +14,12 @@ export function internalWebhook(ctx: Context, bot, data) {
     data: data,
   };
 
-  if (session.selfId == session.userId) return;
   session[Context.filter] = (ctx) => ctx.filter(session);
 
   // 不是特定类型，当作普通信息
   if (data.type !== 255) {
+    if (session.selfId == session.userId) return; // 只忽略关于自身的普通消息
+
     session.guildId = data?.extra?.guild_id;
     session.channelId = data?.target_id;
 
