@@ -276,6 +276,7 @@ export class Commander {
       {
         type: MessageType.card,
         quote: session.data.msg_id,
+        temp_target_id: session.userId,
       },
     );
   }
