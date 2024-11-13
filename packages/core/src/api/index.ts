@@ -39,7 +39,12 @@ export abstract class AbstactBot {
   async sendMessage(
     target_id: string,
     content: string,
-    options?: { type?: Kook.MessageType; temp_target_id?: string; quote?: string },
+    options?: {
+      type?: Kook.MessageType;
+      temp_target_id?: string;
+      quote?: string;
+      template_id?: string;
+    },
   ) {
     const res = await this.http.post('/api/v3/message/create', { target_id, content, ...options });
     const response: IBaseAPIResponse<Kook.MessageReturn> = res.data;
@@ -53,7 +58,7 @@ export abstract class AbstactBot {
   createTempMessageBuilder(
     target_id: string,
     user_id: string,
-    builderOptions?: { type?: Kook.MessageType; quote?: string },
+    builderOptions?: { type?: Kook.MessageType; quote?: string; template_id?: string },
   ) {
     // 返回一个新的函数，这个新函数只接受一个参数
     return async (content: string, options?: { type?: Kook.MessageType; quote?: string }) => {
@@ -67,7 +72,7 @@ export abstract class AbstactBot {
 
   createMessageBuilder(
     target_id: string,
-    builderOptions?: { type?: Kook.MessageType; quote?: string },
+    builderOptions?: { type?: Kook.MessageType; quote?: string; template_id?: string },
   ) {
     return async (content: string, options?: { type?: Kook.MessageType; quote?: string }) => {
       // 直接调用 sendMessage，不需要传递 temp_target_id
@@ -85,6 +90,7 @@ export abstract class AbstactBot {
       type?: Kook.MessageType.kmarkdown | Kook.MessageType.card;
       temp_target_id?: string;
       quote?: string;
+      template_id?: string;
     },
   ) {
     const res = await this.http.post('/api/v3/message/update', { msg_id, content, ...options });
@@ -412,9 +418,15 @@ export interface AbstactBot {
     content: string;
     quote?: string;
     nonce?: string;
+    template_id?: string;
   }): Promise<Kook.MessageReturn>;
 
-  updateDirectMessage(param: { msg_id: string; content: string; quote?: string }): Promise<void>;
+  updateDirectMessage(param: {
+    msg_id: string;
+    content: string;
+    quote?: string;
+    template_id?: string;
+  }): Promise<void>;
 
   deleteDirectMessage(param: { msg_id: string }): Promise<void>;
 
