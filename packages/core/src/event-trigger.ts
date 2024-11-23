@@ -1,7 +1,9 @@
-import { Context } from './context';
+import { Context, Events } from './context';
 import { NoticeType, Session } from './types';
 import { KookEvent } from './events';
 import { createLogger } from './Logger';
+import { Bot } from './bot';
+import { GetEvents } from 'cordis';
 
 const logger = createLogger('Kook-Events');
 export function internalWebhook(ctx: Context, bot, data) {
@@ -65,9 +67,17 @@ function handleSpecialTypes(data, session, ctx, bot) {
   }
 }
 
-function processEvent(ctx, session, eventType, bot) {
+function processEvent(
+  ctx: Context,
+  session: Session<any>,
+  eventType: keyof GetEvents<Context>,
+  bot: Bot,
+) {
   ctx.parallel(session, eventType, bot, session).catch((e) => {
     logger.error(e, `Error processing event ${eventType}:`);
+    ctx.parallel(session, 'event/error', session, eventType, e).catch(() => {
+      logger.error(e, `Error processing error event ${eventType}:`);
+    });
   });
 }
 

@@ -53,6 +53,8 @@ import {
 } from './services';
 import { Flags } from 'type-flag';
 import { Awaitable } from 'cosmokit';
+import { GetEvents } from 'cordis';
+import { Context } from './context';
 
 export interface KookEvent {
   'internal/webhook'(bot: Bot, payload: PayLoad): void;
@@ -112,6 +114,7 @@ export interface KookEvent {
 }
 
 export interface ServiceEvent {
+  'event/error'(session: any, eventType: keyof GetEvents<Context>, error: any): void;
   'middleware'(bot: Bot, data: MessageSession): void;
 
   'command/before-parse'(
