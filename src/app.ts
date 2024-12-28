@@ -1,11 +1,11 @@
 import { Bot, Context, logger } from 'kook-cordis';
 
 // 实例化一个情境
+// 启用 webhook 需要 webhook 和 port 被同时设置。
 const useWebHook = false;
 const ctx = new Context({
   webhook: useWebHook ? '/kook' : undefined,
   port: 1000,
-  kafka_brokers: ['172.20.254.159:9092'],
   compressed: false,
 });
 
