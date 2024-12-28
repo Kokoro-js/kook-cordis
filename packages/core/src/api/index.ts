@@ -224,6 +224,7 @@ AbstactBot.define('deleteGameActivity', 'POST', '/game/delete-activity');
 AbstactBot.define('joinVoice', 'POST', '/voice/join');
 AbstactBot.define('listJoinedVoice', 'GET', '/voice/list');
 AbstactBot.define('leaveVoice', 'POST', '/voice/leave');
+AbstactBot.define('keepVoiceAlive', 'POST', '/voice/keep-alive');
 
 export interface AbstactBot {
   getGuildList(param?: Kook.Pagination): Promise<Kook.GuildList>;
@@ -540,4 +541,5 @@ export interface AbstactBot {
     param?: Kook.Pagination,
   ): Promise<Kook.List<{ id: string; guild_id: string; parent_id: string; name: string }>>;
   leaveVoice(param: { channel_id: string }): Promise<void>;
+  keepVoiceAlive(param: { channel_id: string }): Promise<void>;
 }

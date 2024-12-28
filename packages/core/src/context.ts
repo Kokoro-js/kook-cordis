@@ -37,12 +37,19 @@ export interface Context extends ServiceContext {
 export class Context extends cordis.Context {
   static readonly session = Symbol('session');
   public baseDir = process.cwd();
+
+  static matchBot = (bot, prop) => {
+    const id = bot.userME?.id;
+    const token = bot.verifyToken;
+    return id === prop || token === prop;
+  };
+
   public bots = new Proxy([], {
     get(target, prop) {
       if (prop in target || typeof prop === 'symbol') {
         return Reflect.get(target, prop);
       }
-      return target.find((bot) => bot.verifyToken === prop);
+      return target.find((bot) => Context.matchBot(bot, prop));
     },
     deleteProperty(target, prop) {
       if (prop in target || typeof prop === 'symbol') {

@@ -142,12 +142,12 @@ export class Bot extends AbstactBot {
 
 export namespace Bot {
   export interface Config {
-    verifyToken: string;
+    verifyToken?: string;
     token: string;
   }
 
   export const Config: Schema<Config> = Schema.object({
-    verifyToken: Schema.string().required(),
+    verifyToken: Schema.string().default(''),
     token: Schema.string().required(),
   });
 }
