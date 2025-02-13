@@ -1,6 +1,7 @@
 {
   "name": "kook-cordis",
   "version": "1.10.20",
+  "type": "module",
   "description": "Kook 在 Cordis 下的 SDK 包装。",
   "repository": "github:Kokoro-js/kook-cordis",
   "main": "./dist/index.cjs",
@@ -24,21 +25,20 @@
     "agent-base": "^7.1.3",
     "axios": "^1.7.9",
     "cordis": "3.4.1",
-    "cosmokit": "1.5.2",
+    "cosmokit": "1.7.2",
     "fast-fuzzy": "^1.12.0",
-    "kafkajs": "^2.2.4",
     "mime-db": "^1.53.0",
-    "msgpackr": "^1.11.2",
-    "pino": "^8.21.0",
-    "schemastery": "^3.15.0",
+    "pino": "^9.6.0",
+    "schemastery": "^3.16.0",
     "type-flag": "^3.0.0",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.51.0",
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "@types/ws": "^8.5.14"
   },
   "scripts": {
     "test": "npm run build:ts && tsc -p test/tsconfig.json && tap --ts \"test/**/*.test.ts\"",
-    "build": "pkgroll",
-    "prepublish": "pkgroll",
+    "build": "pkgroll --minify",
+    "prepublish": "npm run build",
     "dev": "if \"%OS%\"==\"Windows_NT\" (chcp 65001) && npm run dev:start",
     "dev:start": "cross-env LEVEL=trace ts-node-dev --respawn --debounce 1000 ../../src/app.ts | pino-pretty"
   },
@@ -49,10 +49,9 @@
   "keywords": [],
   "author": "",
   "license": "LGPL-3.0",
-  "devDependencies": {
-    "@types/bun": "^1.2.2",
-    "@types/node": "^20.17.16",
-    "pkgroll": "^2.6.1",
-    "typescript": "^5.7.3"
+  "peerDependencies": {
+    "@types/node": "*",
+    "pkgroll": "*",
+    "typescript": "*"
   }
 }

@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
     "target": "es2022",
-    "module": "NodeNext",
+    "module": "esnext",
     "outDir": "./dist", // 输出目录为 dist
     "rootDir": "./src", // TypeScript源代码目录为 src
     "removeComments": false,
     "esModuleInterop": true,
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "bundler",
     "strictBindCallApply": true,
     "composite": true,
     "declaration": true,

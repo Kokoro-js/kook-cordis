@@ -6,23 +6,22 @@
     "projects/**"
   ],
   "devDependencies": {
-    "@types/node": "^20.17.16",
-    "@types/tap": "^15.0.12",
+    "@types/node": "^22.13.2",
     "cross-env": "^7.0.3",
-    "pino-pretty": "^11.3.0",
-    "pkgroll": "^2.6.1",
+    "pino-pretty": "^13.0.0",
+    "pkgroll": "^2.8.2",
     "prettier": "3.2.5",
-    "tap": "^18.8.0",
-    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.3"
   },
   "scripts": {
     "dev": "cross-env LEVEL=trace bun --watch --env:LEVEL=trace src/app.ts | pino-pretty",
     "dev:node": "if \"%OS%\"==\"Windows_NT\" (chcp 65001) && npm run dev:start",
-    "dev:start": "cross-env LEVEL=trace ts-node-dev --respawn --debounce 1000 ./src/app.ts | pino-pretty",
+    "dev:start": "tsx --env-file=.env src/app.ts --clear-screen=false | pino-pretty",
     "build": "cd packages/core && bun run build"
   },
   "dependencies": {
     "kook-cordis": "workspace:*"
-  }
+  },
+  "packageManager": "pnpm@10.3.0+sha512.ee592eda8815a8a293c206bb0917c4bb0ff274c50def7cbc17be05ec641fc2d1b02490ce660061356bd0d126a4d7eb2ec8830e6959fb8a447571c631d5a2442d"
 }
