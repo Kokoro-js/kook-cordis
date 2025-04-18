@@ -11,8 +11,8 @@ const ctx = new Context({
 
 // 在情境下实例化一个机器人
 ctx.plugin(Bot, {
-  verifyToken: process.env.BOT_TOKEN,
-  token: process.env.BOT_VERIFY,
+  verifyToken: process.env.BOT_VERIFY,
+  token: process.env.BOT_TOKEN,
 });
 
 // 一个可行的访问机器人的方式
