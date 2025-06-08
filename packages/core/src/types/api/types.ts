@@ -67,7 +67,9 @@ export interface GuildUserList extends List<GuildUser> {
 
 export namespace GuildMute {
   export enum Type {
+    /** 麦克风闭麦 **/
     mic = 1,
+    /** 耳机静音 **/
     headset = 2,
   }
 }
@@ -91,8 +93,14 @@ export interface GuildBoost {
 }
 
 export interface Pagination {
+  /** 目标页数 **/
   page?: number;
+  /** 每页数据数量 **/
   page_size?: number;
+  /**
+   * 	代表排序的字段, 比如-id 代表 id 按 DESC 排序，id 代表 id 按 ASC 排序。
+   * 	不一定有, 如果有，接口中会声明支持的排序字段。
+   */
   sort?: string[];
 }
 
@@ -178,4 +186,31 @@ export interface IVoiceInfo {
   bitrate: number;
   audio_ssrc: string;
   audio_pt: string;
+}
+
+/**
+ * 私信参数：使用 chat_code 查询
+ */
+interface ByChatCode {
+  /** 私信会话 Code。 **/
+  chat_code: string;
+  target_id?: never;
+}
+
+/**
+ * 私信参数：使用 target_id 查询
+ */
+interface ByTargetId {
+  /** 目标用户 id，后端会自动创建会话。 **/
+  target_id: string;
+  chat_code?: never;
+}
+
+export type DirectMessageGetType = ByChatCode | ByTargetId;
+
+export interface BotOnlineStatus {
+  /** 是否在线 **/
+  online: boolean;
+  /** 在线的平台 **/
+  online_os: string[];
 }
