@@ -5,7 +5,6 @@ import { Bot } from '../../bot';
 import { hasPermission } from '../../utils';
 import { Commander } from './commander';
 import { parseArgsStringToArgv } from './helper';
-import { req } from 'agent-base';
 
 type ParseRequired<T extends string> = T extends `${infer Before} <${infer Param}> ${infer After}`
   ? { [K in Param]: string } & ParseRequired<`${Before} ${After}`>
@@ -82,14 +81,23 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
     this.checkers['admin'] = async (bot, session) => {
       const guildRoles = await bot.getGuildRoleList({ guild_id: session.guildId });
       const userRoles = session.data.extra.author.roles;
-      const hasAdminPermission = userRoles.some(roleId => {
+      const hasAdminPermission = userRoles.some((roleId) => {
         const targetRole = guildRoles.items.find((item) => item.role_id == roleId);
         return targetRole && hasPermission(targetRole.permissions, Permissions.GUILD_ADMIN);
       });
       if (hasAdminPermission) {
         return true;
       }
-      await bot.sendMessage(session.channelId, '你没有权限执行此操作。');
+
+      if (session.data.channel_type === 'GROUP') {
+        await bot.sendMessage(session.channelId, '你没有权限执行此操作。');
+      }
+      if (session.data.channel_type === 'PERSON') {
+        await bot.createDirectMessage({
+          chat_code: session.data.extra.code,
+          content: '你没有权限执行此操作。',
+        });
+      }
       return false;
     };
     return this;
@@ -119,14 +127,22 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
     const parsedArgv = parseArgsStringToArgv(possible);
 
     if (this.requiredMatches.length > parsedArgv.length) {
-      await bot.sendMessage(
-        session.channelId,
-        `须填参数 ${this.requiredMatches.length} 个，还缺少 ${
-          this.requiredMatches.length - parsedArgv.length
-        } 个参数。`,
-        { quote: session.data.msg_id },
-      );
-      return;
+      const content = `须填参数 ${this.requiredMatches.length} 个，还缺少 ${
+        this.requiredMatches.length - parsedArgv.length
+      } 个参数。`;
+
+      if (session.data.channel_type === 'GROUP') {
+        await bot.sendMessage(session.channelId, content, { quote: session.data.msg_id });
+        return;
+      }
+      if (session.data.channel_type === 'PERSON') {
+        await bot.createDirectMessage({
+          chat_code: session.data.extra.code,
+          content: content,
+          quote: session.data.msg_id,
+        });
+        return;
+      }
     }
 
     const params: Record<string, string> = {};
@@ -143,7 +159,17 @@ export class CommandInstance<T extends Flags = any, P extends string = any> {
     });
 
     const result = await this.commandFunction(Object.assign(argv, params) as any, bot, session);
-    if (result) await bot.sendMessage(session.channelId, result);
+    if (result) {
+      if (session.data.channel_type === 'GROUP') {
+        await bot.sendMessage(session.channelId, result);
+      }
+      if (session.data.channel_type === 'PERSON') {
+        await bot.createDirectMessage({
+          chat_code: session.data.extra.code,
+          content: result,
+        });
+      }
+    }
     return true;
   }
 

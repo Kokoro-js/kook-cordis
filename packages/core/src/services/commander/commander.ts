@@ -73,25 +73,37 @@ export class Commander {
               return true;
             }
           });
-          bot
-            .sendMessage(
-              session.channelId,
-              CardTemplate.CommandList(
-                `指令帮助 (指令前缀 "${this.prefix}")`,
-                this.formatCommandListOutput(
-                  meetCommands.filter((_, index) => checkResults[index]),
-                ),
-                session.data.content,
-                session.data.extra.author.avatar,
-              ),
-              {
+
+          const cardContent = CardTemplate.CommandList(
+            `指令帮助 (指令前缀 "${this.prefix}")`,
+            this.formatCommandListOutput(meetCommands.filter((_, index) => checkResults[index])),
+            session.data.content,
+            session.data.extra.author.avatar,
+          );
+
+          if (session.data.channel_type === 'GROUP') {
+            bot
+              .sendMessage(session.channelId, cardContent, {
                 type: MessageType.card,
                 quote: session.data.msg_id,
-              },
-            )
-            .catch((e) => {
-              bot.logger.error(e, '处理 Help 时遇到错误');
-            });
+              })
+              .catch((e) => {
+                bot.logger.error(e, '处理 Help 时遇到错误');
+              });
+          }
+          if (session.data.channel_type === 'PERSON') {
+            bot
+              .createDirectMessage({
+                chat_code: session.data.extra.code,
+                content: cardContent,
+                type: MessageType.card,
+                quote: session.data.msg_id,
+              })
+              .catch((e) => {
+                bot.logger.error(e, '处理 Help 时遇到错误');
+              });
+          }
+
           return;
         }
 
@@ -110,21 +122,34 @@ export class Commander {
               obj.options,
             )}`;
           }
-          bot
-            .sendMessage(
-              session.channelId,
-              CardTemplate.HelpCardTemplate(
-                `${obj.name} ${obj.aliases.length !== 0 ? `(${obj.aliases.toString()})` : ''}`,
-                content,
-              ),
-              {
+
+          const cardContent = CardTemplate.HelpCardTemplate(
+            `${obj.name} ${obj.aliases.length !== 0 ? `(${obj.aliases.toString()})` : ''}`,
+            content,
+          );
+
+          if (session.data.channel_type === 'GROUP') {
+            bot
+              .sendMessage(session.channelId, cardContent, {
                 type: MessageType.card,
                 quote: session.data.msg_id,
-              },
-            )
-            .catch((e) => {
-              bot.logger.error(e, '处理 Help 时遇到错误');
-            });
+              })
+              .catch((e) => {
+                bot.logger.error(e, '处理 Help 时遇到错误');
+              });
+          }
+          if (session.data.channel_type === 'PERSON') {
+            bot
+              .createDirectMessage({
+                chat_code: session.data.extra.code,
+                content: cardContent,
+                type: MessageType.card,
+                quote: session.data.msg_id,
+              })
+              .catch((e) => {
+                bot.logger.error(e, '处理 Help 时遇到错误');
+              });
+          }
           return;
         }
 
@@ -224,9 +249,22 @@ export class Commander {
       if (commandInputMain === obj.name || obj.aliases.includes(commandInputMain)) {
         this.ctx.serial(session, 'command/before-execute', obj, bot, session).then((result) => {
           if (typeof result === 'string') {
-            bot
-              .sendMessage(session.channelId, result, { quote: session.data.msg_id })
-              .catch(obj.handleError);
+            if (session.data.channel_type === 'GROUP') {
+              bot
+                .sendMessage(session.channelId, result, {
+                  quote: session.data.msg_id,
+                })
+                .catch(obj.handleError);
+            }
+            if (session.data.channel_type === 'PERSON') {
+              bot
+                .createDirectMessage({
+                  chat_code: session.data.extra.code,
+                  content: result,
+                  quote: session.data.msg_id,
+                })
+                .catch(obj.handleError);
+            }
           } else {
             obj
               .execute(args, bot, session)
@@ -261,24 +299,41 @@ export class Commander {
       const response = await this.ctx.bail('command/not-found', bot, session);
       // 返回任意内容则取消找不到相关指令的提示
       if (response !== undefined) return;
-      await bot.sendMessage(session.channelId, '找不到相关指令', { quote: session.data.msg_id });
+      if (session.data.channel_type === 'GROUP') {
+        await bot.sendMessage(session.channelId, '找不到相关指令', { quote: session.data.msg_id });
+      }
+      if (session.data.channel_type === 'PERSON') {
+        await bot.createDirectMessage({
+          chat_code: session.data.extra.code,
+          content: '找不到相关指令',
+          quote: session.data.msg_id,
+        });
+      }
       return;
     }
 
-    await bot.sendMessage(
-      session.channelId,
-      CardTemplate.CommandList(
-        `相似指令提示 (指令前缀 "${this.prefix}")`,
-        this.formatCommandListOutput(result),
-        session.data.content,
-        session.data.extra.author.avatar,
-      ).toString(),
-      {
+    const cardContent = CardTemplate.CommandList(
+      `相似指令提示 (指令前缀 "${this.prefix}")`,
+      this.formatCommandListOutput(result),
+      session.data.content,
+      session.data.extra.author.avatar,
+    ).toString();
+
+    if (session.data.channel_type === 'GROUP') {
+      await bot.sendMessage(session.channelId, cardContent, {
         type: MessageType.card,
         quote: session.data.msg_id,
         temp_target_id: session.userId,
-      },
-    );
+      });
+    }
+    if (session.data.channel_type === 'PERSON') {
+      await bot.createDirectMessage({
+        chat_code: session.data.extra.code,
+        content: cardContent,
+        type: MessageType.card,
+        quote: session.data.msg_id,
+      });
+    }
   }
 
   private formatCommandListOutput(commandList: CommandInstance[]) {
