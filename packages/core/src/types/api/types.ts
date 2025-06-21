@@ -188,6 +188,22 @@ export interface IVoiceInfo {
   audio_pt: string;
 }
 
+export interface ITemplate {
+  id: string;
+  title: string;
+  type: 8;
+  /** 1 代表 kmd 消息，2 代表通过 json 发卡片消息，3 代表通过 yaml 发卡片消息 **/
+  msgtype: 1 | 2 | 3;
+  /** 0 代表未审核，1 代表审核中，2 代表审核通过，3 代表审核拒绝 **/
+  status: 0 | 1 | 2 | 3;
+  test_data: string;
+  test_channel: string;
+  content: string;
+}
+
+export interface ITemplateReturn {
+  model: ITemplate;
+}
 /**
  * 私信参数：使用 chat_code 查询
  */
