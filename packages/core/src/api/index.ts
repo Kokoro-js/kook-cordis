@@ -236,22 +236,27 @@ AbstactBot.define('deleteGame', 'POST', '/game/delete');
 AbstactBot.define('createGameActivity', 'POST', '/game/activity');
 AbstactBot.define('deleteGameActivity', 'POST', '/game/delete-activity');
 
+AbstactBot.define('getTemplateList', 'GET', '/template/list');
+AbstactBot.define('createTemplate', 'POST', '/template/create');
+AbstactBot.define('updateTemplate', 'POST', '/template/update');
+AbstactBot.define('deleteTemplate', 'POST', '/template/delete');
+
 export interface AbstactBot {
   /**
    * 获取当前用户加入的服务器列表
-   * @doc https://developer.kookapp.cn/doc/http/guild#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%8A%A0%E5%85%A5%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%88%97%E8%A1%A8
+   * @see https://developer.kookapp.cn/doc/http/guild#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E5%8A%A0%E5%85%A5%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%88%97%E8%A1%A8
    */
   getGuildList(param?: Kook.Pagination): Promise<Kook.GuildList>;
 
   /**
    * 获取服务器详情
-   * @doc https://developer.kookapp.cn/doc/http/guild#%E8%8E%B7%E5%8F%96%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AF%A6%E6%83%85
+   * @see https://developer.kookapp.cn/doc/http/guild#%E8%8E%B7%E5%8F%96%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AF%A6%E6%83%85
    */
   getGuildView(param: { guild_id: string }): Promise<Kook.Guild>;
 
   /**
    * 获取服务器中的用户列表
-   * @doc https://developer.kookapp.cn/doc/http/guild#%E8%8E%B7%E5%8F%96%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%AD%E7%9A%84%E7%94%A8%E6%88%B7%E5%88%97%E8%A1%A8
+   * @see https://developer.kookapp.cn/doc/http/guild#%E8%8E%B7%E5%8F%96%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%AD%E7%9A%84%E7%94%A8%E6%88%B7%E5%88%97%E8%A1%A8
    */
   getGuildUserList(
     param: { guild_id: string } & Partial<{
@@ -274,7 +279,7 @@ export interface AbstactBot {
 
   /**
    * 修改服务器中用户的昵称
-   * @doc https://developer.kookapp.cn/doc/http/guild#%E4%BF%AE%E6%94%B9%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%AD%E7%94%A8%E6%88%B7%E7%9A%84%E6%98%B5%E7%A7%B0
+   * @see https://developer.kookapp.cn/doc/http/guild#%E4%BF%AE%E6%94%B9%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%AD%E7%94%A8%E6%88%B7%E7%9A%84%E6%98%B5%E7%A7%B0
    */
   setGuildUserNickname(param: {
     guild_id: string;
@@ -286,25 +291,25 @@ export interface AbstactBot {
 
   /**
    * 离开服务器
-   * @doc https://developer.kookapp.cn/doc/http/guild#%E7%A6%BB%E5%BC%80%E6%9C%8D%E5%8A%A1%E5%99%A8
+   * @see https://developer.kookapp.cn/doc/http/guild#%E7%A6%BB%E5%BC%80%E6%9C%8D%E5%8A%A1%E5%99%A8
    */
   leaveGuild(param: { guild_id: string }): Promise<void>;
 
   /**
    * 踢出服务器
-   * @doc https://developer.kookapp.cn/doc/http/guild#%E8%B8%A2%E5%87%BA%E6%9C%8D%E5%8A%A1%E5%99%A8
+   * @see https://developer.kookapp.cn/doc/http/guild#%E8%B8%A2%E5%87%BA%E6%9C%8D%E5%8A%A1%E5%99%A8
    */
   kickoutGuildUser(param: { guild_id: string; target_id: string }): Promise<void>;
 
   /**
    * 服务器静音闭麦列表
-   * @doc https://developer.kookapp.cn/doc/http/guild#%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%9D%99%E9%9F%B3%E9%97%AD%E9%BA%A6%E5%88%97%E8%A1%A8
+   * @see https://developer.kookapp.cn/doc/http/guild#%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%9D%99%E9%9F%B3%E9%97%AD%E9%BA%A6%E5%88%97%E8%A1%A8
    */
   getGuildMuteList(param: { guild_id: string }): Promise<Kook.GuildMuteList>;
 
   /**
    * 添加服务器静音或闭麦
-   * @doc https://developer.kookapp.cn/doc/http/guild#%E6%B7%BB%E5%8A%A0%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%9D%99%E9%9F%B3%E6%88%96%E9%97%AD%E9%BA%A6
+   * @see https://developer.kookapp.cn/doc/http/guild#%E6%B7%BB%E5%8A%A0%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%9D%99%E9%9F%B3%E6%88%96%E9%97%AD%E9%BA%A6
    */
   createGuildMute(param: {
     guild_id: string;
@@ -315,7 +320,7 @@ export interface AbstactBot {
 
   /**
    * 删除服务器静音或闭麦
-   * @doc https://developer.kookapp.cn/doc/http/guild#%E5%88%A0%E9%99%A4%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%9D%99%E9%9F%B3%E6%88%96%E9%97%AD%E9%BA%A6
+   * @see https://developer.kookapp.cn/doc/http/guild#%E5%88%A0%E9%99%A4%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%9D%99%E9%9F%B3%E6%88%96%E9%97%AD%E9%BA%A6
    */
   deleteGuildMute(param: {
     guild_id: string;
@@ -326,7 +331,7 @@ export interface AbstactBot {
 
   /**
    * 服务器助力历史
-   * @doc https://developer.kookapp.cn/doc/http/guild#%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8A%A9%E5%8A%9B%E5%8E%86%E5%8F%B2
+   * @see https://developer.kookapp.cn/doc/http/guild#%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%8A%A9%E5%8A%9B%E5%8E%86%E5%8F%B2
    */
   getGuildBoostHistory(param: {
     guild_id: string;
@@ -338,7 +343,7 @@ export interface AbstactBot {
 
   /**
    * 获取频道列表
-   * @doc https://developer.kookapp.cn/doc/http/channel#%E8%8E%B7%E5%8F%96%E9%A2%91%E9%81%93%E5%88%97%E8%A1%A8
+   * @see https://developer.kookapp.cn/doc/http/channel#%E8%8E%B7%E5%8F%96%E9%A2%91%E9%81%93%E5%88%97%E8%A1%A8
    */
   getChannelList(
     param: {
@@ -352,13 +357,13 @@ export interface AbstactBot {
 
   /**
    * 获取频道详情
-   * @doc https://developer.kookapp.cn/doc/http/channel#%E8%8E%B7%E5%8F%96%E9%A2%91%E9%81%93%E8%AF%A6%E6%83%85
+   * @see https://developer.kookapp.cn/doc/http/channel#%E8%8E%B7%E5%8F%96%E9%A2%91%E9%81%93%E8%AF%A6%E6%83%85
    */
   getChannelView(param: { target_id: string }): Promise<Kook.Channel>;
 
   /**
    * 创建频道
-   * @doc https://developer.kookapp.cn/doc/http/channel#%E5%88%9B%E5%BB%BA%E9%A2%91%E9%81%93
+   * @see https://developer.kookapp.cn/doc/http/channel#%E5%88%9B%E5%BB%BA%E9%A2%91%E9%81%93
    */
   createChannel(param: {
     guild_id: string;
@@ -386,7 +391,7 @@ export interface AbstactBot {
 
   /**
    * 编辑频道
-   * @doc https://developer.kookapp.cn/doc/http/channel#%E7%BC%96%E8%BE%91%E9%A2%91%E9%81%93
+   * @see https://developer.kookapp.cn/doc/http/channel#%E7%BC%96%E8%BE%91%E9%A2%91%E9%81%93
    */
   updateChannel(param: {
     channel_id: string;
@@ -423,19 +428,19 @@ export interface AbstactBot {
 
   /**
    * 删除频道
-   * @doc https://developer.kookapp.cn/doc/http/channel#%E5%88%A0%E9%99%A4%E9%A2%91%E9%81%93
+   * @see https://developer.kookapp.cn/doc/http/channel#%E5%88%A0%E9%99%A4%E9%A2%91%E9%81%93
    */
   deleteChannel(param: { channel_id: string }): Promise<void>;
 
   /**
    * 语音频道用户列表
-   * @doc https://developer.kookapp.cn/doc/http/channel#%E8%AF%AD%E9%9F%B3%E9%A2%91%E9%81%93%E7%94%A8%E6%88%B7%E5%88%97%E8%A1%A8
+   * @see https://developer.kookapp.cn/doc/http/channel#%E8%AF%AD%E9%9F%B3%E9%A2%91%E9%81%93%E7%94%A8%E6%88%B7%E5%88%97%E8%A1%A8
    */
   getChannelUserList(param: { channel_id: string }): Promise<Kook.User[]>;
 
   /**
    * 语音频道之间移动用户
-   * @doc https://developer.kookapp.cn/doc/http/channel#%E8%AF%AD%E9%9F%B3%E9%A2%91%E9%81%93%E4%B9%8B%E9%97%B4%E7%A7%BB%E5%8A%A8%E7%94%A8%E6%88%B7
+   * @see https://developer.kookapp.cn/doc/http/channel#%E8%AF%AD%E9%9F%B3%E9%A2%91%E9%81%93%E4%B9%8B%E9%97%B4%E7%A7%BB%E5%8A%A8%E7%94%A8%E6%88%B7
    */
   moveChannelUser(param: {
     target_id: string;
@@ -445,19 +450,19 @@ export interface AbstactBot {
 
   /**
    * 踢出语音频道中的用户
-   * @doc https://developer.kookapp.cn/doc/http/channel#%E8%B8%A2%E5%87%BA%E8%AF%AD%E9%9F%B3%E9%A2%91%E9%81%93%E4%B8%AD%E7%9A%84%E7%94%A8%E6%88%B7
+   * @see https://developer.kookapp.cn/doc/http/channel#%E8%B8%A2%E5%87%BA%E8%AF%AD%E9%9F%B3%E9%A2%91%E9%81%93%E4%B8%AD%E7%9A%84%E7%94%A8%E6%88%B7
    */
   kickChannelUser(param: { channel_id: string; user_id: string }): Promise<void>;
 
   /**
    * 频道角色权限详情
-   * @doc https://developer.kookapp.cn/doc/http/channel#%E9%A2%91%E9%81%93%E8%A7%92%E8%89%B2%E6%9D%83%E9%99%90%E8%AF%A6%E6%83%85
+   * @see https://developer.kookapp.cn/doc/http/channel#%E9%A2%91%E9%81%93%E8%A7%92%E8%89%B2%E6%9D%83%E9%99%90%E8%AF%A6%E6%83%85
    */
   getChannelRoleIndex(param: { channel_id: string }): Promise<Kook.ChannelRoleIndex>;
 
   /**
    * 创建频道角色权限
-   * @doc https://developer.kookapp.cn/doc/http/channel#%E5%88%9B%E5%BB%BA%E9%A2%91%E9%81%93%E8%A7%92%E8%89%B2%E6%9D%83%E9%99%90
+   * @see https://developer.kookapp.cn/doc/http/channel#%E5%88%9B%E5%BB%BA%E9%A2%91%E9%81%93%E8%A7%92%E8%89%B2%E6%9D%83%E9%99%90
    */
   createChannelRole(param: {
     channel_id: string;
@@ -472,7 +477,7 @@ export interface AbstactBot {
 
   /**
    * 更新频道角色权限
-   * @doc https://developer.kookapp.cn/doc/http/channel#%E6%9B%B4%E6%96%B0%E9%A2%91%E9%81%93%E8%A7%92%E8%89%B2%E6%9D%83%E9%99%90
+   * @see https://developer.kookapp.cn/doc/http/channel#%E6%9B%B4%E6%96%B0%E9%A2%91%E9%81%93%E8%A7%92%E8%89%B2%E6%9D%83%E9%99%90
    */
   updateChannelRole(param: {
     channel_id: string;
@@ -491,13 +496,13 @@ export interface AbstactBot {
 
   /**
    * 同步频道角色权限
-   * @doc https://developer.kookapp.cn/doc/http/channel#%E5%90%8C%E6%AD%A5%E9%A2%91%E9%81%93%E8%A7%92%E8%89%B2%E6%9D%83%E9%99%90
+   * @see https://developer.kookapp.cn/doc/http/channel#%E5%90%8C%E6%AD%A5%E9%A2%91%E9%81%93%E8%A7%92%E8%89%B2%E6%9D%83%E9%99%90
    */
   syncChannelRole(param: { channel_id: string }): Promise<Kook.ChannelRoleIndex>;
 
   /**
    * 删除频道角色权限
-   * @doc https://developer.kookapp.cn/doc/http/channel#%E5%88%A0%E9%99%A4%E9%A2%91%E9%81%93%E8%A7%92%E8%89%B2%E6%9D%83%E9%99%90
+   * @see https://developer.kookapp.cn/doc/http/channel#%E5%88%A0%E9%99%A4%E9%A2%91%E9%81%93%E8%A7%92%E8%89%B2%E6%9D%83%E9%99%90
    */
   deleteChannelRole(param: {
     channel_id: string;
@@ -510,7 +515,7 @@ export interface AbstactBot {
   /**
    * 获取频道聊天消息列表
    * @note 此接口非标准分页，需要根据参考消息来查询相邻分页的消息
-   * @doc https://developer.kookapp.cn/doc/http/message#%E8%8E%B7%E5%8F%96%E9%A2%91%E9%81%93%E8%81%8A%E5%A4%A9%E6%B6%88%E6%81%AF%E5%88%97%E8%A1%A8
+   * @see https://developer.kookapp.cn/doc/http/message#%E8%8E%B7%E5%8F%96%E9%A2%91%E9%81%93%E8%81%8A%E5%A4%A9%E6%B6%88%E6%81%AF%E5%88%97%E8%A1%A8
    */
   getMessageList(
     param: {
@@ -526,7 +531,7 @@ export interface AbstactBot {
 
   /**
    * 获取频道聊天消息详情
-   * @doc https://developer.kookapp.cn/doc/http/message#%E8%8E%B7%E5%8F%96%E9%A2%91%E9%81%93%E8%81%8A%E5%A4%A9%E6%B6%88%E6%81%AF%E8%AF%A6%E6%83%85
+   * @see https://developer.kookapp.cn/doc/http/message#%E8%8E%B7%E5%8F%96%E9%A2%91%E9%81%93%E8%81%8A%E5%A4%A9%E6%B6%88%E6%81%AF%E8%AF%A6%E6%83%85
    */
   getMessageView(param: { msg_id: string }): Promise<Kook.Message>;
 
@@ -536,7 +541,7 @@ export interface AbstactBot {
 
   /**
    * 获取频道消息某回应的用户列表
-   * @doc https://developer.kookapp.cn/doc/http/message#%E8%8E%B7%E5%8F%96%E9%A2%91%E9%81%93%E6%B6%88%E6%81%AF%E6%9F%90%E5%9B%9E%E5%BA%94%E7%9A%84%E7%94%A8%E6%88%B7%E5%88%97%E8%A1%A8
+   * @see https://developer.kookapp.cn/doc/http/message#%E8%8E%B7%E5%8F%96%E9%A2%91%E9%81%93%E6%B6%88%E6%81%AF%E6%9F%90%E5%9B%9E%E5%BA%94%E7%9A%84%E7%94%A8%E6%88%B7%E5%88%97%E8%A1%A8
    */
   getMessageReactionList(param: {
     msg_id: string;
@@ -546,13 +551,13 @@ export interface AbstactBot {
 
   /**
    * 给某个消息添加回应
-   * @doc https://developer.kookapp.cn/doc/http/message#%E7%BB%99%E6%9F%90%E4%B8%AA%E6%B6%88%E6%81%AF%E6%B7%BB%E5%8A%A0%E5%9B%9E%E5%BA%94
+   * @see https://developer.kookapp.cn/doc/http/message#%E7%BB%99%E6%9F%90%E4%B8%AA%E6%B6%88%E6%81%AF%E6%B7%BB%E5%8A%A0%E5%9B%9E%E5%BA%94
    */
   addMessageReaction(param: { msg_id: string; emoji: string }): Promise<void>;
 
   /**
    * 删除消息的某个回应
-   * @doc https://developer.kookapp.cn/doc/http/message#%E5%88%A0%E9%99%A4%E6%B6%88%E6%81%AF%E7%9A%84%E6%9F%90%E4%B8%AA%E5%9B%9E%E5%BA%94
+   * @see https://developer.kookapp.cn/doc/http/message#%E5%88%A0%E9%99%A4%E6%B6%88%E6%81%AF%E7%9A%84%E6%9F%90%E4%B8%AA%E5%9B%9E%E5%BA%94
    */
   deleteMessageReaction(param: {
     msg_id: string;
@@ -563,7 +568,7 @@ export interface AbstactBot {
 
   /**
    * 发送管道消息
-   * @doc https://developer.kookapp.cn/doc/http/message#%E5%8F%91%E9%80%81%E7%AE%A1%E9%81%93%E6%B6%88%E6%81%AF
+   * @see https://developer.kookapp.cn/doc/http/message#%E5%8F%91%E9%80%81%E7%AE%A1%E9%81%93%E6%B6%88%E6%81%AF
    */
   sendPipeMessage(
     param: {
@@ -577,7 +582,7 @@ export interface AbstactBot {
 
   /**
    * 根据用户 id 和服务器 id 获取用户所在语音频道
-   * @doc https://developer.kookapp.cn/doc/http/channel-user#%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%20id%20%E5%92%8C%E6%9C%8D%E5%8A%A1%E5%99%A8%20id%20%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E6%89%80%E5%9C%A8%E8%AF%AD%E9%9F%B3%E9%A2%91%E9%81%93
+   * @see https://developer.kookapp.cn/doc/http/channel-user#%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%20id%20%E5%92%8C%E6%9C%8D%E5%8A%A1%E5%99%A8%20id%20%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E6%89%80%E5%9C%A8%E8%AF%AD%E9%9F%B3%E9%A2%91%E9%81%93
    */
   getUserJoinedChannelList(
     param: { guild_id: string; user_id: string } & Kook.Pagination,
@@ -585,7 +590,7 @@ export interface AbstactBot {
 
   /**
    * 获取私信聊天会话列表
-   * @doc https://developer.kookapp.cn/doc/http/user-chat#%E8%8E%B7%E5%8F%96%E7%A7%81%E4%BF%A1%E8%81%8A%E5%A4%A9%E4%BC%9A%E8%AF%9D%E5%88%97%E8%A1%A8
+   * @see https://developer.kookapp.cn/doc/http/user-chat#%E8%8E%B7%E5%8F%96%E7%A7%81%E4%BF%A1%E8%81%8A%E5%A4%A9%E4%BC%9A%E8%AF%9D%E5%88%97%E8%A1%A8
    */
   getPrivateChatList(
     param?: Kook.Pagination,
@@ -593,25 +598,25 @@ export interface AbstactBot {
 
   /**
    * 获取私信聊天会话详情
-   * @doc https://developer.kookapp.cn/doc/http/user-chat#%E8%8E%B7%E5%8F%96%E7%A7%81%E4%BF%A1%E8%81%8A%E5%A4%A9%E4%BC%9A%E8%AF%9D%E8%AF%A6%E6%83%85
+   * @see https://developer.kookapp.cn/doc/http/user-chat#%E8%8E%B7%E5%8F%96%E7%A7%81%E4%BF%A1%E8%81%8A%E5%A4%A9%E4%BC%9A%E8%AF%9D%E8%AF%A6%E6%83%85
    */
   getPrivateChatView(param: { chat_code: string }): Promise<Kook.PrivateChat>;
 
   /**
    * 创建私信聊天会话
-   * @doc https://developer.kookapp.cn/doc/http/user-chat#%E5%88%9B%E5%BB%BA%E7%A7%81%E4%BF%A1%E8%81%8A%E5%A4%A9%E4%BC%9A%E8%AF%9D
+   * @see https://developer.kookapp.cn/doc/http/user-chat#%E5%88%9B%E5%BB%BA%E7%A7%81%E4%BF%A1%E8%81%8A%E5%A4%A9%E4%BC%9A%E8%AF%9D
    */
   createPrivateChat(param: { target_id: string }): Promise<Kook.PrivateChat>;
 
   /**
    * 删除私信聊天会话
-   * @doc https://developer.kookapp.cn/doc/http/user-chat#%E5%88%A0%E9%99%A4%E7%A7%81%E4%BF%A1%E8%81%8A%E5%A4%A9%E4%BC%9A%E8%AF%9D
+   * @see https://developer.kookapp.cn/doc/http/user-chat#%E5%88%A0%E9%99%A4%E7%A7%81%E4%BF%A1%E8%81%8A%E5%A4%A9%E4%BC%9A%E8%AF%9D
    */
   deletePrivateChat(param: { chat_code: string }): Promise<void>;
 
   /**
    * 获取私信聊天消息列表
-   * @doc https://developer.kookapp.cn/doc/http/direct-message#%E8%8E%B7%E5%8F%96%E7%A7%81%E4%BF%A1%E8%81%8A%E5%A4%A9%E6%B6%88%E6%81%AF%E5%88%97%E8%A1%A8
+   * @see https://developer.kookapp.cn/doc/http/direct-message#%E8%8E%B7%E5%8F%96%E7%A7%81%E4%BF%A1%E8%81%8A%E5%A4%A9%E6%B6%88%E6%81%AF%E5%88%97%E8%A1%A8
    */
   getDirectMessageList(
     param: {
@@ -622,7 +627,7 @@ export interface AbstactBot {
   ): Promise<{ items: Kook.Message[] }>;
   /**
    * 获取私信聊天消息详情
-   * @doc https://developer.kookapp.cn/doc/http/direct-message#%E8%8E%B7%E5%8F%96%E7%A7%81%E4%BF%A1%E8%81%8A%E5%A4%A9%E6%B6%88%E6%81%AF%E8%AF%A6%E6%83%85
+   * @see https://developer.kookapp.cn/doc/http/direct-message#%E8%8E%B7%E5%8F%96%E7%A7%81%E4%BF%A1%E8%81%8A%E5%A4%A9%E6%B6%88%E6%81%AF%E8%AF%A6%E6%83%85
    */
   getDirectMessageView(
     param: {
@@ -634,7 +639,7 @@ export interface AbstactBot {
 
   /**
    * 发送私信聊天消息
-   * @doc https://developer.kookapp.cn/doc/http/direct-message#%E5%8F%91%E9%80%81%E7%A7%81%E4%BF%A1%E8%81%8A%E5%A4%A9%E6%B6%88%E6%81%AF
+   * @see https://developer.kookapp.cn/doc/http/direct-message#%E5%8F%91%E9%80%81%E7%A7%81%E4%BF%A1%E8%81%8A%E5%A4%A9%E6%B6%88%E6%81%AF
    */
   createDirectMessage(
     param: {
@@ -648,7 +653,7 @@ export interface AbstactBot {
 
   /**
    * 更新私信聊天消息
-   * @doc https://developer.kookapp.cn/doc/http/direct-message#%E6%9B%B4%E6%96%B0%E7%A7%81%E4%BF%A1%E8%81%8A%E5%A4%A9%E6%B6%88%E6%81%AF
+   * @see https://developer.kookapp.cn/doc/http/direct-message#%E6%9B%B4%E6%96%B0%E7%A7%81%E4%BF%A1%E8%81%8A%E5%A4%A9%E6%B6%88%E6%81%AF
    */
   updateDirectMessage(param: {
     msg_id: string;
@@ -660,25 +665,25 @@ export interface AbstactBot {
   /**
    * 删除私信聊天消息
    * @note 只能删除自己的消息
-   * @doc https://developer.kookapp.cn/doc/http/direct-message#%E5%88%A0%E9%99%A4%E7%A7%81%E4%BF%A1%E8%81%8A%E5%A4%A9%E6%B6%88%E6%81%AF
+   * @see https://developer.kookapp.cn/doc/http/direct-message#%E5%88%A0%E9%99%A4%E7%A7%81%E4%BF%A1%E8%81%8A%E5%A4%A9%E6%B6%88%E6%81%AF
    */
   deleteDirectMessage(param: { msg_id: string }): Promise<void>;
 
   /**
    * 获取消息某回应的用户列表
-   * @doc https://developer.kookapp.cn/doc/http/direct-message#%E8%8E%B7%E5%8F%96%E9%A2%91%E9%81%93%E6%B6%88%E6%81%AF%E6%9F%90%E5%9B%9E%E5%BA%94%E7%9A%84%E7%94%A8%E6%88%B7%E5%88%97%E8%A1%A8
+   * @see https://developer.kookapp.cn/doc/http/direct-message#%E8%8E%B7%E5%8F%96%E9%A2%91%E9%81%93%E6%B6%88%E6%81%AF%E6%9F%90%E5%9B%9E%E5%BA%94%E7%9A%84%E7%94%A8%E6%88%B7%E5%88%97%E8%A1%A8
    */
   getDirectMessageReactionList(param: { msg_id: string; emoji?: string }): Promise<Kook.User[]>;
 
   /**
    * 给某个消息添加回应
-   * @doc https://developer.kookapp.cn/doc/http/direct-message#%E7%BB%99%E6%9F%90%E4%B8%AA%E6%B6%88%E6%81%AF%E6%B7%BB%E5%8A%A0%E5%9B%9E%E5%BA%94
+   * @see https://developer.kookapp.cn/doc/http/direct-message#%E7%BB%99%E6%9F%90%E4%B8%AA%E6%B6%88%E6%81%AF%E6%B7%BB%E5%8A%A0%E5%9B%9E%E5%BA%94
    */
   addDirectMessageReaction(param: { msg_id: string; emoji: string }): Promise<void>;
 
   /**
    * 删除消息的某个回应
-   * @doc https://developer.kookapp.cn/doc/http/direct-message#%E5%88%A0%E9%99%A4%E6%B6%88%E6%81%AF%E7%9A%84%E6%9F%90%E4%B8%AA%E5%9B%9E%E5%BA%94
+   * @see https://developer.kookapp.cn/doc/http/direct-message#%E5%88%A0%E9%99%A4%E6%B6%88%E6%81%AF%E7%9A%84%E6%9F%90%E4%B8%AA%E5%9B%9E%E5%BA%94
    */
   deleteDirectMessageReaction(param: {
     msg_id: string;
@@ -688,7 +693,7 @@ export interface AbstactBot {
 
   /**
    * 获取网关连接地址
-   * @doc https://developer.kookapp.cn/doc/http/gateway#%E8%8E%B7%E5%8F%96%E7%BD%91%E5%85%B3%E8%BF%9E%E6%8E%A5%E5%9C%B0%E5%9D%80
+   * @see https://developer.kookapp.cn/doc/http/gateway#%E8%8E%B7%E5%8F%96%E7%BD%91%E5%85%B3%E8%BF%9E%E6%8E%A5%E5%9C%B0%E5%9D%80
    */
   getGateway(param: {
     /** 下发数据是否压缩，默认为 `1`,代表压缩 **/
@@ -697,19 +702,19 @@ export interface AbstactBot {
 
   /**
    * 获取当前用户信息
-   * @doc https://developer.kookapp.cn/doc/http/user#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF
+   * @see https://developer.kookapp.cn/doc/http/user#%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF
    */
   getUserMe(): Promise<Kook.User>;
 
   /**
    * 获取目标用户信息
-   * @doc https://developer.kookapp.cn/doc/http/user#%E8%8E%B7%E5%8F%96%E7%9B%AE%E6%A0%87%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF
+   * @see https://developer.kookapp.cn/doc/http/user#%E8%8E%B7%E5%8F%96%E7%9B%AE%E6%A0%87%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF
    */
   getUserView(param: { user_id: string; guild_id?: string }): Promise<Kook.User>;
 
   /**
    * 下线机器人
-   * @doc https://developer.kookapp.cn/doc/http/user#%E4%B8%8B%E7%BA%BF%E6%9C%BA%E5%99%A8%E4%BA%BA
+   * @see https://developer.kookapp.cn/doc/http/user#%E4%B8%8B%E7%BA%BF%E6%9C%BA%E5%99%A8%E4%BA%BA
    */
   offline(): Promise<void>;
 
@@ -717,19 +722,19 @@ export interface AbstactBot {
    * 上线机器人
    * @note 上线机器人, 仅限webhook使用。websocket直接连上信令服务器即视为上线。
    * @warning 该接口的允许调用频率较低,仅用于允许开发者不经过界面上线机器人。当出现过多错误下线时，请尽量先排查问题再上线，而不是直接调用该接口。
-   * @doc https://developer.kookapp.cn/doc/http/user#%E4%B8%8A%E7%BA%BF%E6%9C%BA%E5%99%A8%E4%BA%BA
+   * @see https://developer.kookapp.cn/doc/http/user#%E4%B8%8A%E7%BA%BF%E6%9C%BA%E5%99%A8%E4%BA%BA
    */
   online(): Promise<void>;
 
   /**
    * 获取在线状态
-   * @doc https://developer.kookapp.cn/doc/http/user#%E8%8E%B7%E5%8F%96%E5%9C%A8%E7%BA%BF%E7%8A%B6%E6%80%81
+   * @see https://developer.kookapp.cn/doc/http/user#%E8%8E%B7%E5%8F%96%E5%9C%A8%E7%BA%BF%E7%8A%B6%E6%80%81
    */
   getOnlineStatus(): Promise<BotOnlineStatus>;
 
   /**
    * 加入语音频道
-   * @doc https://developer.kookapp.cn/doc/http/voice#%E5%8A%A0%E5%85%A5%E8%AF%AD%E9%9F%B3%E9%A2%91%E9%81%93
+   * @see https://developer.kookapp.cn/doc/http/voice#%E5%8A%A0%E5%85%A5%E8%AF%AD%E9%9F%B3%E9%A2%91%E9%81%93
    */
   joinVoice(param: {
     channel_id: string;
@@ -741,7 +746,7 @@ export interface AbstactBot {
 
   /**
    * 获取机器人加入的语音频道列表
-   * @doc https://developer.kookapp.cn/doc/http/voice#%E8%8E%B7%E5%8F%96%E9%A2%91%E9%81%93%E5%88%97%E8%A1%A8
+   * @see https://developer.kookapp.cn/doc/http/voice#%E8%8E%B7%E5%8F%96%E9%A2%91%E9%81%93%E5%88%97%E8%A1%A8
    */
   listJoinedVoice(
     param?: Kook.Pagination,
@@ -749,14 +754,14 @@ export interface AbstactBot {
 
   /**
    * 离开语音频道
-   * @doc https://developer.kookapp.cn/doc/http/voice#%E7%A6%BB%E5%BC%80%E8%AF%AD%E9%9F%B3%E9%A2%91%E9%81%93
+   * @see https://developer.kookapp.cn/doc/http/voice#%E7%A6%BB%E5%BC%80%E8%AF%AD%E9%9F%B3%E9%A2%91%E9%81%93
    */
   leaveVoice(param: { channel_id: string }): Promise<void>;
 
   /**
    * 保持语音连接活跃
    * @description 正常如果长时间断流，系统会回收端口等资源，如果不希望系统回收，可以每隔45s，调用该接口，保持端口活跃，这样系统不会回收该端口资源
-   * @doc https://developer.kookapp.cn/doc/http/voice#%E4%BF%9D%E6%8C%81%E8%AF%AD%E9%9F%B3%E8%BF%9E%E6%8E%A5%E6%B4%BB%E8%B7%83
+   * @see https://developer.kookapp.cn/doc/http/voice#%E4%BF%9D%E6%8C%81%E8%AF%AD%E9%9F%B3%E8%BF%9E%E6%8E%A5%E6%B4%BB%E8%B7%83
    */
   keepVoiceAlive(param: { channel_id: string }): Promise<void>;
 
@@ -764,7 +769,7 @@ export interface AbstactBot {
 
   /**
    * 获取服务器角色列表
-   * @doc https://developer.kookapp.cn/doc/http/guild-role#%E8%8E%B7%E5%8F%96%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%92%E8%89%B2%E5%88%97%E8%A1%A8
+   * @see https://developer.kookapp.cn/doc/http/guild-role#%E8%8E%B7%E5%8F%96%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%92%E8%89%B2%E5%88%97%E8%A1%A8
    */
   getGuildRoleList(
     param: { guild_id: string } & Kook.Pagination,
@@ -772,13 +777,13 @@ export interface AbstactBot {
 
   /**
    * 创建服务器角色
-   * @doc https://developer.kookapp.cn/doc/http/guild-role#%E5%88%9B%E5%BB%BA%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%92%E8%89%B2
+   * @see https://developer.kookapp.cn/doc/http/guild-role#%E5%88%9B%E5%BB%BA%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%92%E8%89%B2
    */
   createGuildRole(param: { name?: string; guild_id: string }): Promise<Kook.GuildRole>;
 
   /**
    * 更新服务器角色
-   * @doc https://developer.kookapp.cn/doc/http/guild-role#%E6%9B%B4%E6%96%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%92%E8%89%B2
+   * @see https://developer.kookapp.cn/doc/http/guild-role#%E6%9B%B4%E6%96%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%92%E8%89%B2
    */
   updateGuildRole(
     param: { guild_id: string; role_id: number } & Partial<Omit<Kook.GuildRole, 'role_id'>>,
@@ -786,13 +791,13 @@ export interface AbstactBot {
 
   /**
    * 删除服务器角色
-   * @doc https://developer.kookapp.cn/doc/http/guild-role#%E5%88%A0%E9%99%A4%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%92%E8%89%B2
+   * @see https://developer.kookapp.cn/doc/http/guild-role#%E5%88%A0%E9%99%A4%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%92%E8%89%B2
    */
   deleteGuildRole(param: { guild_id: string; role_id: number }): Promise<void>;
 
   /**
    * 赋予用户角色
-   * @doc https://developer.kookapp.cn/doc/http/guild-role#%E8%B5%8B%E4%BA%88%E7%94%A8%E6%88%B7%E8%A7%92%E8%89%B2
+   * @see https://developer.kookapp.cn/doc/http/guild-role#%E8%B5%8B%E4%BA%88%E7%94%A8%E6%88%B7%E8%A7%92%E8%89%B2
    */
   grantGuildRole(param: {
     guild_id: string;
@@ -802,7 +807,7 @@ export interface AbstactBot {
 
   /**
    * 删除用户角色
-   * @doc https://developer.kookapp.cn/doc/http/guild-role#%E5%88%A0%E9%99%A4%E7%94%A8%E6%88%B7%E8%A7%92%E8%89%B2
+   * @see https://developer.kookapp.cn/doc/http/guild-role#%E5%88%A0%E9%99%A4%E7%94%A8%E6%88%B7%E8%A7%92%E8%89%B2
    */
   revokeGuildRole(param: {
     guild_id: string;
@@ -812,14 +817,14 @@ export interface AbstactBot {
 
   /**
    * 获取用户亲密度
-   * @doc https://developer.kookapp.cn/doc/http/intimacy#%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BA%B2%E5%AF%86%E5%BA%A6
+   * @see https://developer.kookapp.cn/doc/http/intimacy#%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E4%BA%B2%E5%AF%86%E5%BA%A6
    * @deprecated 此功能已被官方下线，新 Bot 不可用
    */
   getIntimacy(param: { user_id: string }): Promise<Kook.Intimacy>;
 
   /**
    * 更新用户亲密度
-   * @doc https://developer.kookapp.cn/doc/http/intimacy#%E6%9B%B4%E6%96%B0%E7%94%A8%E6%88%B7%E4%BA%B2%E5%AF%86%E5%BA%A6
+   * @see https://developer.kookapp.cn/doc/http/intimacy#%E6%9B%B4%E6%96%B0%E7%94%A8%E6%88%B7%E4%BA%B2%E5%AF%86%E5%BA%A6
    * @deprecated 此功能已被官方下线，新 Bot 不可用
    */
   updateIntimacy(param: {
@@ -831,7 +836,7 @@ export interface AbstactBot {
 
   /**
    * 获取服务器表情列表
-   * @doc https://developer.kookapp.cn/doc/http/guild-emoji#%E8%8E%B7%E5%8F%96%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A1%A8%E6%83%85%E5%88%97%E8%A1%A8
+   * @see https://developer.kookapp.cn/doc/http/guild-emoji#%E8%8E%B7%E5%8F%96%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A1%A8%E6%83%85%E5%88%97%E8%A1%A8
    */
   getGuildEmojiList(param?: Kook.Pagination): Promise<Kook.List<Kook.Emoji>>;
 
@@ -839,19 +844,19 @@ export interface AbstactBot {
 
   /**
    * 更新服务器表情
-   * @doc https://developer.kookapp.cn/doc/http/guild-emoji#%E6%9B%B4%E6%96%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A1%A8%E6%83%85
+   * @see https://developer.kookapp.cn/doc/http/guild-emoji#%E6%9B%B4%E6%96%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A1%A8%E6%83%85
    */
   updateGuildEmoji(param: { name: string; id: string }): Promise<void>;
 
   /**
    * 删除服务器表情
-   * @doc https://developer.kookapp.cn/doc/http/guild-emoji#%E5%88%A0%E9%99%A4%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A1%A8%E6%83%85
+   * @see https://developer.kookapp.cn/doc/http/guild-emoji#%E5%88%A0%E9%99%A4%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A1%A8%E6%83%85
    */
   deleteGuildEmoji(param: { id: string }): Promise<void>;
 
   /**
    * 获取邀请列表
-   * @doc https://developer.kookapp.cn/doc/http/invite#%E8%8E%B7%E5%8F%96%E9%82%80%E8%AF%B7%E5%88%97%E8%A1%A8
+   * @see https://developer.kookapp.cn/doc/http/invite#%E8%8E%B7%E5%8F%96%E9%82%80%E8%AF%B7%E5%88%97%E8%A1%A8
    */
   getInviteList(
     param: { guild_id?: string; channel_id?: string } & Kook.Pagination,
@@ -859,7 +864,7 @@ export interface AbstactBot {
 
   /**
    * 创建邀请链接
-   * @doc https://developer.kookapp.cn/doc/http/invite#%E5%88%9B%E5%BB%BA%E9%82%80%E8%AF%B7%E9%93%BE%E6%8E%A5
+   * @see https://developer.kookapp.cn/doc/http/invite#%E5%88%9B%E5%BB%BA%E9%82%80%E8%AF%B7%E9%93%BE%E6%8E%A5
    */
   createInvite(param: {
     guild_id?: string;
@@ -870,19 +875,19 @@ export interface AbstactBot {
 
   /**
    * 删除邀请链接
-   * @doc https://developer.kookapp.cn/doc/http/invite#%E5%88%A0%E9%99%A4%E9%82%80%E8%AF%B7%E9%93%BE%E6%8E%A5
+   * @see https://developer.kookapp.cn/doc/http/invite#%E5%88%A0%E9%99%A4%E9%82%80%E8%AF%B7%E9%93%BE%E6%8E%A5
    */
   deleteInvite(param: { url_code: string; guild_id?: string; channel_id?: string }): Promise<void>;
 
   /**
    * 获取黑名单列表
-   * @doc https://developer.kookapp.cn/doc/http/blacklist#%E8%8E%B7%E5%8F%96%E9%BB%91%E5%90%8D%E5%8D%95%E5%88%97%E8%A1%A8
+   * @see https://developer.kookapp.cn/doc/http/blacklist#%E8%8E%B7%E5%8F%96%E9%BB%91%E5%90%8D%E5%8D%95%E5%88%97%E8%A1%A8
    */
   getBlacklist(param: { guild_id: string } & Kook.Pagination): Promise<Kook.List<Kook.BlackList>>;
 
   /**
    * 加入黑名单
-   * @doc https://developer.kookapp.cn/doc/http/blacklist#%E5%8A%A0%E5%85%A5%E9%BB%91%E5%90%8D%E5%8D%95
+   * @see https://developer.kookapp.cn/doc/http/blacklist#%E5%8A%A0%E5%85%A5%E9%BB%91%E5%90%8D%E5%8D%95
    */
   createBlacklist(param: {
     guild_id: string;
@@ -893,43 +898,43 @@ export interface AbstactBot {
 
   /**
    * 移除黑名单
-   * @doc https://developer.kookapp.cn/doc/http/blacklist#%E7%A7%BB%E9%99%A4%E9%BB%91%E5%90%8D%E5%8D%95
+   * @see https://developer.kookapp.cn/doc/http/blacklist#%E7%A7%BB%E9%99%A4%E9%BB%91%E5%90%8D%E5%8D%95
    */
   deleteBlacklist(param: { guild_id: string; target_id: string }): Promise<void>;
 
   /**
    * 获取服务器 Badge
-   * @doc https://developer.kookapp.cn/doc/http/badge#%E8%8E%B7%E5%8F%96%E6%9C%8D%E5%8A%A1%E5%99%A8%20Badge
+   * @see https://developer.kookapp.cn/doc/http/badge#%E8%8E%B7%E5%8F%96%E6%9C%8D%E5%8A%A1%E5%99%A8%20Badge
    */
   getGuildBadge(param: { guild_id: string; style?: 0 | 1 | 2 }): Promise<void>;
 
   /**
    * 游戏列表
-   * @doc https://developer.kookapp.cn/doc/http/game#%E6%B8%B8%E6%88%8F%E5%88%97%E8%A1%A8
+   * @see https://developer.kookapp.cn/doc/http/game#%E6%B8%B8%E6%88%8F%E5%88%97%E8%A1%A8
    */
   getGameList(param?: { type?: 0 | 1 | 2 }): Promise<Kook.List<Kook.Game>>;
 
   /**
    * 添加游戏
-   * @doc https://developer.kookapp.cn/doc/http/game#%E6%B7%BB%E5%8A%A0%E6%B8%B8%E6%88%8F
+   * @see https://developer.kookapp.cn/doc/http/game#%E6%B7%BB%E5%8A%A0%E6%B8%B8%E6%88%8F
    */
   createGame(param: { name: string; icon?: string }): Promise<Kook.List<Kook.Game>>;
 
   /**
    * 更新游戏
-   * @doc https://developer.kookapp.cn/doc/http/game#%E6%9B%B4%E6%96%B0%E6%B8%B8%E6%88%8F
+   * @see https://developer.kookapp.cn/doc/http/game#%E6%9B%B4%E6%96%B0%E6%B8%B8%E6%88%8F
    */
   updateGame(param: { id: number; name?: string; icon?: string }): Promise<Kook.List<Kook.Game>>;
 
   /**
    * 删除游戏
-   * @doc https://developer.kookapp.cn/doc/http/game#%E5%88%A0%E9%99%A4%E6%B8%B8%E6%88%8F
+   * @see https://developer.kookapp.cn/doc/http/game#%E5%88%A0%E9%99%A4%E6%B8%B8%E6%88%8F
    */
   deleteGame(param: { id: number }): Promise<void>;
 
   /**
    * 添加游戏/音乐记录-开始玩/听
-   * @doc https://developer.kookapp.cn/doc/http/game#%E6%B7%BB%E5%8A%A0%E6%B8%B8%E6%88%8F/%E9%9F%B3%E4%B9%90%E8%AE%B0%E5%BD%95-%E5%BC%80%E5%A7%8B%E7%8E%A9/%E5%90%AC
+   * @see https://developer.kookapp.cn/doc/http/game#%E6%B7%BB%E5%8A%A0%E6%B8%B8%E6%88%8F/%E9%9F%B3%E4%B9%90%E8%AE%B0%E5%BD%95-%E5%BC%80%E5%A7%8B%E7%8E%A9/%E5%90%AC
    */
   createGameActivity(param: {
     /** 请求数据类型 `1` 游戏 `2` 音乐 **/
@@ -947,13 +952,13 @@ export interface AbstactBot {
 
   /**
    * 删除游戏/音乐记录-结束玩/听
-   * @doc https://developer.kookapp.cn/doc/http/game#%E5%88%A0%E9%99%A4%E6%B8%B8%E6%88%8F/%E9%9F%B3%E4%B9%90%E8%AE%B0%E5%BD%95-%E7%BB%93%E6%9D%9F%E7%8E%A9/%E5%90%AC
+   * @see https://developer.kookapp.cn/doc/http/game#%E5%88%A0%E9%99%A4%E6%B8%B8%E6%88%8F/%E9%9F%B3%E4%B9%90%E8%AE%B0%E5%BD%95-%E7%BB%93%E6%9D%9F%E7%8E%A9/%E5%90%AC
    */
   deleteGameActivity(param: { data_type: 1 | 2 }): Promise<void>;
 
   /**
    * 获取AccessToken
-   * @doc https://developer.kookapp.cn/doc/http/oauth#%E8%8E%B7%E5%8F%96AccessToken
+   * @see https://developer.kookapp.cn/doc/http/oauth#%E8%8E%B7%E5%8F%96AccessToken
    */
   getToken(param: {
     grant_type: 'authorization_code';
@@ -962,4 +967,39 @@ export interface AbstactBot {
     code: string;
     redirect_uri: string;
   }): Promise<Kook.AccessToken>;
+
+  /**
+   * 获取消息模板列表
+   * @see https://developer.kookapp.cn/doc/http/template#%E8%8E%B7%E5%8F%96%E6%A8%A1%E6%9D%BF%E5%88%97%E8%A1%A8
+   */
+  getTemplateList(param?: Kook.Pagination): Promise<Kook.List<Kook.ITemplate>>;
+
+  /**
+   * 创建消息模板
+   * @see https://developer.kookapp.cn/doc/http/template#%E8%8E%B7%E5%8F%96%E6%A8%A1%E6%9D%BF%E8%AF%A6%E6%83%85
+   */
+  createTemplate(
+    param: Pick<Kook.ITemplate, 'title' | 'content'> &
+      Partial<Pick<Kook.ITemplate, 'type' | 'msgtype' | 'test_data' | 'test_channel'>>,
+  ): Promise<Kook.ITemplateReturn>;
+
+  /**
+   * 更新消息模板
+   * @see https://developer.kookapp.cn/doc/http/template#%E6%9B%B4%E6%96%B0%E6%A8%A1%E6%9D%BF
+   */
+  updateTemplate(
+    param: Pick<Kook.ITemplate, 'id'> &
+      Partial<
+        Pick<
+          Kook.ITemplate,
+          'title' | 'content' | 'type' | 'msgtype' | 'test_data' | 'test_channel'
+        >
+      >,
+  ): Promise<Kook.ITemplateReturn>;
+
+  /**
+   * 删除消息模板
+   * @see https://developer.kookapp.cn/doc/http/template#%E5%88%A0%E9%99%A4%E6%A8%A1%E6%9D%BF
+   */
+  deleteTemplate(param: Pick<Kook.ITemplate, 'id'>): Promise<void>;
 }

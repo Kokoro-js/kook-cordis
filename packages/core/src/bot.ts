@@ -72,21 +72,30 @@ export class Bot extends AbstactBot {
     }
 
     this.webhookKeepAlive = setInterval(async () => {
-      const { data: status } = await this.http.get<{ code: number; data: { online: boolean } }>(
-        '/api/v3/user/get-online-status',
-      );
-      if (status.code !== 0) {
-        this.logger.error('机器人获取自身在线状态失败。');
-        return;
-      }
-      if (status.data.online) return;
-      if (this.ws) {
-        this.ctx.scope.restart();
-        return;
-      }
-      const { data } = await this.http.post('/api/v3/user/online');
-      if (data.code !== 0) {
-        this.logger.error('机器人自启失败。');
+      try {
+        const res = await this.http
+          .get<{ code: number; data: { online: boolean } }>('/api/v3/user/get-online-status')
+          .catch(() => null);
+
+        const status = res?.data;
+        if (!res || status.code !== 0) {
+          this.logger.error('机器人获取自身在线状态失败。');
+          return;
+        }
+        if (status.data.online) return;
+        if (this.ws) {
+          this.ctx.scope.restart();
+          return;
+        }
+        const resOnline = await this.http.post('/api/v3/user/online').catch(() => null);
+        const data = resOnline?.data;
+        if (!resOnline || data?.code !== 0) {
+          this.logger.error('机器人自启失败。');
+          this._retryCount++;
+          this.ctx.scope.restart();
+        }
+      } catch (e) {
+        this.logger.error('机器人自启过程出现意外错误。');
         this._retryCount++;
         this.ctx.scope.restart();
       }
