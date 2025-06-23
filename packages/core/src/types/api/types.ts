@@ -191,10 +191,11 @@ export interface IVoiceInfo {
 export interface ITemplate {
   id: string;
   title: string;
-  type: 8;
-  /** 1 代表 kmd 消息，2 代表通过 json 发卡片消息，3 代表通过 yaml 发卡片消息 **/
+  /** 目前固定为0，代表模型使用twig渲染 */
+  type: 0;
+  /** 1 代表 kmd 消息，2 代表通过 json 发卡片消息，3 代表通过 yaml 发卡片消息 */
   msgtype: 1 | 2 | 3;
-  /** 0 代表未审核，1 代表审核中，2 代表审核通过，3 代表审核拒绝 **/
+  /** 0 代表未审核，1 代表审核中，2 代表审核通过，3 代表审核拒绝 */
   status: 0 | 1 | 2 | 3;
   test_data: string;
   test_channel: string;
