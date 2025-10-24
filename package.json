@@ -25,8 +25,7 @@
 	"dependencies": {
 		"@pluxel/cli": "^0.1.2",
 		"@pluxel/core": "^0.1.2",
-		"@pluxel/hmr": "^0.1.4",
-		"@dnd-kit/utilities": "3.2.2"
+		"@pluxel/hmr": "^0.1.4"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.0",
