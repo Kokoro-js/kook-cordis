@@ -15,8 +15,8 @@ importers:
         specifier: ^0.1.2
         version: 0.1.2
       '@pluxel/hmr':
-        specifier: ^0.1.4
-        version: 0.1.4(@mantine/core@8.3.5(@mantine/hooks@8.3.5(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@mantine/notifications@8.3.5(@mantine/core@8.3.5(@mantine/hooks@8.3.5(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@mantine/hooks@8.3.5(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@pluxel/core@0.1.2)(@types/node@24.9.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(rollup@4.52.5)(sugarss@5.0.1(postcss@8.5.6))
+        specifier: ^0.1.6
+        version: 0.1.6(@mantine/core@8.3.5(@mantine/hooks@8.3.5(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@mantine/notifications@8.3.5(@mantine/core@8.3.5(@mantine/hooks@8.3.5(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@mantine/hooks@8.3.5(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@pluxel/core@0.1.2)(@types/node@24.9.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(rollup@4.52.5)(sugarss@5.0.1(postcss@8.5.6))
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.3.0
@@ -945,8 +945,8 @@ packages:
   '@pluxel/core@0.1.2':
     resolution: {integrity: sha512-3X32Pj4bCMQSymeaZB5I7zuY17YycIV0h9bNV4AP39xBeF/7PuLyT9Vf6PFJ17+IM8Ln+5ZHp4sSiS8s6TegPA==}
 
-  '@pluxel/hmr@0.1.4':
-    resolution: {integrity: sha512-ZgrPKv/lkQ+Q73zzu+znr+BvnUkbw3k+tZrh7URPaIeu0F5Ntjl+rXCb15abXKs9uNFJtPXHUNE6HLVdXWYCWA==}
+  '@pluxel/hmr@0.1.6':
+    resolution: {integrity: sha512-l2DCgRqZOvD0tRqGjNueChJ+9fv37EGythlqi08OEVb3i3n5wPeCueWbIYWwor/IK4UXJON9A+0JrQYcGAGW2Q==}
     peerDependencies:
       '@mantine/core': ^8.2.2
       '@mantine/notifications': ^8.2.2
@@ -3521,7 +3521,7 @@ snapshots:
       reflect-metadata: 0.2.2
       xstate: 5.20.1
 
-  '@pluxel/hmr@0.1.4(@mantine/core@8.3.5(@mantine/hooks@8.3.5(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@mantine/notifications@8.3.5(@mantine/core@8.3.5(@mantine/hooks@8.3.5(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@mantine/hooks@8.3.5(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@pluxel/core@0.1.2)(@types/node@24.9.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(rollup@4.52.5)(sugarss@5.0.1(postcss@8.5.6))':
+  '@pluxel/hmr@0.1.6(@mantine/core@8.3.5(@mantine/hooks@8.3.5(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@mantine/notifications@8.3.5(@mantine/core@8.3.5(@mantine/hooks@8.3.5(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@mantine/hooks@8.3.5(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@pluxel/core@0.1.2)(@types/node@24.9.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(rollup@4.52.5)(sugarss@5.0.1(postcss@8.5.6))':
     dependencies:
       '@gqloom/core': 0.12.1(graphql@16.11.0)
       '@gqloom/valibot': 0.12.0(@gqloom/core@0.12.1(graphql@16.11.0))(graphql@16.11.0)(valibot@1.1.0)

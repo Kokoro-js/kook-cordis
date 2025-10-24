@@ -1,4 +1,4 @@
-import { BasePlugin, f, Optional, Plugin, v } from '@pluxel/hmr'
+import { BasePlugin, Config, f, Optional, Plugin, v } from '@pluxel/hmr'
 // PluginA.ts
 // PluginA 依赖 PluginB 为必选依赖，依赖 PluginC 为可选依赖
 // biome-ignore lint/style/useImportType: <PluginSystem>
@@ -31,6 +31,8 @@ const _test = v.object({
 @Plugin({ name: 'PluginA' })
 export class PluginA extends BasePlugin {
 
+	@Config(_test)
+	private test!: Config<typeof _test>
 	constructor(public pluginB: PluginB, @Optional() public _pluginC?: PluginC) {
     super();
   }

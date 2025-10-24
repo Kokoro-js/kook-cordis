@@ -25,7 +25,7 @@
 	"dependencies": {
 		"@pluxel/cli": "^0.1.2",
 		"@pluxel/core": "^0.1.2",
-		"@pluxel/hmr": "^0.1.4"
+		"@pluxel/hmr": "^0.1.6"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.3.0",
