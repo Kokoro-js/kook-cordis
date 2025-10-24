@@ -1,0 +1,12 @@
+{
+  "name": "pluxel-plugin-render",
+  "version": "0.1.0",
+  "description": "",
+  "main": "./src/index.ts",
+  "scripts": {},
+  "dependencies": {
+    "@leafer-ui/node": "^1.9.5",
+    "@napi-rs/canvas": "^0.1.78",
+    "echarts": "^6.0.0"
+  }
+}

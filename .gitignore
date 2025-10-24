@@ -1,4 +1,5 @@
-projects/
+gqty/
+logs/
 
 # 本地测试不应上传的文件
 **/dist

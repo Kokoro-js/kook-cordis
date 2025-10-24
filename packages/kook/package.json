@@ -1,0 +1,20 @@
+{
+	"name": "pluxel-plugin-kook",
+	"version": "0.1.0",
+	"description": "Pluxel KOOK 插件。",
+	"main": "./src/kook.ts",
+	"scripts": {
+		"dev": "bun src/index.js",
+		"new": "bunx pluxel new plugin"
+	},
+	"dependencies": {
+		"type-flag": "^3.0.0",
+		"ws": "^8.18.3"
+	},
+	"peerDependencies": {
+		"pluxel-plugin-ky": "workspace:*"
+	},
+	"devDependencies": {
+		"@types/ws": "^8.18.1"
+	}
+}

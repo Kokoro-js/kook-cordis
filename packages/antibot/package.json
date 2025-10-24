@@ -1,0 +1,13 @@
+{
+	"name": "pluxel-plugin-antibot",
+	"version": "0.1.0",
+	"description": "",
+	"main": "./src/index.ts",
+	"scripts": {},
+	"dependencies": {
+		"pluxel-plugin-render": "workspace:*",
+		"pluxel-plugin-kook": "workspace:*"
+	},
+	"peerDependencies": {},
+	"devDependencies": {}
+}

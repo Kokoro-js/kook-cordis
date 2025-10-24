@@ -1,0 +1,17 @@
+{
+	"name": "pluxel-plugin-ky",
+	"version": "0.1.0",
+	"description": "Pluxel KOOK 插件。",
+	"main": "./src/ky.ts",
+	"scripts": {
+		"dev": "bun src/index.js",
+		"new": "bunx pluxel new plugin"
+	},
+	"dependencies": {
+		"ky": "^1.9.0"
+	},
+	"peerDependencies": {
+	},
+	"devDependencies": {
+	}
+}

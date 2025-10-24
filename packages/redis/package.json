@@ -1,0 +1,12 @@
+{
+	"name": "pluxel-plugin-redis",
+	"version": "0.1.0",
+	"description": "Pluxel Redis 插件。",
+	"main": "./src/index.ts",
+	"scripts": {},
+	"dependencies": {
+		"redis": "^5.8.1"
+	},
+	"peerDependencies": {},
+	"devDependencies": {}
+}

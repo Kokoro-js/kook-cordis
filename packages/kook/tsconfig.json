@@ -6,7 +6,7 @@
 		"moduleResolution": "bundler",
 		// 输出配置
 		"outDir": "dist", // 输出目录
-		"rootDir": ".", // 源码根目录
+		"rootDir": "src", // 源码根目录
 		// Enable all strict type checking options.
 		"strict": true,
 		// Enables project references and informs the TypeScript program where to find referenced outputs.
@@ -47,5 +47,5 @@
 			"~/*": ["src/*"]
 		}
 	},
-	"include": ["src/**/*.ts", "packages/antibot/src/index.ts"]
+	"include": ["src/**/*.ts"]
 }
