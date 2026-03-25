@@ -1,6 +1,6 @@
 on:
   push:
-    branches: 
+    branches:
       - main
 
 jobs:
@@ -38,8 +38,11 @@ jobs:
 
       - name: Build Packages
         run: pnpm build
-        
-      - uses: JS-DevTools/npm-publish@v3
+
+      - uses: actions/setup-node@v4
         with:
-          token: ${{ secrets.NPM_TOKEN }}
-          package: packages/core
+          node-version: 'lts/*'
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: npm publish --provenance --access public
+        working-directory: packages/core
