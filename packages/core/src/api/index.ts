@@ -1,6 +1,6 @@
 import { AxiosInstance, AxiosRequestConfig, Method } from 'axios';
-import * as Kook from '../types';
-import { BotOnlineStatus, DirectMessageGetType, IBaseAPIResponse, IVoiceInfo } from '../types';
+import type * as Kook from '../types';
+import type { BotOnlineStatus, DirectMessageGetType, IBaseAPIResponse, IVoiceInfo } from '../types';
 
 export class ResponseError extends Error {
   code: number;
@@ -173,8 +173,18 @@ AbstactBot.define('getMessageReactionList', 'GET', '/message/reaction-list');
 AbstactBot.define('addMessageReaction', 'POST', '/message/add-reaction');
 AbstactBot.define('deleteMessageReaction', 'POST', '/message/delete-reaction');
 AbstactBot.define('sendPipeMessage', 'POST', '/message/send-pipemsg');
+AbstactBot.define('pinMessage', 'POST', '/message/pin');
+AbstactBot.define('unpinMessage', 'POST', '/message/unpin');
 
 AbstactBot.define('getUserJoinedChannelList', 'GET', '/channel-user/get-joined-channel');
+
+AbstactBot.define('getThreadCategoryList', 'GET', '/category/list');
+AbstactBot.define('createThread', 'POST', '/thread/create');
+AbstactBot.define('replyThread', 'POST', '/thread/reply');
+AbstactBot.define('getThreadView', 'GET', '/thread/view');
+AbstactBot.define('getThreadList', 'POST', '/thread/list');
+AbstactBot.define('deleteThread', 'POST', '/thread/delete');
+AbstactBot.define('getThreadPostList', 'GET', '/thread/post');
 
 AbstactBot.define('getPrivateChatList', 'GET', '/user-chat/list');
 AbstactBot.define('getPrivateChatView', 'GET', '/user-chat/view');
@@ -581,12 +591,141 @@ export interface AbstactBot {
   ): Promise<void>;
 
   /**
+   * 置顶频道消息
+   * @see https://developer.kookapp.cn/doc/http/message#%E7%BD%AE%E9%A1%B6%E9%A2%91%E9%81%93%E6%B6%88%E6%81%AF
+   */
+  pinMessage(param: {
+    msg_id: string;
+    /** 频道id **/
+    target_id?: string;
+  }): Promise<void>;
+
+  /**
+   * 取消置顶频道消息
+   * @see https://developer.kookapp.cn/doc/http/message#%E5%8F%96%E6%B6%88%E7%BD%AE%E9%A1%B6%E9%A2%91%E9%81%93%E6%B6%88%E6%81%AF
+   */
+  unpinMessage(param: {
+    msg_id: string;
+    /** 频道id **/
+    target_id?: string;
+  }): Promise<void>;
+
+  /**
    * 根据用户 id 和服务器 id 获取用户所在语音频道
    * @see https://developer.kookapp.cn/doc/http/channel-user#%E6%A0%B9%E6%8D%AE%E7%94%A8%E6%88%B7%20id%20%E5%92%8C%E6%9C%8D%E5%8A%A1%E5%99%A8%20id%20%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E6%89%80%E5%9C%A8%E8%AF%AD%E9%9F%B3%E9%A2%91%E9%81%93
    */
   getUserJoinedChannelList(
     param: { guild_id: string; user_id: string } & Kook.Pagination,
   ): Promise<Kook.List<Kook.Channel>>;
+
+  /**
+   * 获取帖子分区列表
+   * @see https://developer.kookapp.cn/doc/http/thread#%E8%8E%B7%E5%8F%96%E5%B8%96%E5%AD%90%E5%88%86%E5%8C%BA%E5%88%97%E8%A1%A8
+   */
+  getThreadCategoryList(param: {
+    /** 帖子频道 id **/
+    channel_id: string;
+  }): Promise<{
+    list: Kook.ThreadCategory[];
+  }>;
+
+  /**
+   * 创建帖子
+   * @see https://developer.kookapp.cn/doc/http/thread#%E5%88%9B%E5%BB%BA%E5%B8%96%E5%AD%90
+   */
+  createThread(param: {
+    /** 频道 id **/
+    channel_id: string;
+    /** 服务器 id **/
+    guild_id: string;
+    /** 帖子分区 id（若无默认为综合分区） **/
+    category_id?: string;
+    /** 标题 **/
+    title: string;
+    /** 封面url **/
+    cover?: string;
+    /** 卡片消息内容 */
+    content: string;
+  }): Promise<Kook.ThreadDetail>;
+
+  /**
+   * 评论/回复
+   * @see https://developer.kookapp.cn/doc/http/thread#%E8%AF%84%E8%AE%BA/%E5%9B%9E%E5%A4%8D
+   */
+  replyThread(param: {
+    /** 频道 id **/
+    channel_id: string;
+    /** 服务器 id **/
+    guild_id: string;
+    /** 回复的 `post_id`，如果是评论主楼则不传，回复其它楼和楼中楼则必传 **/
+    reply_id?: string;
+    /** 文本 **/
+    content: string;
+  }): Promise<Kook.ThreadPost>;
+
+  /**
+   * 帖子详情
+   * @see https://developer.kookapp.cn/doc/http/thread#%E5%B8%96%E5%AD%90%E8%AF%A6%E6%83%85
+   */
+  getThreadView(param: {
+    /** 频道 id **/
+    channel_id: string;
+    /** 帖子 id **/
+    thread_id: string;
+  }): Promise<Kook.ThreadDetail>;
+
+  /**
+   * 帖子列表
+   * @see https://developer.kookapp.cn/doc/http/thread#%E5%B8%96%E5%AD%90%E5%88%97%E8%A1%A8
+   */
+  getThreadList(param: {
+    /** 频道 id **/
+    channel_id: string;
+    /** 帖子分区 id（若无默认为综合分区） **/
+    category_id?: string;
+    /** 排序规则，`1` 最新回复 `2` 最新创建，默认按频道设置来 **/
+    sort?: number;
+    /** 分页，默认30 **/
+    page_size?: number;
+    /** 翻页时，从什么时间开始找(传最后一个帖子的对应时间，sort=1 时取 `latest_active_time`，sort=2 时取 `create_time`) **/
+    time?: number;
+  }): Promise<{
+    items: Kook.Thread[];
+  }>;
+
+  /**
+   * 帖子/评论/回复删除
+   * @see https://developer.kookapp.cn/doc/http/thread#%E5%B8%96%E5%AD%90/%E8%AF%84%E8%AE%BA/%E5%9B%9E%E5%A4%8D%E5%88%A0%E9%99%A4
+   */
+  deleteThread(param: {
+    /** 频道 id **/
+    channel_id: string;
+    /** 帖子id，删除整个贴子时必传，如果同时有post_id只会删除对应post **/
+    thread_id?: string;
+    /** 评论or回复的id，删除评论/回复时必传 **/
+    post_id?: string;
+  }): Promise<void>;
+
+  /**
+   * 回复列表
+   * @see https://developer.kookapp.cn/doc/http/thread#%E5%9B%9E%E5%A4%8D%E5%88%97%E8%A1%A8
+   */
+  getThreadPostList(param: {
+    /** 频道id **/
+    channel_id: string;
+    /** 某一楼评论的post_id，查看楼中楼需要 **/
+    post_id?: string;
+    /** 帖子id **/
+    thread_id: string;
+    /** 回复的create_time用于分页 **/
+    time?: number;
+    /** 一页几个 **/
+    page_size?: number;
+    /** 'asc'升序 'desc'降序 **/
+    order?: 'asc' | 'desc';
+    /** 页码 **/
+    page?: number;
+  }): Promise<Omit<Kook.List<Kook.ThreadPost>, 'sort'>>;
 
   /**
    * 获取私信聊天会话列表

@@ -1,3 +1,5 @@
+import type { KmarkdownRoleMeta, KmarkdownUserMeta } from './message';
+
 export interface PayLoad {
   s: number; // 信令类型
   d: Data<any>; // 数据
@@ -61,6 +63,11 @@ export interface User {
   joined_at?: number;
   active_time?: number;
 }
+
+export type UserMeta = Pick<
+  User,
+  'id' | 'identify_num' | 'username' | 'avatar' | 'is_vip' | 'vip_avatar' | 'nickname' | 'roles'
+>;
 
 export enum UserStatus {
   normal = 0,
@@ -187,4 +194,94 @@ export interface Overwrite {
   role_id: number;
   allow: number;
   deny: number;
+}
+
+export interface ThreadCategoryPermissionRole {
+  type: 'role';
+  role_id: number;
+  user_id: '';
+  allow: number;
+}
+
+export interface ThreadCategoryPermissionUser {
+  type: 'user';
+  role_id: 0;
+  user_id: string;
+  allow: number;
+}
+
+export type ThreadCategoryPermission = ThreadCategoryPermissionRole | ThreadCategoryPermissionUser;
+
+export interface Thread {
+  id: string;
+  /** 帖子状态, `1` 代表审核中，`2` 代表审核通过, `3` 代表编辑审核中 **/
+  status: number;
+  title: string;
+  cover: string;
+  /** 主楼id **/
+  post_id: string;
+  medias: ThreadMedia[];
+  preview_content: string;
+  user: UserMeta;
+  category: Omit<ThreadCategory, 'roles'> | null;
+  tags: any[];
+  latest_active_time: number;
+  create_time: number;
+  is_updated: boolean;
+  content_deleted: boolean;
+  /** 删除类型：`1` 作者自己删除 `2` 管理员删除 `3` 审核删除 **/
+  content_deleted_type: number;
+  /** 收藏数量 **/
+  collect_num: number;
+  post_count: number;
+}
+
+export type ThreadDetail = Thread & ThreadContentBase;
+
+export interface ThreadCategory {
+  id: string;
+  name: string;
+  allow: number;
+  deny: number;
+  roles: ThreadCategoryPermission[];
+}
+
+export type ThreadPost = {
+  /** 评论/回复 id **/
+  id: string;
+  /** 分区id **/
+  category_id: string;
+  /** 所属帖子id **/
+  thread_id: string;
+  /** 回复对象的id（回复主贴为0） **/
+  reply_id: string;
+  /** 所属的评论的post_id **/
+  belong_to_post_id: string;
+  is_updated: boolean;
+  user: UserMeta;
+} & ThreadContentBase;
+
+export interface ThreadContentBase {
+  /** 卡片消息 **/
+  content: string;
+  /** 回复状态, `1` 代表审核中，`2` 代表审核通过, `3` 代表编辑审核中 **/
+  status: number;
+  /** `@特定用户` 的用户 ID 数组 **/
+  mention: string[];
+  /** 是否含有 `@全体人员` **/
+  mention_all: boolean;
+  /** 是否含有 `@在线成员` **/
+  mention_here: boolean;
+  /** `@特定用户` 详情 **/
+  mention_part: KmarkdownUserMeta[];
+  /** `@特定角色` 详情 **/
+  mention_role_part: KmarkdownRoleMeta[];
+  channel_part: any[];
+  item_part: any[];
+}
+
+export interface ThreadMedia {
+  type: number;
+  src: string;
+  title: string;
 }

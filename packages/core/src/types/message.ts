@@ -1,5 +1,5 @@
-import { Channel, GuildRole, MessageType, User } from './base';
-import { Notice } from './system';
+import type { Channel, GuildRole, MessageType, User } from './base';
+import type { Notice } from './system';
 
 export interface MessageMeta {
   mention: string[];

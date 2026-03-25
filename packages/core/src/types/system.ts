@@ -1,5 +1,5 @@
-import { Emoji, IKMarkdownParts, MessageMeta } from './message';
-import { Channel, GuildRole, MessageType, User } from './base';
+import type { Emoji, IKMarkdownParts, MessageMeta } from './message';
+import type { Channel, GuildRole, MessageType, User } from './base';
 
 export interface IBaseSystemExtra {
   type: NoticeType;

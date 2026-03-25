@@ -1,4 +1,4 @@
-import { Channel, GuildRole, Overwrite, User } from '../base';
+import type { Channel, GuildRole, Overwrite, User } from '../base';
 
 export interface ChannelRoleIndex {
   permission_overwrites: Overwrite[];
