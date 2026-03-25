@@ -118,7 +118,7 @@ export abstract class AbstactBot {
       file = Buffer.from(file, 'base64');
     }
     if (Buffer.isBuffer(file)) {
-      file = new Blob([file], { type: 'application/octet-stream' });
+      file = new Blob([new Uint8Array(file)], { type: 'application/octet-stream' });
     }
     if (file instanceof Blob) {
       const payload = new FormData();
