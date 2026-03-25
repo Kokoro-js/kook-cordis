@@ -597,7 +597,7 @@ export interface AbstactBot {
   pinMessage(param: {
     msg_id: string;
     /** 频道id **/
-    target_id?: string;
+    target_id: string;
   }): Promise<void>;
 
   /**
@@ -607,7 +607,7 @@ export interface AbstactBot {
   unpinMessage(param: {
     msg_id: string;
     /** 频道id **/
-    target_id?: string;
+    target_id: string;
   }): Promise<void>;
 
   /**
