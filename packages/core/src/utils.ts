@@ -17,22 +17,30 @@ export function generatePermission(bitValues: Permissions[]) {
   return permissions;
 }
 
-export async function allPagesRequest<DataType, Input extends Omit<Pagination, 'page'>>(
-  botFunction: (param: Input) => Promise<List<DataType>>,
-  params: Input,
+export async function allPagesRequest<DataType, Request extends Pagination>(
+  botFunction: (param: Request) => Promise<List<DataType>>,
+  params: Omit<Request, 'page'>,
 ): Promise<DataType[]> {
+  const firstPage = await botFunction({
+    ...params,
+    page: 1,
+  } as Request);
+
   let {
     items,
     meta: { page_total },
-  } = await botFunction(params);
+  } = firstPage;
 
   if (page_total <= 1) return items;
 
-  // 并发请求其他页的数据
   const pagePromises: Promise<List<DataType>>[] = [];
   for (let i = 2; i <= page_total; i++) {
-    const updatedParams = { ...params, page: i } as Input;
-    pagePromises.push(botFunction(updatedParams));
+    pagePromises.push(
+      botFunction({
+        ...params,
+        page: i,
+      } as Request),
+    );
   }
 
   const pageResults = await Promise.all(pagePromises);
